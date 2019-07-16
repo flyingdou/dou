@@ -1,0 +1,171 @@
+
+
+<html>
+<HEAD>
+	<TITLE>人员管理</TITLE>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="../../layuiAdmin/src/views/ChTree/css/zTreeStyle/zTreeStyle.css" type="text/css"> 
+    <script src="../../layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <script type="text/javascript" src="../../layuiAdmin/src/views/ChTree/js/jquery-1.4.4.min.js"></script>  
+    <script type="text/javascript" src="../../layuiAdmin/src/views/ChTree/js/jquery.ztree.core.js"></script>  
+    <script type="text/javascript" src="../../layuiAdmin/src/views/ChTree/js/jquery.ztree.excheck.js"></script>  
+    <script type="text/javascript" src="../../layuiAdmin/src/views/ChTree/js/jquery.ztree.exhide.js"></script>
+   
+</HEAD>
+
+<BODY>
+
+ <div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>人员管理</cite></a>
+  </div>
+</div>
+
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body" style=" background-color: #F2F2F2;">
+			
+			
+				  <div class="layui-row layui-col-space15">
+				    <div class="layui-col-xs2">
+				      <div class="layui-card">
+				        <div class="layui-card-header">组织架构树</div>
+				        <div class="layui-card-body">
+				        	<div class="zTreeDemoBackground left">
+								<ul id="treeDemo" class="ztree"></ul>
+							</div>
+				        </div>
+				      </div>
+				    </div>
+				    <div class="layui-col-md10">
+				      <div class="layui-card">
+				        <div class="layui-card-header">用户管理</div>
+				        <div class="layui-card-body">
+				        	<iframe id="main" name="main" frameborder="0"  src="" style="min-height:800px;width:100%;margin: 0px;" "></iframe>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+			
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+
+ <SCRIPT type="text/javascript">
+		var setting = {
+			view: {
+                showLine: false
+            },
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			async: {
+	                enable: true,
+	                url: "/treeController/selectall",
+	                autoParam: ["id","Pid","name"]
+	        },
+	        callback: {
+	        	beforeClick: zTreeBeforeClick
+            }
+		};
+		
+	    
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+			
+		});
+		 
+		function zTreeBeforeClick(treeId, treeNode, clickFlag) {
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+		    var node = treeObj.getNodes(); //可以获取所有的父节点
+		    var nodes = treeObj.transformToArray(node); //获取树所有节点
+		    var user=layui.data('layuiAdmin').user.departmentid;
+			//动态根据所点击级别
+			var parents;
+			//根据用户所属部门拿到对应的所有子节点
+			var children="";
+			//拿到用户所属部门在树中的位置
+			var k;
+			//循环取出登录用户对应的部门及其下的所有子节点
+			for(var i=0;i<nodes.length;i++){
+				if(user==nodes[i].id){
+				k=i;
+				children=","+nodes[i].id+getAllChildrenNodes(nodes[i],children)+",";
+				}
+			}	
+			/* //包含本节点及其所有子节点
+			if(children){
+				children=treeNode.id+children;
+			} */
+			//拆分成数组
+			var  ss = children.split(",");
+			
+			if(ss.length>1){
+			//判断点击节点是否属于该用户所属权限下
+			    if(children.match(","+treeNode.id+",")){
+				  for(var j=0;j<ss.length;j++){
+					  console.log(ss);
+						if(ss[j]==treeNode.id){
+							$("#main").attr("src","/layuiAdmin/src/views/user/userlist.html");
+							sessionStorage.setItem("department",treeNode.id);
+						}
+				  }
+			    }else{
+			    	$("#main").attr("src","/layuiAdmin/src/views/user/userlist.html");
+					sessionStorage.setItem("department",nodes[k].id);
+			    }
+			}else{
+				$("#main").attr("src","/layuiAdmin/src/views/user/userlist.html");
+				sessionStorage.setItem("department",nodes[k].id);
+			}
+		    return (treeNode.id !== 1);
+		};
+		 
+		function getAllChildrenNodes(treeNode,result){
+		      if (treeNode.isParent) {
+		        var childrenNodes = treeNode.children;
+		        if (childrenNodes) {
+		            for (var i = 0; i < childrenNodes.length; i++) {
+		                result += ',' + childrenNodes[i].id;
+		                result = getAllChildrenNodes(childrenNodes[i], result);
+		            }
+		        }
+		    }
+		    return result;
+		}
+		
+		function setIframeHeight(iframe) {
+			if (iframe) {
+			var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+			if (iframeWin.document.body) {
+			iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+			}
+			}
+			};
+
+			window.onload = function () {
+			setIframeHeight(document.getElementById('main'));
+			};
+			
+			var layer;
+			layui.use(['layer'], function(){
+				layer = layui.layer;
+			});
+			
+	</SCRIPT>
+
+</BODY>
+</html>
+

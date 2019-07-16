@@ -1,0 +1,235 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>二级库备件出库</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+		.layui-bg-red {
+			background-color: #FF5722 !important
+		}
+	</style>
+</head>
+
+<body  style="width:100%;height:100%">
+
+<form class="layui-form" action="" onsubmit="return false">
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>出库</legend>
+	</fieldset>	
+<div style="margin-left: 10%;">
+	<div class="layui-form-item">
+	 <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">部门</label>
+		      <div class="layui-input-inline">
+		        <input type="text" id="department" name="department" lay-filter="tree" class="layui-input" lay-verify="required" >
+		      	<input type="hidden" name="spareid" id="spareid"  autocomplete="off" class="layui-input" >
+		      	<input type="hidden" name="status" id="status"  autocomplete="off" class="layui-input" >
+		      </div>
+		    </div>
+	<div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">所属船</label>
+		      <div class="layui-input-inline">
+		        <select class="select"  name="inboat" id="inboat" lay-filter="inboat"  lay-verify="inboat">
+		        </select>
+		      </div>
+		    </div>
+	
+	<div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">数量</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" id="number" value="0" autocomplete="off" class="layui-input" lay-verify="require|double">
+		      </div>
+		    </div>
+	</div>
+	
+	<div class="layui-form-item">
+	<div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">备注</label>
+		      <div class="layui-input-inline">
+		        <textarea  class="layui-textarea" name="remarks" id="remarks" style="width:500px"></textarea>
+		      </div>
+		    </div>
+	</div>
+</div>	 
+	<center>
+	 <div class="layui-form-item" >
+    <div class="layui-inline">
+      <button class="layui-btn" lay-submit="" lay-filter="create">确定</button>
+    </div>
+  </div>
+  </center>
+</form>
+	
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+	<script>
+	var table;
+	var layer;
+	var laytpl;
+	var dataTable;
+	var laydate;
+	var form;
+	var $;
+	var loading;
+	var treeSelect; 
+	var json = [];
+	var add;
+	var notice;
+	
+	var id = sessionStorage.id;
+	var status = sessionStorage.status;
+
+	 window.onload = function(){
+		document.getElementById("spareid").value=id;
+		document.getElementById("status").value=status;
+	}
+	
+	 layui.config({
+	        base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+	    }).extend({
+	        notice: 'notice'
+	    });
+	 
+	layui.use(['table','form','layer','laytpl','laydate','treeSelect','notice'], function(){
+	  table = layui.table,
+	  notice = layui.notice,
+	  layer = layui.layer,
+	  loading = layer.load(1, {
+    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+	    });
+	  laytpl = layui.laytpl;
+	  treeSelect= layui.treeSelect;
+	  laydate = layui.laydate;
+	  $ = layui.jquery;
+		 $(document).ajaxStop(function (){
+			 layer.close(loading);
+			 
+		 });
+	 
+	 form=layui.form,
+	 
+	 treeSelect.render({
+         // 选择器
+         elem: '#department',
+         // 数据
+         data: '/person/selectall2',
+         // 异步加载方式：get/post，默认get
+         type: 'post',
+         // 占位符
+         placeholder: '请选择',
+         // 是否开启搜索功能：true/false，默认false
+         search: true,
+         // 点击回调
+         click: function(d){
+             document.getElementById("department").value=d.current.id;
+             selectboat(d.current.id);
+             form.render('select');
+         },
+         // 加载完成后的回调函数
+         success: function (d) {
+         }
+     });
+	 
+	  
+	 //保存
+	 form.on('submit(create)', function(data){
+		 loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+			return saveData(data);;
+		});
+	 
+	
+	 form.verify({
+         
+		    double: function(value){
+		    if(/^\d+$/.test(value)==false && /^\d+\.\d+$/.test(value)==false)
+		    {
+		     return '您输入的不是数字';
+		    }
+		   }
+		});
+	 
+	 
+	});
+	
+	//查询船
+	function selectboat(department){
+		$("select[name=inboat]").empty();
+		$.ajax({
+		    async: false,
+		    type: "POST",
+		    url: "/WcBoat/selectWcBoattype",
+		    dataType: "json",
+		    data: {
+		    	department:department,
+		    	theshiptype:"趸船"
+		    },
+		    success: function (res) {
+		    	if(res.list.length>0){
+		    		for(var i=0; i<res.list.length; i++){
+		  			  if(res.list[i].id!=null && res.list[i].id!=''){
+		  				  var option="<option value=\""+res.list[i].id+"\"";
+		  				  option += ">"+res.list[i].name+"</option>"; //动态添加数据
+		  				  $("select[name=inboat]").append(option);
+		  			  }
+		  		  }
+		    	}
+		    }
+		   });
+	} 
+	
+	//提交
+	function saveData(formData) {
+			var result = false;
+				$.ajax({
+					url: "/wcSpare/outpare",
+					async: false,
+					dataType: "json",
+					type: "post",
+					data: formData.field,
+					success: function(data) {
+						layer.close(loading);
+						if(data.SUCCESS===true){
+							finalily();
+						}else{
+							notice.init({
+			        	        autoClose: true,
+			        	        type:"danger",
+			        	        title: data.msg
+			        	    });
+						}
+					}
+				});
+			return result;
+		}
+	//跳转页面
+	function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+	
+	
+		 
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

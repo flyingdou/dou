@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>微信模块编辑</title>
+<link rel="stylesheet" href="../../ChTree/layui/css/layui.css" medidia="all" />
+<script type="text/javascript" src = "../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src ="../js/layui/layui.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<title>Insert title here</title>
+</head>
+
+<body>
+	<div class="wraper" id="wraper" align="center">
+		<form class="layui-form" id="form1" >
+		
+		 <div class="layui-form-item" style="margin-top: 10px">
+		    <label class="layui-form-label">名称</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="name" lay-verify="required"  v-model ="WcWefunc.name" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+		 <div class="layui-form-item">
+		    <label class="layui-form-label">方法名</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="fun" lay-verify="required"  v-model ="WcWefunc.fun" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+		 <div class="layui-form-item">
+		    <label class="layui-form-label">类型</label>
+		    <div class="layui-input-inline">
+		            <select name="type" id="type" v-model ="WcWefunc.type" lay-verify="required">
+				     </select>
+		    </div>
+		 </div>
+		 <div class="layui-form-item">
+		    <label class="layui-form-label">排序</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="fno" lay-verify="required"  v-model ="WcWefunc.fno" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+		 <div class="layui-form-item">
+		    <label class="layui-form-label">数字统计字段</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="field" lay-verify="required"  v-model ="WcWefunc.field" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+  		  <div class="layui-form-item" pane="">
+		    <label class="layui-form-label">单选框</label>
+		    <div class="layui-input-inline">
+		     <input type="radio" name="role" value="2"  v-model ="WcWefunc.role" title="管理员" checked="">
+		     <input type="radio" name="role" value="3"  v-model ="WcWefunc.role" title="船员">
+		    </div>
+		  </div>
+		  <div class="layui-form-item">
+		    <label class="layui-form-label">参数名</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="pkey" lay-verify="required" v-model ="WcWefunc.pkey" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		    <label class="layui-form-label">参数值</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="pvalue" lay-verify="required"  v-model ="WcWefunc.pvalue"  placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+		   <div class="layui-form-item">
+		    <label class="layui-form-label">路径</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="path" lay-verify="required" v-model ="WcWefunc.path"  placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		    <label class="layui-form-label">图标路径</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="imagepath" lay-verify="required" v-model ="WcWefunc.imagepath"  placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>
+  		 <div class="layui-form-item layui-form-text">
+		    <label class="layui-form-label">备注</label>
+		    <div class="layui-input-block">
+		      <textarea placeholder="请输入内容" class="layui-textarea" name="remark"  v-model ="WcWefunc.remark" ></textarea>
+		    </div>
+		 </div>
+		 <div class="layui-form-item">
+		     <button class="layui-btn layui-btn-sm" onclick="save()" style="margin-top: 15px;">保存</button>
+		 </div> 
+		</form>
+	</div>
+	
+	
+<script type="text/javascript">	  
+
+layui.use('form', function(){
+	 var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	 form.render();
+	 window.onload=function(){
+		 $.ajax({
+		        type:"POST",
+		        cache:false,
+		        url:"/WcwefuncController/selecttype",
+		        dataType:"json",
+		        success:function(data){	        	
+		        	var option='<option value="">请选择类型</option>';
+		            $.each(data,function(i,n){
+		            	option += '<option value="'+n.id+'">'+n.name+'</option>';
+		            })
+		            $("#type").append(option);
+		            form.render('select');
+		        }
+		  });
+	 }
+	 
+});
+function save(){
+  $.ajax({
+	  type: 'post',
+	  async:false,
+	  dataType:"json", 
+	  url:'/WcwefuncController/savewefunc',
+	  data:$('#form1').serialize(),
+	  success:function(result){
+		  if(result=200){
+			  alert("修改成功!");
+		  }else if(result=500){
+			  alert("修改失败!");
+		  }else{
+			  alert("未知错误!");
+		  }
+		  var index = parent.layer.getFrameIndex(window.name);
+		  parent.layer.close(index);
+			parent.location.reload();
+	  },
+	  error:function(result){
+		  alert("未知错误!");
+	  }
+  });
+	 }
+</script>
+
+</body>
+</html>

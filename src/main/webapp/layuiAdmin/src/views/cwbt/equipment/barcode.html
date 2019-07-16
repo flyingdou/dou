@@ -1,0 +1,40 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>设备卡条形码</title>
+    <script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+    <script src="/layuiAdmin/src/views/cwbt/js/JsBarcode.all.min.js"></script>
+    <style>
+        * {margin: 0;padding: 0;box-sizing: border-box;}
+        .box {text-align: center;}
+        #barcode {width: 200px;}
+    </style>
+</head>
+ 
+<body>
+    <div class="box">
+        <img id="barcode"/>
+    </div>
+    <div align="center">
+        <i id="name" style="font-size:10px;"></i>
+    </div>
+</body>
+<script>
+     var barcode = document.getElementById('barcode');
+     var ids=sessionStorage.getItem("ideqssss");
+     var name=sessionStorage.getItem("boatnames");
+     var eqname=sessionStorage.getItem("eqname");
+     var pingjie=name+"&nbsp;&nbsp;"+"-"+"&nbsp;&nbsp;"+eqname;
+     $("#name").html(pingjie);
+     var idssss=ids;
+     options = {
+         format: "CODE128",
+         displayValue: true,
+         fontSize: 18,
+         height: 100
+     };
+     JsBarcode(barcode, idssss, options); //原生  
+     // $('#barcode').JsBarcode(string, options); //jQuery
+</script>
+</html>

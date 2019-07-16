@@ -1,0 +1,150 @@
+body{  
+	padding:0;
+	margin: 0;
+	font-size: 14px;
+	font-family:"Microsoft Yahei";
+}
+img{
+	display: block;
+}
+
+.clearfix{
+	clear: both;
+}
+body{
+	background: url(../images/blbj.jpg) no-repeat scroll center top;
+	background-size: cover;
+}
+.top{
+	background-color: #fff;
+	
+}
+.top_box{
+	width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.top_leftimg{
+	float: left;
+	margin-top: 15px;
+	margin-right: 30px;
+}
+.hyz{
+	float: left;
+	line-height:70px ;
+	font-size: 16px;
+}
+.hyz span{
+	font-size: 20px;
+	margin-left: 20px;
+}
+.bjt{
+	width: 100%;	
+}
+.left_tp{
+	width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.tp_img{
+	width: 400px;
+	margin-top: 17%;
+	float: left;
+	margin-left: 120px;
+}
+.dltk{
+	float: right;
+	width: 376px;
+	margin-right: 160px;
+	margin-top: 11%;	
+}
+.login{
+	width: 330px;
+	margin: 0 auto 40px auto;
+}
+.dlsrk{
+	width: 376px;
+	height: 282px;
+	padding-top: 36px;
+	background-color: #fff;
+	margin-right: 160px;
+}
+.kk{
+	margin: 0 auto 22px auto;
+	width: 322px;
+	height: 42px;
+	border: 1px solid #a5b0b6;
+}
+.yhm{
+	float: left;
+	margin: 13px;
+}
+.yhmk{
+	width: 280px;
+    float: left;
+    height: 42px;
+}
+.yhmk input{
+	width: 280px;
+	height: 40px;
+	border:none;
+	outline:none;
+}
+.yzm{
+	margin: 0 auto 22px auto;
+	width: 322px;
+	height: 42px;
+	
+}
+
+.yzm_yhmk{
+	width: 176px;
+    float: left;
+    height: 20px;
+    border: 1px solid #a5b0b6;
+    padding: 10px;
+    margin-right: 10px;
+}
+.yzm_yhmk input{
+	width: 134px;
+	height:20px;
+	border:none;
+	outline:none;
+}
+.yzmxs{
+	float: left;
+	width: 112px;
+	height: 40px;
+	border: 1px solid #a5b0b6;
+}
+.dlk{
+	margin: 32px auto 30px auto;
+	width: 324px;
+	height: 44px;
+	background-color: #0180cf;
+	color: #fff;
+	line-height: 44px;
+	font-size: 18px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.wx{
+	width: 114px;
+	height: 114px;
+	margin: 16px auto;
+	background: rgba(255,255,255,0.2);	
+	filter:alpha(opacity=20);   
+	-moz-opacity:0.2;   
+	-khtml-opacity: 0.2;  
+}
+.wx img{
+	margin: 4px;
+	padding-top: 4px;
+	
+}
+.shumin{
+	color: #fff;
+	text-align: center;
+}			
+			

@@ -1,0 +1,183 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>修改部门图片</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="/layui/layui/css/layui.css">
+	<style>
+	.layui-footer{
+		position: fixed;
+		bottom: 0;
+		width:100%;
+		background-color: #fff;
+		box-shadow: 0 -1px 2px 0 rgba(0,0,0,.05);
+		height: 44px;
+		line-height: 44px;
+	}
+	</style>
+</head>
+<body  style="width:100%;height:100%">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>图片</legend>
+	</fieldset>
+<form class="layui-form" action="" onsubmit="return false">
+		<div class="layui-form-item" style="margin-left: 10%;" id="wraper">
+			<input type="hidden" id="seqId" name="seqId" v-model = "department.id"/>
+			<input type="hidden" id="image" name="image" v-model = "department.image"/>
+			<img class="layui-upload-img" v-if="department.imageurl&&department.imageurl!='null'" id="imageurl" :src="window.location.protocol+'//'+window.location.host+'/'+department.imageurl">
+		</div>
+		
+	 <div class="layui-form-item" style="margin-left: 10%;">
+		<div class="layui-upload">
+  			<button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+  			<!-- 
+ 			 <div class="layui-upload-list">
+    			<img class="layui-upload-img" id="demo1">
+    			<p id="demoText"></p>
+  			</div> -->
+		</div> 
+		</div>
+	
+	
+	
+        <div class="layui-form-item">
+          	
+            <div class="layui-footer" >
+            <center>
+               <button class="layui-btn" lay-submit="" lay-filter="create">确定</button>
+            </center>
+            </div>
+        </div>
+</form>
+	
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+	<script>
+	var zuo = new Vue({
+		el: "#wraper",
+		data: {
+			department:{}
+		}
+	});
+	
+
+	var id = sessionStorage.id;
+	var image = sessionStorage.image;
+	var imageurl = sessionStorage.imageurl;
+	
+	var department={};
+	department.id=id;
+	department.image=image;
+	department.imageurl=imageurl;
+	zuo.department = department;
+	
+	layui.config({
+        base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        notice: 'notice'
+    });
+	
+	var notice;
+	layui.use(['upload','form','notice'], function(){
+		  var $ = layui.jquery
+		  ,upload = layui.upload
+		  ,form=layui.form;
+		  
+		  notice = layui.notice;
+		  //普通图片上传
+		  var uploadInst = upload.render({
+		    elem: '#test1'
+		    ,url: '/uploadFile/uploadFile'
+		    ,data:{
+		    	filetype:"1"
+		    }
+		  	,size:0
+		    ,before: function(obj){
+		      /* //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		        $('#demo1').attr('src', result); //图片链接（base64）
+		      }); */
+		    }
+		    ,done: function(res){
+		      //如果上传失败
+		      if(res.code > 0){
+		        return layer.msg('上传失败');
+		      }else if(res.code===0){//上传成功
+
+		    	  zuo.department.image = res.fileid;
+		    	  zuo.department.imageurl = res.fileurl;
+
+		    	  
+		      }
+		      
+		    }
+		    ,error: function(){
+		      //演示失败状态，并实现重传
+		      var demoText = $('#demoText');
+		      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+		      demoText.find('.demo-reload').on('click', function(){
+		        uploadInst.upload();
+		      });
+		    }
+		  });
+		//保存
+			 form.on('submit(create)', function(data){
+				 loading = layer.load(1, {
+			    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+				    });
+					return saveData(data);;
+				});
+		  
+	});
+	
+	//提交
+	function saveData(formData) {
+			var result = false;
+				$.ajax({
+					url: "/treeController/updataimage",
+					async: false,
+					dataType: "json",
+					type: "post",
+					data: formData.field,
+					success: function(data) {
+						layer.close(loading);
+						if(data.SUCCESS===true){
+							notice.init({
+			        	        autoClose: true,
+			        	        title: data.msg
+			        	    });
+							finalily();
+						}else{
+							notice.init({
+			        	        autoClose: true,
+			        	        type:"danger",
+			        	        title: data.msg
+			        	    });
+						}
+					}
+				});
+			return result;
+		}
+	
+	//跳转页面
+	function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+	
+	</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

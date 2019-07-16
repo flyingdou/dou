@@ -1,0 +1,156 @@
+<html>
+<title>留言板</title>
+  <link rel="stylesheet" href="/layuiAdmin/start/layui/css/layui.css" media="all">
+  <script src="/layuiAdmin/start/layui/layui.js"></script>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+ 
+<script type="text/html" id="toolbarDemo" >
+<div class="layui-btn-container">
+    <button class="layui-btn" lay-event="save"><i class="layui-icon">&#xe654;</i>添加用户</button>
+</div>
+</script>
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="czpwd">重置密码</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+              
+          
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
+ 
+<script>
+
+
+//时间格式处理
+function createTime(v){
+		var date = new Date(v);
+	    var y = date.getFullYear();
+	    var m = date.getMonth()+1;
+	    m = m<10?'0'+m:m;
+	    var d = date.getDate();
+	    d = d<10?("0"+d):d;
+	    var str = y+"-"+m+"-"+d;
+	    return str;
+	}
+
+var table;
+layui.use('table', function(){
+ table = layui.table;
+  var $=layui.$;
+  var did=sessionStorage.getItem("department"); 
+  table.render({
+    elem: '#test'
+    ,url:'/user/selectall?departmentid='+did+''
+    ,toolbar: '#toolbarDemo'
+    ,title: '用户数据表'
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field:'uno', title:'序号', width:80, fixed: 'left', unresize: true, sort: true}
+      ,{field:'name', title:'用户名', width:120, edit: 'text'}
+      ,{field:'privname', title:'角色', width:130, edit: 'text'}
+      ,{field:'position', title:'职位', width:100}
+      ,{field:'status', title:'状态',templet: function(d){
+         if(d.status==0){
+        	 return "正常";
+         }else{
+        	 return "禁用";
+         }
+      }}
+      ,{field:'sex', title:'性别', width:80, sort: true,templet: function(d){
+          if(d.sex==0){
+         	 return "男";
+          }else{
+         	 return "女";
+          }
+       }}
+      ,{field:'createtime', title:'创建时间', width:160,sort: true,templet:function (d){
+    	  if(d.createtime==null){
+    		  return "";
+    	  }else{
+              return createTime(d.createtime);
+    	  }
+      }}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:210}
+    ]]
+    ,page: true
+  });
+  
+  //头工具栏事件
+  table.on('toolbar(test)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'save':
+    	  window.parent.layer.open({
+			title : "添加用户",
+			type : 2,
+			area: ['49%', '78%'], // 弹窗大小
+			shadeClose: true,
+			shade: 0.5,
+			content :"/layuiAdmin/src/views/user/saveuser.html",
+			success : function(layero, index){
+				setTimeout(function(){
+					layui.layer.tips('点击返回', '.layui-layer-close', {
+						tips: 3
+					});
+				},500);
+			}
+		})
+      break;
+      
+      
+    };
+  });
+  
+  //监听行工具事件
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del();
+        layer.close(index);
+        $.ajax({
+        	url:'/user/deluser',
+        	async:false,
+        	type: "post",
+        	data:{"id":data.id},
+        	success:function(){
+        		layer.msg("删除成功！");
+        	}
+        })
+      });
+    } else if(obj.event === 'edit'){
+    	sessionStorage.setItem("user",JSON.stringify(data));
+    	var  s=sessionStorage.getItem("user");
+    	window.parent.layer.open({
+			title : "修改用户",
+			type : 2,
+			area: ['49%', '75%'], // 弹窗大小
+			shadeClose: true,
+			shade: 0.5,
+			content :"/layuiAdmin/src/views/user/edituser.html",
+			success : function(layero, index){
+				setTimeout(function(){
+					layui.layer.tips('点击返回', '.layui-layer-close', {
+						tips: 3
+					});
+				},500);
+			}
+		})
+    }else if(obj.event === 'czpwd'){
+    	$.ajax({
+        	url:'/user/updatepwd',
+        	async:false,
+        	type: "post",
+        	data:{"id":data.id},
+        	success:function(){
+        		layer.msg("重置成功！");
+        	}
+        })
+    }
+  });
+});
+</script>
+</html>

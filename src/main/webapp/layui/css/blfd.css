@@ -1,0 +1,63 @@
+#fdfoot{width:100%;position:fixed;_position:absolute;left:0px;bottom:0px;_bottom:0px;_margin-top:expression(this.style.pixelHeight+document.documentElement.scrollTop)}
+* { margin:0; padding:0;}
+/*
+body { text-align:center; font:75% Verdana, Arial, Helvetica, sans-serif;}
+*/
+#fdfoot .layui-nav{
+	text-align: center;
+}
+.fdclass {
+	 width:100%;
+	 
+	 position:relative; 
+	 top:20px;
+	 margin:0 auto; 
+	 padding:5px;}
+#blcontent{
+	border: 1px solid #cdcdcd;
+	border-radius: 6px;
+	 height:450px;
+	 overflow:hidden;
+	 display:none;
+	 background:#ffffff;
+	 }
+.blfsbt{
+	margin-bottom: 4px;
+	margin-top: 8px;
+	margin-left: 30px;
+	text-align: left;
+	font-size: 20px;
+	
+}
+.blfsbt .bllx:hover{
+	line-height: 44px;
+	font-size: 18px;
+}
+.scstgzs{
+	margin-left: 20px;
+	float: left;
+	display: block;
+	padding: 6px 10px 0 10px;
+	font-weight: 400;
+	text-align: right;
+	line-height: 20px;
+	position: relative;	
+}
+.hsbj{
+	background-color: #f8f8f8;
+}
+.qran img{
+	margin-right: 10PX;
+}
+.srnr .layui-textarea{
+	width: 99%;
+}
+.blfsxlk .layui-form-select{
+	width: 20%;
+}
+.blfsxlk .layui-input{
+	width: 100%;
+}
+.srnr .layui-textarea{
+	min-height: 26px;
+}

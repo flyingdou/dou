@@ -1,0 +1,406 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>统计查询 （单部门、时间段、多物资统计）</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link href="/layui/layui/css/formSelects-v4.css" rel="stylesheet" />
+	<script src="/layui/layui/js-pinyin.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body  style="width:100%;height:100%">
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>物资管理</cite></a>
+    <a><cite>部门物资统计报表</cite></a>
+  </div>
+</div>
+
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+			<form class="layui-form" action="">
+	<blockquote class="layui-elem-quote elem-quote" >
+	<form class="layui-form" action="" onsubmit="return false">
+	  <div >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">部门</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" id="tree" name="tree" lay-filter="tree" class="layui-input">
+		    </div>
+		</div>
+		
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">物资</label>
+		    <div class="layui-input-inline" style="width:230px;">
+		    	<select name="materialids" id="materialids" xm-select="materialids" xm-select-search="" xm-select-placeholder="请选择" xm-select-search-type="dl" xm-select-show-count="2"> 
+				</select> 
+		    </div>
+		</div>
+		
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">时间</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" name="time" id="time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" style="width:200px;">
+		    </div>
+		</div>
+		
+		<div class="layui-inline" style="margin-left:50px">
+			<a class="layui-btn layui-btn-warm" lay-submit lay-filter="searchForm">查询</a>
+		</div>
+		
+		 </div > 
+
+	 <div >
+		
+	  </div>
+	  </form>
+	</blockquote>
+	</form>
+	
+     <blockquote class="layui-elem-quote">
+			请选择小处部门和物资
+	</blockquote>
+		  </div>
+		 </div>
+		</div>
+		
+		
+	<div class="layui-row layui-col-space15">
+    <div class="layui-col-md4">
+      <div class="layui-card">
+      
+        <div class="layui-card-header">查询结果</div>
+        <div class="layui-card-body">
+				          
+			<table id="dataTable" lay-filter="dataTable">
+			
+			</table>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md8">
+      <div class="layui-card">
+        <div class="layui-card-header">饼图</div>
+        <div class="layui-card-body" id="echarts1">
+		      <div id="main" style="height:400px;"></div>
+        </div>
+      </div>
+    </div>
+	
+      
+     <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">柱状图</div>
+        <div class="layui-card-body" id="echarts2">
+		      <div id="main2" style="height:400px;"></div>
+        </div>
+      </div>
+    </div>
+      
+		</div>
+		</div>
+	
+	<script>
+	
+
+	
+	
+	var table;
+	var layer;
+	var laytpl;
+	var dataTable;
+	var laydate;
+	var form;
+	var loading;
+	var treeSelect;
+	var formSelects;
+	var json = [];
+	
+	layui.config({
+        base: '/layuiAdmin/src/controller/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        formSelects: 'formSelects-v4',
+    });
+	
+	
+	layui.use(['table','form','layer','laytpl','formSelects','laydate','treeSelect','echarts'], function(){
+		 table = layui.table,
+		  loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+		  formSelects = layui.formSelects;
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  laydate = layui.laydate;
+		  treeSelect= layui.treeSelect;
+		  
+		 form=layui.form,
+		  $ = layui.jquery;
+		 
+	
+		 treeSelect.render({
+	            // 选择器
+	            elem: '#tree',
+	            // 数据
+	            data: '/person/selectall',
+	            style: {
+	                folder: { // 父节点图标
+	                    enable: true // 是否开启：true/false
+	                },
+	                line: { // 连接线
+	                    enable: true // 是否开启：true/false
+	                }
+	            },
+	            // 异步加载方式：get/post，默认get
+	            type: 'post',
+	            // 占位符
+	            placeholder: '请选择',
+	            // 是否开启搜索功能：true/false，默认false
+	            search: true,
+	            // 点击回调
+	            click: function(d){
+	                document.getElementById("tree").value=d.current.id;
+	            },
+	            // 加载完成后的回调函数
+	            success: function (d) {
+			    	layer.close(loading);
+	            }
+	        });
+		 
+		 
+		 //物资
+		 formSelects.data('materialids', 'server', {
+			    url: '/wcMaterial/selectalltoformselect'
+			 /*    success: function(id, url, searchVal, result){      //使用远程方式的success回调
+			    	 //如果有需要默认值的小伙伴请使用formSelects.value
+			    	 formSelects.value('select7_2',true);
+				        console.log(result);    //返回的结果
+			    } */
+
+			});
+		 
+		 
+		 layui.formSelects.filter('materialids', function(id, inputVal, val, isDisabled){
+	         if(
+	             PY.fullPY(val.name).toLowerCase().indexOf(inputVal) != -1 ||    //拼音全拼是否包含
+	             PY.fullPY(val.name, true).indexOf(inputVal) != -1 ||            //拼音简拼是否包含
+	             val.name.indexOf(inputVal) != -1                                //文本是否包含
+	         ){
+	             return false;
+	         }
+	         return true;
+	     });
+		 
+		 laydate.render({
+				elem: '#time',
+				range: '~',
+				});
+		 
+		 dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,page: false //开启分页 
+			    ,toolbar:true
+			    ,data: json//数据接口
+			    ,cols: [[ //表头
+			      {field: 'no', title: '序号',width:'10%',type:'numbers'}
+			      ,{field: 'materialname', title: '物资名称'}
+			      ,{field: 'sumnumber', title: '数量',templet:function(d){
+			    	  return d.sumnumber+d.unitname
+			      }
+			      }
+			    ]],
+		  });
+		 
+		//查询
+		 form.on('submit(searchForm)', function(data){
+				return show(data);
+			});
+		
+
+		//查询接口
+			function show(formData){
+				var time = document.getElementById("time").value;
+				var departmentid = document.getElementById("tree").value;
+				var materialids = formSelects.value('materialids', 'valStr');
+				console.log(materialids);
+				
+				  $.ajax({
+						url: "/WcMaterialout/selecttoeacharts2",
+						type: "post",
+						data: {
+							departmentid: departmentid,
+							time: time,
+							materialids: materialids
+						},
+						dataType: "json",
+						success: function (res) {
+							/* layer.closeAll(); */
+							if(res.data==null){
+								layer.msg("查询无数据");
+								
+							}else{
+								if(res.data.length===0){
+									layer.msg("查询无数据");
+									
+								}else if(res.data.length>0){
+									//数据表格刷新
+									table.reload('dataTable',{data : res.data});
+									
+									//定义echarts宽度
+									//饼图
+									  var o = document.getElementById("echarts1");
+									  var w = o.clientWidth||o.offsetWidth;
+									  var main=document.getElementById("main");
+									  main.style.width=w-50+"px";
+									 var myChart = echarts.init(document.getElementById('main')); 
+									 //柱状图
+									  var o2 = document.getElementById("echarts2");
+									  var w2 = o2.clientWidth||o2.offsetWidth;
+									  var main=document.getElementById("main2");
+									  main.style.width=w2-100+"px";
+									 var myChart2 = echarts.init(document.getElementById('main2')); 
+									 
+									 
+									
+									//标题
+									var departmentname;
+									//饼图数据
+									var materialname = [];
+									var sumnumber = [];
+									//柱状图数据
+									var sumnumber2 = [];
+									
+									var datalist = res.data;
+									for(var i=0;i<datalist.length;i++){
+										departmentname = datalist[i].departmentname;
+										materialname.push(datalist[i].materialname+"("+datalist[i].unitname+")");
+										sumnumber.push({value:datalist[i].sumnumber,
+														name:datalist[i].materialname+"("+datalist[i].unitname+")"});
+										sumnumber2.push(datalist[i].sumnumber);
+									}
+									  
+									  option = {
+											    title : {
+											        text: departmentname+'物资使用情况',
+											        x:'center'
+											    },
+											    tooltip : {
+											        trigger: 'item',
+											        formatter: "{a} <br/>{b} : {c} "
+											    },
+											    toolbox: {
+											        show : true,
+											        feature : {
+											            saveAsImage : {show: true}
+											        }
+											    },
+											    legend: {
+											        orient: 'vertical',
+											        x: 'left',
+											        data: materialname
+											    },
+											    series : [
+											        {
+											            name: '使用情况',
+											            type: 'pie',
+											            radius : '55%',
+											            center: ['50%', '60%'],
+											            data:sumnumber,
+											            itemStyle: {
+											                emphasis: {
+											                    shadowBlur: 10,
+											                    shadowOffsetX: 0,
+											                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+											                }
+											            }
+											        }
+											    ]
+											};
+
+										// 为echarts对象加载数据 
+										myChart.setOption(option); 
+										
+										
+										//柱状图
+										
+										
+										option2 = {
+												 title : {
+												        text: departmentname+'物资使用情况',
+												        x:'center'
+												    },
+												    toolbox: {
+												        show : true,
+												        feature : {
+												            saveAsImage : {show: true}
+												        }
+												    },
+												    
+												    tooltip : {
+												        trigger: 'axis',
+												        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+												            type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+												        },
+												        formatter: "{b} : {c} "
+												    },
+											    xAxis: {
+											        type: 'category',
+											        data: materialname,
+											    },
+											    yAxis: {
+											        type: 'value'
+											    },
+											    series: [{
+											    	itemStyle: {
+														normal: {
+															label: {
+																show: true, //开启显示
+																position: 'top', //在上方显示
+										                        formatter: '{c}',
+																textStyle: { //数值样式
+																	color: 'black',
+																	fontSize: 16
+																}
+															}
+														}
+													},
+											        data: sumnumber2,
+											        type: 'bar'
+											    }]
+											};
+
+										
+
+										// 为echarts对象加载数据 
+										myChart2.setOption(option2); 
+										
+										
+								}
+									
+							}
+						}
+					}); 
+				  
+				  
+			  };
+		 
+			  
+	});
+	</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

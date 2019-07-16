@@ -1,0 +1,186 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>督导</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/layer.css" medidia="all" />
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<style>
+	
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;
+		}
+	</style>
+</head>
+<body style="width: 100%;height: 100%">
+<div style='border:1px;'>
+    <form class="layui-form" action="">
+	<blockquote class="layui-elem-quote elem-quote" >
+	  <div class="demoTable">
+  搜索名称：
+  <div class="layui-inline">
+    <input class="layui-input" name="name" id="name" autocomplete="off">
+  </div>
+  <div class="layui-input-inline" >
+        <button class="layui-btn" style="margin-right: 70px;" id="search" name="search">
+            <i class="layui-icon"></i>搜索
+        </button>
+    </div>
+</div>
+	   <script type="text/html" id="caozou">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" id="update">查看</a>
+    </script> 
+	  
+	
+  </blockquote>  
+    </form>
+    <table id="dataTable" lay-filter="dataTable">
+	</table>
+	<div class="layui-tab-item">
+      <div id="pageDemo"></div>
+    </div>
+</div>
+    <script>
+    var loading;
+	var dataTable;
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider','form'], function(){
+    	  var laydate = layui.laydate //日期
+    	  ,laypage = layui.laypage //分页
+    	  ,layer = layui.layer //弹层
+    	  ,table = layui.table //表格
+    	  ,carousel = layui.carousel //轮播
+    	  ,upload = layui.upload //上传
+    	  ,element = layui.element //元素操作
+    	  ,slider = layui.slider //滑块
+    	  ,form=layui.form//表单
+
+    	  ,loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+    	  
+    	  
+        	dataTable=table.render({
+        		elem:"#dataTable",
+        		heigh:'auto',
+        		toolbar: '#barDemo',
+        		url:'/WcSupervision/selectWcSupervision',
+        		method:'post',
+        		page:true,//开启分页
+        		cols:[[
+        		    //{checkbox:true,width:'10%'},
+        		    {field:'content',title:'督导内容',sort: true},
+        		    {field:'auto_date',title:'督导时间',sort: true,templet:function (d){
+			    	  if(d.auto_date==null){
+			    		  return "";
+			    	  }else{
+	                      return createTime(d.auto_date);
+			    	  }
+                  }},
+                  {field:'content1',title:'内容',sort: true},
+      		    {field:'auto_date1',title:'时间',sort: true,templet:function (d){
+			    	  if(d.auto_date1==null){
+			    		  return "";
+			    	  }else{
+	                      return createTime(d.auto_date1);
+			    	  }
+                }},
+                {field:'remark',title:'反馈内容',sort: true},
+    		    {field:'auto_date2',title:'反馈时间',sort: true,templet:function (d){
+		    	  if(d.auto_date2==null){
+		    		  return "";
+		    	  }else{
+                      return createTime(d.auto_date2);
+		    	  }
+              }},
+                {fixed: 'right',title:'操作',width:'15%',align:'center', toolbar: '#caozou'}    
+        		]],
+        		
+        		done:function(){
+        			layer.close(loading);
+        		}
+        	});
+    	  laypage.render({
+    		    elem: 'pageDemo' //分页容器的id
+    		    ,count: 100 //总页数
+    		    ,skin: '#1E9FFF' //自定义选中色值
+    		    //,skip: true //开启跳页
+    		    ,jump: function(obj, first){
+    		      if(!first){
+    		        layer.msg('第'+ obj.curr +'页', {offset: 'b'});
+    		      }
+    		    }
+    		  });    
+    	  
+    	  table.on('tool(dataTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+  		    var data = obj.data //获得当前行数据
+  		    ,layEvent = obj.event; //获得 lay-event 对应的值
+  		    if(layEvent === 'detail'){
+  		      layer.msg('查看操作');
+  		    } else if(layEvent === 'edit'){
+  		    	sessionStorage.setItem("visionid", data.id);
+  		    	var index = layui.layer.open({
+						title : "查看",
+						type : 2,
+						area: ['40%', '70%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						//?data.id
+						content :"/layuiAdmin/src/views/cwbt/WcSupervisionSelect.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+  		    }
+  		  });
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  function createTime(v){
+    			var date = new Date(v);
+    		    var y = date.getFullYear();
+    		    var m = date.getMonth()+1;
+    		    m = m<10?'0'+m:m;
+    		    var d = date.getDate();
+    		    d = d<10?("0"+d):d;
+    		    var str = y+"-"+m+"-"+d;
+    		    return str;
+    		}
+    	  
+    	  $("#search").click(function(){
+              var name = $("#name").val();
+              console.log(name);
+              dataTable.reload({
+                  where: {
+                      name: name
+                  }
+        });
+        return false;
+ });
+    	  
+    	  
+    	  
+    })
+    
+    </script>
+
+</body>
+</html>

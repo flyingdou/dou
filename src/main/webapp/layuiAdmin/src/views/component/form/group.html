@@ -1,0 +1,200 @@
+<link rel="stylesheet" href="/layuiAdmin/start/layui/css/layui.css"/>
+<script type="text/javascript" src = "/layuiAdmin/start/layui/layui.js"></script>
+<!-- <script type="text/javascript" src = "../../../../../vue/vue.min.js"></script> -->
+
+<div class="layui-fluid" id="savemenu">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+      <form class="layui-form" action="" lay-filter="component-form-group">
+        <div class="layui-form-item">
+            <label class="layui-form-label">序号</label>
+            <div class="layui-input-inline">
+              <input type="text" name="mno" v-model="menu.mno" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-inline">
+            <input type="text" name="title" id="title" v-model="menu.title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">url</label>
+            <div class="layui-input-block">
+              <input type="text" name="jump" v-model="menu.jump" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标</label>
+            <div class="layui-input-block">
+              <input type="text" name="icon" v-model="menu.icon" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">上级菜单</label>
+          <div class="layui-input-inline">
+	            <input type="text" id="pid" name="pid"  v-model ="menu.pid" lay-filter="pid" class="layui-input">
+	      </div>
+        </div>
+        
+        <div class="layui-form-item">
+          <label class="layui-form-label">类型</label>
+          <div class="layui-input-block" >
+            <input type="radio" name="type"  value="2" title="功能" >
+            <input type="radio" name="type"  value="1" title="菜单">
+          </div>
+        </div>
+       
+        <div class="layui-form-item layui-form-text">
+          <label class="layui-form-label">普通文本域</label>
+          <div class="layui-input-block">
+            <textarea name="remark" v-model="menu.remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+          </div>
+        </div>        
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <div class="layui-footer">
+              <button class="layui-btn" lay-submit="" lay-filter="component-form-demo1" >立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 
+var hq = new Vue({
+	 el: "#savemenu",
+	 data: {
+			menu: {}
+		},
+	 mounted: function () {
+		 setTimeout(this.init, 100);
+	 },
+	 methods: {
+		 init:function(){
+			 layui.use(['admin', 'form', 'laydate'], function(){
+				  var $ = layui.$
+				  ,admin = layui.admin
+				  ,element = layui.element
+				  ,layer = layui.layer
+				  ,laydate = layui.laydate
+				  ,form = layui.form;
+				  form.render(null, 'component-form-group');
+				  laydate.render({
+				    elem: '#LAY-component-form-group-date'
+				  });
+			 });
+		 },
+		 save: function(){
+			 layui.use(['admin', 'form', 'laydate'], function(){
+				  var $ = layui.$
+				  ,admin = layui.admin
+				  ,element = layui.element
+				  ,layer = layui.layer
+				  ,laydate = layui.laydate
+				  ,form = layui.form;
+					  console.log(hq.menu);
+				      $.ajax({
+				      	url:"/menu/savemenu",
+				  		dataType:'json',
+				  		type:'POST',
+				  		data:{"menu":hq.menu},
+				  		success:function(){
+				  			layer.msg("提交成功！");
+				  		}
+				      });											
+				});	  
+		 }
+	 }
+});
+ */
+ layui.config({
+     base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+ }).extend({
+ 	treeSelect: 'treeSelect'
+ });
+ layui.use(['form', 'laydate','treeSelect'], function(){
+   var $ = layui.$
+   ,element = layui.element
+   ,layer = layui.layer
+   ,laydate = layui.laydate
+   ,form = layui.form
+   ,treeSelect= layui.treeSelect;
+   form.render(null, 'component-form-group');
+   form.render();
+   laydate.render({
+     elem: '#LAY-component-form-group-date'
+   });
+   treeSelect.render({
+       // 选择器
+       elem: '#pid',
+       // 数据
+       data: '/menu/select',
+       // 异步加载方式：get/post，默认get
+       type: 'post',
+       // 占位符
+       placeholder: '请选择',
+       // 是否开启搜索功能：true/false，默认false
+       search: true,
+       // 点击回调
+       click: function(d){
+           document.getElementById("pid").value=d.current.id;
+       },
+       // 加载完成后的回调函数
+       success: function (d) {
+       }
+   });
+	  
+   /* 自定义验证规则 */
+   /* form.verify({
+     title: function(value){
+       if(value.length < 5){
+         return '标题至少得5个字符啊';
+       }
+     }
+     ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+     ,content: function(value){
+       layedit.sync(editIndex);
+     }
+   }); */
+   
+   /* 监听指定开关 */
+   form.on('switch(component-form-switchTest)', function(data){
+     layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+       offset: '6px'
+     });
+     layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+   });
+   
+   form.on('select(pid)'),function(data){
+	   data.field.pid=data.value;
+   }
+   form.on('radio(type)'),function(data){
+	   data.field.type=data.value;
+   }
+   
+   /* 监听提交 */
+   form.on('submit(component-form-demo1)', function(data){
+	   $.ajax({
+	      	url:"/menu/savemenu",
+	  		dataType:'json',
+	  		async:false,
+	  		type:'POST',
+	  		data:data.field,
+	  		success:function(){
+	  			layer.msg("提交成功！");
+	  			finalily();
+	  		}
+	      });
+   });
+   function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+ });
+</script>

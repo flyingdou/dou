@@ -1,0 +1,241 @@
+
+<title>添加用户</title>
+<link rel="stylesheet" href="../ChTree/layui/css/layui.css" medidia="all" />
+<script type="text/javascript" src ="/layuiAdmin/src/views/cwbt/js/layui/layui.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+
+
+
+
+	<div class="wraper" id="wraper">
+		<form class="layui-form" id="form1" name="form1">
+		<input name="id" id="id" type="hidden"  v-model ="User.id">
+		 <div class="layui-form-item" style="margin-top: 10px">
+		   <div class="layui-inline">
+			  <label class="layui-form-label">序号</label>
+			    <div class="layui-input-inline">
+			      <input type="text" name="uno"  v-model ="User.uno"  placeholder="请输入" autocomplete="off" class="layui-input" >
+			    </div>
+		   </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label">名称</label>
+			     <div class="layui-input-inline">
+			       <input type="text" name="name" lay-verify="required"  v-model ="User.name" placeholder="请输入" autocomplete="off" class="layui-input">
+			     </div>
+			</div>
+		 </div>
+		
+		 <div class="layui-form-item" style="margin-top: 10px;">
+		    <label class="layui-form-label">账号</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="account" readonly lay-verify="required"  v-model ="User.account" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		 </div>  
+		  <div class="layui-form-item" style="margin-top: 10px">
+		    <div class="layui-inline">
+	          <label class="layui-form-label">上级部门</label>
+	          <div class="layui-input-inline">
+	            <input type="text" id="departmentid" name="departmentid" v-model ="User.departmentid" lay-filter="departmentid" class="layui-input">
+	          </div>
+            </div>
+            <div class="layui-inline">
+		    <label class="layui-form-label">角色</label>
+			    <div class="layui-input-inline">
+			            <select name="role" id="role" lay-verify="required" >
+					     </select>
+			    </div>
+		    </div>
+		 </div>
+		 <div class="layui-form-item" style="margin-top: 10px;">
+			    <label class="layui-form-label">职位</label>
+			    <div class="layui-input-inline">
+			      <input type="text" name="position" lay-verify="required" v-model ="User.position" placeholder="请输入" autocomplete="off" class="layui-input">
+			    </div>
+		 </div>
+  		 <div class="layui-form-item" style="margin-top: 10px">
+  		    <div class="layui-inline">
+			    <label class="layui-form-label">状态</label>
+			    <div class="layui-input-inline" id="IsPurchased">
+			     <input type="radio"  name="sta" id="zc" value="0"  title="正常">
+			     <input type="radio"  name="sta" id="jz" value="1"  title="禁止">
+			    </div>
+		    </div>
+		     <div class="layui-inline">
+			    <label class="layui-form-label">性别</label>
+			    <div class="layui-input-inline" id="usersex">
+			     <input type="radio"  name="x"  id="nan" value="0" title="男">
+			     <input type="radio"  name="x"  id="nv" value="1"  title="女">
+			    </div>
+		    </div>
+		 </div>
+		  
+		 <input name="createtime" id="createtime" type="hidden"   v-model ="User.createtime">  
+		 <input name="status" id="status" type="hidden"   v-model ="User.status">  
+		 <input name="sex" id="sex" type="hidden"  :value ="User.sex" v-model ="User.sex">
+  		 <div class="layui-form-item layui-form-text" style="margin-top: 10px;">
+			    <label class="layui-form-label">备注</label>
+			    <div class="layui-input-block">
+			      <textarea placeholder="请输入内容" class="layui-textarea" name="remark"  v-model ="User.remark" ></textarea>
+			    </div>
+		 </div>
+		 <center>
+		 <div class="layui-form-item" >
+		     <button class="layui-btn layui-btn-sm" onclick="update()" style="margin-top: 15px;">保存</button>
+		 </div> 
+		 </center>
+		</form>
+	</div>
+	
+<script type="text/javascript">	 
+	var vue = new Vue({
+		el: "#wraper",
+		data: {
+			User:{}
+		},
+	});
+	var u = sessionStorage.getItem("user");
+	console.log(JSON.parse(u));
+	vue.User =JSON.parse(u);
+	console.log(vue.User);
+	layui.use('form', function(){
+	  var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	  var $=layui.$;
+		if(vue.User.status==0){
+			   $("#jz").removeAttr('checked');
+			   $("#zc").prop('checked','true');
+			   form.render();
+		}
+		if(vue.User.status==1){
+			   $("#zc").removeAttr('checked');
+			   $("#jz").prop('checked','true');
+			   form.render();
+		} 
+		if(vue.User.sex==0){
+			   $("#nv").removeAttr('checked');
+			   $("#nan").prop('checked','true');
+			   form.render();
+		}
+		if(vue.User.sex==1){
+			   $("#nan").removeAttr('checked');
+			   $("#nv").prop('checked','true');
+			   form.render();
+		}
+		/* $.ajax({
+	        type:"POST",
+	        cache:false,
+	        url:"/person/selectall2",
+	        dataType:"json",
+	        success:function(data){	        	
+	        	var option='<option value="">请选择类型</option>';
+	            $.each(data,function(i,n){
+	            	option += '<option value="'+n.seqId+'">'+n.deptName+'</option>';
+	            })
+	            $("#departmentid").append(option);
+	            form.render('select'); */
+	            /* $("#type").val(dou.WcWefunc.type);
+	            form.render('select'); */
+	  /*       }
+	    }) */
+	  
+	    layui.config({
+	        base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+	    }).extend({
+	    	treeSelect: 'treeSelect'
+	    });
+
+	     layui.use(['form', 'laydate','treeSelect'], function(){
+	       var $ = layui.$
+	       ,layer = layui.layer
+	       ,form = layui.form
+	       ,treeSelect= layui.treeSelect;;
+	       
+	       form.render(null, 'component-form-group');
+	       form.render();
+	     
+	       
+	       treeSelect.render({
+	           // 选择器
+	           elem: '#departmentid',
+	           // 数据
+	           data: '/person/selectall2',
+	           // 异步加载方式：get/post，默认get
+	           type: 'post',
+	           // 占位符
+	           placeholder: '请选择',
+	           // 是否开启搜索功能：true/false，默认false
+	           search: true,
+	           // 点击回调
+	           click: function(d){
+	               document.getElementById("departmentid").value=d.current.id;
+	               vue.User.departmentid=d.current.id;
+	           },
+	           // 加载完成后的回调函数
+	           success: function (d) {
+	        	   treeSelect.checkNode('departmentid', vue.User.departmentid);
+	           }
+	       });
+	       
+		$.ajax({
+	        type:"POST",
+	        cache:false,
+	        url:"/userPriv/selecprivtall",
+	        dataType:"json",
+	        success:function(data){	        	
+	        	var option='<option value="">请选择角色</option>';
+	            $.each(data.data,function(i,n){
+	            	option += '<option value="'+n.seqId+'">'+n.privName+'</option>';
+	            })
+	            $("#role").append(option);
+	            form.render('select');
+	            $("#role").val(vue.User.role);
+	            form.render('select'); 
+	        }
+	    })
+	    
+	});
+ })
+
+layui.use('form', function(){
+	 var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	 var $=layui.$;
+	 form.render();
+});
+	function update(){
+	  /* dou.User.role=$('#IsPurchased input[name="role"]:checked ').val();
+	  console.log(dou); */
+	  var status=$('#IsPurchased input[name="sta"]:checked ').val();
+	  $("#status").attr("value",status);
+	  vue.User.status=status;
+	  var sex=$('#usersex input[name="x"]:checked ').val();
+	  $("#sex").attr("value",sex);
+	  vue.User.sex=sex;
+	  var role=$(".layui-input-inline select").val();
+	  vue.User.role=role;
+	   $.ajax({
+		  url:'/user/editu',
+		  type: 'POST',
+		  cache:false,
+		  data:{"user":JSON.stringify(vue.User)},
+		  success:function(result){
+			  if(result=200){
+				  parent.layer.msg("修改成功!");
+			  }else if(result=500){
+				  parent.layer.msg("修改失败!");
+			  }else{
+				  parent.layer.msg("未知错误!");
+			  }
+			 
+		  },
+		  error:function(result){
+			  alert("b");
+			  parent.layer.msg("未知错误aaa!");
+		  }
+	   });
+	   var index = parent.layer.getFrameIndex(window.name);
+		  parent.layer.close(index);
+		  parent.location.reload();
+	 }
+
+
+</script>

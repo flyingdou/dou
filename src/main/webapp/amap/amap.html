@@ -1,0 +1,330 @@
+<html>
+<head>
+<meta charset="utf-8">
+	<title>销售区域地图列表</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<style>
+	</style>
+</head>
+<body  style="width:100%;height:100%">
+
+<div style='border:1px;'>
+   <form class="layui-form" action="">
+	<blockquote class="layui-elem-quote elem-quote" >
+	  <div >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">名称</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" id="name" name="name" class="layui-input search_input">
+		    </div>
+		</div>
+		<div class="layui-inline" style="margin-left:50px">
+			<a class="layui-btn layui-btn-warm" lay-submit lay-filter="searchForm">查询</a>
+		</div>
+		
+		 </div > 
+
+	 <div >
+		
+	  </div>
+	</blockquote>
+	</form>
+	
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+     <script type="text/html" id="test-table-toolbar-toolbarDemo">
+     <div class="layui-btn-container" style="margin-left:5px;">
+              <button class="layui-btn layui-btn-sm" id="addProviMeet">新增</button>
+              <button class="layui-btn layui-btn-sm" lay-event="getCheckData" style="background-color: #FF5722;">查看地图</button>
+</div>
+	</script>
+	<table id="dataTable" lay-filter="dataTable">
+			 
+	</table>
+	</div>
+	<script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit"  id="i2"><i class="layui-icon" ></i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="del"   id="i3"><i class="layui-icon" ></i></a>
+	</script>
+	
+	
+	<script type="text/html" id="douview">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="view"  id="i1"><i class="layui-icon" ></i></a>
+	</script>
+	
+	<script>
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var form;
+		var seachworkid = sessionStorage.seachworkid;
+		if(seachworkid == undefined){
+			seachworkid = null;
+		}
+		var $;
+		layui.use(['table','form','layer','laytpl','laydate'], function(){
+		  table = layui.table,
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  laydate = layui.laydate;
+		  laydate.render({
+				elem: '#time',
+				range: '~',
+				});
+		 form=layui.form,
+		  $ = layui.jquery;
+		  dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,url: '/amap/select' //数据接口
+			    ,request: {     
+			    	page: 'start'
+				   ,limit: 'limitsize'
+				   
+				   
+				},
+				where:{
+					isDel:'0'
+				}
+			    ,toolbar: '#test-table-toolbar-toolbarDemo'
+			    ,page: true //开启分页 	
+			    ,cols: [[ //表头
+			      {checkbox: true,width:'5%'}
+			      ,{field: 'no', title: '序号',width:'5%',type:'numbers'}
+			      ,{field: 'name', title: '名称'}
+			      ,{field: 'type', title: '类别',sort: true} 
+			      ,{field: 'positions', title: '地图',align:'center',toolbar: '#douview'}
+			      ,{field: 'create_time', title: '创建时间',align:'center',sort: true}
+			      ,{fixed: 'right',title:'操作',width:'15%',align:'center', toolbar: '#barDemo'}
+			    ]],
+			    done:function(){
+			    }
+		  });
+		  
+		  
+		  //监听表格复选框选择
+		  table.on('checkbox(dataTable)', function(obj){
+			  
+		  });
+		  //监听工具条
+		  table.on('tool(dataTable)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'del'){
+		    	window.parent.layer.confirm('确定删除吗？', function(index){
+		        delMap(data.id);
+		        //关闭弹窗
+				dataTable.reload({
+					 page:{
+						 curr:1
+					 },
+					 where:{
+						 isDel:'0'
+					 }
+				 });
+		        layer.close(index);
+		      });
+		    } else if(obj.event === 'edit'){
+		    	var id=data.id;
+		    	sessionStorage.setItem("id",id);//工作卡id
+		    	var index = window.parent.layui.layer.open({
+					title : "修改工作卡模板",
+					type : 2,
+					area: ['60%', '80%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"/layuiAdmin/src/views/cwbt/editworkcord.html",
+					success : function(layero, index){
+						setTimeout(function(){
+							window.parent.layui.layer.tips('点击返回', '.layui-layer-close', {
+								tips: 3
+							});
+						},500);
+					}
+				})
+				//改变窗口大小时，重置弹窗的高度，防止超出可视区域（如F12调出debug的操作）
+				//$(window).resize(function(){
+					//layui.layer.full(index);
+				//})
+				//layui.layer.full(index); 
+		    }else if(obj.event === 'view'){
+		    	var id=data.id;
+		    	sessionStorage.setItem("douMap", JSON.stringify(data));//地图id
+		    	sessionStorage.setItem("type", "view");
+		    	var index = window.parent.layui.layer.open({
+					title : "查看详情",
+					type : 2,
+					area: ['85%', '90%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"/amap/gaodeMap.html",
+					success : function(layero, index){
+						setTimeout(function(){
+							window.parent.layui.layer.tips('点击返回', '.layui-layer-close', {
+								tips: 3
+							});
+						},500);
+					}
+				})
+
+		    }
+		  });
+		  		 
+			 $("#addProviMeet").click(function(){
+			 sessionStorage.setItem("type", "add");
+		   	 var index = window.parent.layui.layer.open({
+					title : "新增工作卡模板",
+					type : 2,
+					area: ['85%', '90%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"/amap/gaodeMap.html",
+					success : function(layero, index){
+						setTimeout(function(){
+							window.parent.layui.layer.tips('点击返回', ' .layui-layer-close', {
+								tips: 3
+							});
+						},500);
+						
+					}
+				})		
+			});
+			 
+			 
+	function delMap (id) {
+		var param = {
+			id: id,
+			isDel: 1
+		};
+		
+		// 请求后台
+		$.ajax({
+			url: '/amap/delete',
+			type: 'POST',
+			async: false,
+			data: {
+				json: encodeURI(JSON.stringify(param))
+			},
+			success: function (result) {
+				if (result.success){
+					
+				}
+			}
+			 
+		});
+	}
+			
+		
+			
+    //头工具栏事件
+    table.on('toolbar(dataTable)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'getCheckData':
+          var data = checkStatus.data;
+          if(data.length==0){
+        	  layer.msg('未选择！');
+          }else{
+			  deviDels(JSON.stringify(data));
+          }
+        break;
+        case 'getCheckLength':
+          var data = checkStatus.data;
+          window.parent.layer.msg('选中了：'+ data.length + ' 个');
+        break;
+        case 'isAll':
+        	window.parent.layer.msg(checkStatus.isAll ? '全选': '未全选');
+        break;
+      };
+    });
+			
+			 //监听排序
+			table.on('sort(dataTable)', function(obj){ //注：tool是工具条事件名，deptTable是table原始容器的属性 lay-filter="对应的值"
+				 // console.log(obj.field); //当前排序的字段名
+				//  console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+				//  console.log(this); //当前排序的 th 对象
+				  
+				  //尽管我们的 table 自带排序功能，但并没有请求服务端。
+				  //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，如：
+				 
+				  //表格重载
+				  table.reload('dataTable', {
+				    initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+				    ,where: { //请求参数 接口的其它参数
+				      field: obj.field, //排序字段
+				      order: obj.type //排序方式
+				    }
+				  });
+				}); 
+			form.on('submit(searchForm)', function(data){
+				reloadData(data.field);
+				return false;
+			});
+		});
+		
+		function deviDel(sid) {
+   	 		
+			//alert(sid);
+			$.ajax({
+				url:"/workCard/deleteworkcord",
+				type: "post",
+				 data:"sid="+sid,	 
+		 		 async:false,   	
+				 
+				success: function(data){
+				//var rtJson = HQWL.parseJson(data); 
+			   	//if (rtJson.rtState == "0") {
+			   		//window.location.reload(true);
+				//	}
+			   	//alert("ok");
+			   }});
+   	 		
+		}
+function deviDels(sids) {
+   	 		
+			//alert(sid);
+			$.ajax({
+				url:"/workCard/deleteworkcord",
+				type: "post",
+				 data:"sids="+sids,	 
+		 		 async:false,   	
+				 
+				success: function(data){
+				//var rtJson = HQWL.parseJson(data); 
+			   	//if (rtJson.rtState == "0") {
+			   		//window.location.reload(true);
+				//	}
+			   	//alert("ok");
+			   }});
+   	 		
+		}
+		
+		function reloadData(formData) {
+			//console.log(formData);
+			dataTable.reload({
+				where: formData
+			});
+		}
+		
+		  
+		
+		
+		  
+		
+		  
+		
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

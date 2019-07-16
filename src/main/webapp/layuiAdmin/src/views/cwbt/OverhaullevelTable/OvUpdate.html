@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>级别</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/layer.css" medidia="all" />
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+	</style>
+</head>
+<body>
+    <form class="layui-form layui-form-pane"  id="insert">
+		<div class="layui-card">
+          <div class="layui-card-body">
+		    
+			<div class="layui-form-item">
+		    <div class="layui-inline" >
+		      <label class="layui-form-label label-width" style="width: 120px;height:32px;">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="name" id="name"  autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    </div>
+		    <div class="layui-form-item">
+		   <div class="layui-inline" >
+		      <label class="layui-form-label label-width" style="width: 120px;height:32px;">定期制（天）</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="regular" id="regular"  autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+		    <div class="layui-inline" >
+		      <label class="layui-form-label label-width" style="width: 120px;height:32px;">是否拍照</label>
+		      <div class="layui-input-inline">
+		        <select name="ismusttake" id="ismusttake"  lay-verify="" lay-search>
+				</select>
+		      </div>
+		    </div>
+		    </div>
+		    
+		    
+		    <!-- <div class="layui-form-item">
+		     <div class="layui-inline" >
+		      <label class="layui-form-label label-width" style="width: 120px;height:32px;">颜色选择</label>
+		      <div class="layui-input-inline">
+		       <input type="color" name="color" id="color"  autocomplete="off"  class="layui-input"  >
+		      </div>
+		    </div>
+		   </div> -->
+		   <div style="margin-left: 0px;">
+            <form class="layui-form" action="">
+            <div class="layui-form-item">
+            <label class="layui-form-label label-width" style="width: 120px;height:38px;">颜色选择</label>
+            <div class="layui-input-inline" style="width: 152px;height:38px;">
+                <input type="text" name="color"  placeholder="请选择颜色" class="layui-input" id="test-form-input"style="width: 152px;height:38px;">
+            </div>
+            <div class="layui-inline" style="left: -11px;">
+                <div id="test-form"></div>
+            </div>
+            </div>
+            </form>
+        </div>
+		   
+		   
+            <center>
+			<div class="layui-form-item" >
+		        <div class="layui-inline">
+		            <button class="layui-btn"  id="demo1" onclick="update()">提交</button>
+		        </div>
+		    </div>
+		    </center>
+		    </div>
+		    </div>
+		    </div>
+		</form> 
+
+		<script>
+		
+		
+		$(function(){
+			var id=sessionStorage.getItem("ovid");
+			if(id!=null){
+				$.getJSON("/wcOverhaullevel/selectOverhaullevel?id="+id+"&&v="+Math.random(),function(date){
+					list=date.ovlist;
+					$("#name").val(list[0].name);
+					$("#regular").val(list[0].regular);
+					$("#test-form-input").val(list[0].color);
+					layui.use(['form','colorpicker'], function(){
+						  var $ = layui.$
+						  ,colorpicker = layui.colorpicker
+						  ,form = layui.form;//高版本建议把括号去掉，有的低版本，需要加() 
+						  if(list[0].ismusttake==0){
+								$("#ismusttake").append("<option value='0'selected='selected' >是</option>");
+					        	$("#ismusttake").append("<option value='1'>否</option>");
+							}else{
+								$("#ismusttake").append("<option value='0' >是</option>");
+					        	$("#ismusttake").append("<option value='1' selected='selected' >否</option>");
+							}
+							form.render();
+						  
+						  
+						  
+						  colorpicker.render({
+							    elem: '#test-form'
+							    ,color: list[0].color
+							    ,done: function(color){
+							      $('#test-form-input').val(color);
+							    }
+							});
+						  
+					});
+				})
+			}
+			
+			
+		})
+		
+		function update(){
+			var id=sessionStorage.getItem("ovid");
+			 var name=document.getElementById("name").value;
+			 var regular=document.getElementById("regular").value;
+			 var color=document.getElementById("test-form-input").value;
+			 var ismusttake=document.getElementById("ismusttake").value;
+			 $.ajax({
+					url:"/wcOverhaullevel/updateOverhaullevel",
+					type: "post",	 
+			 		async:false,   
+					data:{'ismusttake':ismusttake,'id':id,'name':name,'regular':regular,'color':color},
+					dataType: "json",	 
+					success: function(data){
+						parent.location.reload();
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+				   }
+				});
+    	 }
+		   layui.use('colorpicker', function(){
+			  var colorpicker = layui.colorpicker;
+			  //渲染
+			  colorpicker.render({
+			    elem: '#color'  //绑定元素
+			  });
+			});
+		</script>
+		
+		
+		
+</body>
+</html>

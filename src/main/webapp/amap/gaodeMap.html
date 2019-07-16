@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" type="text/css">
+	
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+    <style>
+      html,body,#container{
+        height: 100%
+      }
+      .input-item{
+        height: 2.2rem;
+		display: flex;
+		flex: space-between;
+		align-items: center;
+      }
+      .btn{
+        width: 6rem;
+        margin: 0 1rem 0 2rem;
+      }
+      .input-text{
+        width: 4rem;
+        margin-right:1rem;
+      }
+    </style>
+    <title>鼠标工具绘制</title>
+  </head>
+<body>
+<div id='app'>
+	<!-- 地图标题 -->
+	<blockquote class="layui-elem-quote elem-quote" >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">名称</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" v-model = "saveParam.name" :value = "saveParam.name" class="layui-input search_input">
+		    </div>
+			
+		</div>
+		 
+	
+	 <div >
+		
+	  </div>
+	</blockquote>
+</div>
+
+    <div id='container'></div>
+    <div class='info'>操作说明：圆和矩形通过拖拽来绘制，其他覆盖物通过点击来绘制</div>
+    <div class="input-card" style='width: 30rem;'>
+		<div id = 'add'>
+				<div class="input-item">
+				  <input type="radio" name='func' checked="" value='marker'><span class="input-text">画点</span>
+				  <input type="radio" name='func' value='polyline'><span class="input-text">画折线</span>
+				  <input type="radio" name='func' value='polygon'><span class="input-text" style='width:5rem;'>画多边形</span>
+				</div>
+				<div class="input-item">
+				  <input type="radio" name='func' value='rectangle'><span class="input-text">画矩形</span>
+				  <input type="radio" name='func' value='circle'><span class="input-text">画圆</span>
+				</div>
+				<div class="input-item">
+				  <input id="clear" type="button" class="btn" value="清除" />
+				  <input id="close" type="button" class="btn" value="关闭绘图" />
+				  <input id = "save" type = "button" class="btn" @click="save" value = "保存地图" />
+				</div>
+		</div>
+				
+	<div class="input-item" id = 'view'>
+				<input id = "save" type = "button" class="btn" @click='save' value = "保存地图" />
+	</div>
+		
+		
+			
+    </div>
+
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=d355c531472d229452123c9757c5581d&plugin=AMap.MouseTool,AMap.PolyEditor"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+	<script src="/vue/vue.min.js"></script>
+    <script type="text/javascript">
+	var map = new AMap.Map('container',{
+			center: [114.274668,30.588197],
+			zoom:14
+		});
+	var douType = '';
+	var saveParam = {};
+	
+	var douMap = new Vue({
+		el: "#app",
+		data: {
+			
+		},
+		created: function () {
+			// 地图对象
+			 map = new AMap.Map('container',{
+					center: [114.274668,30.588197],
+				    zoom: 14
+				});
+			
+			douType = sessionStorage.getItem("type");
+			if (douType == 'view') {
+				$("#view").show();
+				$("#add").hide();
+				saveParam = sessionStorage.getItem("douMap");
+				saveParam = JSON.parse(saveParam);
+				if (!saveParam.positions) {
+					 saveParam.positions = {};
+				}
+				view(saveParam.id);
+			} else if (douType == 'add') {
+				$("#view").hide();
+				$("#add").show();
+				view(0);
+			}
+			
+			// douMap.saveParam = saveParam;
+			// 给vue对象赋值
+			this.saveParam = saveParam;
+			console.log(this);
+		}
+		
+		
+		
+	});
+	
+	
+	
+	// 查看地图
+	async function view (id) {
+		var param = {id:id};
+		console.log('绘制地图中。。。');
+		$.ajax({
+			url:'/amap/selectById',
+			data: {
+				json: encodeURI(JSON.stringify(param))
+			},
+			type: 'post',
+			success: function (result) {
+				result = JSON.parse(result);
+				if (result.success) {
+					var positions,type = {};
+					
+					result.maps.forEach (function (map,i) {
+						positions = JSON.parse(map.positions);
+						type = map.type;
+						switch (type){
+							case 'polygon':{
+								showPolygon(positions);
+								break;
+							}
+							case 'circle':{
+								showCircle(positions);
+								break;
+							}case 'polyline':{
+								showPolyline(positions);
+								break;
+							}
+						}
+					}); 
+						
+					
+					
+				}
+			} 
+		
+		})
+	}
+	
+	// 画多边形
+	function showPolygon(data) {
+		var path = [];
+		var p = [];
+		data.path.forEach(function (pos,i) {
+			p = [];
+			p.push(pos.lng);
+			p.push(pos.lat);
+			path.push(p);
+		});
+		
+		// 多边形对象
+		var polygon = new AMap.Polygon({
+		    path: path,
+		    strokeColor: "#FF33FF", 
+		    strokeWeight: 6,
+		    strokeOpacity: 0.2,
+		    fillOpacity: 0.4,
+		    fillColor: '#1791fc',
+		    zIndex: 50,
+		})
+		
+		map.add(polygon)
+		// 缩放地图到合适的视野级别
+		map.setFitView([ polygon ])
+		
+	}
+	
+	// 画圆
+	function showCircle(data) {
+	 var center = [];
+	 center.push(data.center.lng);
+	 center.push(data.center.lat);
+	 var circle = new AMap.Circle({
+        center: center,
+        radius: data.radius, //半径
+        borderWeight: 3,
+        strokeColor: "#FF33FF", 
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        strokeOpacity: 0.2,
+        fillOpacity: 0.4,
+        strokeStyle: 'dashed',
+        strokeDasharray: [10, 10], 
+        // 线样式还支持 'dashed'
+        fillColor: '#1791fc',
+        zIndex: 50,
+    })
+
+    circle.setMap(map)
+    // 缩放地图到合适的视野级别
+    map.setFitView([ circle ])
+	}
+	
+	// 折线图
+	function showPolyline(data) {
+		var path = [];
+		var p = [];
+		data.path.forEach(function (pos,i) {
+			p = [];
+			p.push(pos.lng);
+			p.push(pos.lat);
+			path.push(p);
+		});
+		var polyline = new AMap.Polyline({
+        path: path,
+        isOutline: true,
+        outlineColor: '#ffeeff',
+        borderWeight: 3,
+        strokeColor: "#3366FF", 
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        // 折线样式还支持 'dashed'
+        strokeStyle: "solid",
+        // strokeStyle是dashed时有效
+        strokeDasharray: [10, 5],
+        lineJoin: 'round',
+        lineCap: 'round',
+        zIndex: 50,
+    })
+
+    polyline.setMap(map)
+    // 缩放地图到合适的视野级别
+    map.setFitView([ polyline ])
+	}
+	
+	
+    var mouseTool = new AMap.MouseTool(map); 
+    //监听draw事件可获取画好的覆盖物
+    var overlays = [];
+    mouseTool.on('draw',function(e){
+		handleParam(e.obj);
+        overlays.push(e.obj);
+    })
+	
+	
+	// 处理页面参数
+	function handleParam (obj) {
+		console.log(obj);
+		var data = obj;
+		var type = data.CLASS_NAME;
+		switch (type){
+			case 'AMap.Polygon': {
+				douMap.saveParam.type = 'polygon';
+				douMap.saveParam.positions.path = data.Ie.path;
+				break;
+			}
+			case 'AMap.Circle': {
+				douMap.saveParam.type = 'circle';
+				console.log(douMap.saveParam);
+				douMap.saveParam.positions.center = data.Ie.center;
+				douMap.saveParam.positions.radius = data.Ie.radius;
+				// 半径过小, 不保存
+				if (douMap.saveParam.positions.radius < 1) {
+					return;
+				}
+				break;
+			}
+			case 'AMap.Polyline': {
+				douMap.saveParam.type = 'polyline';
+				douMap.saveParam.positions.path = data.Ie.path;
+				break;
+			}
+			
+		}
+		
+		
+		
+	}
+	
+	// 保存数据
+	function save () {
+		console.log(douMap.saveParam);
+		// 发起请求
+		$.ajax({
+			url: '/amap/saveOrUpdate',
+			type: 'POST',
+			data: {
+			   json: encodeURI(JSON.stringify(douMap.saveParam))
+			},
+			success: function (result) {
+				result = JSON.parse(result);
+				if (result.success) {
+					finalily();
+				}
+			}
+		});
+	}
+	
+	//关闭窗口
+	function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+	
+	
+    
+    function draw(type){
+      switch(type){
+        case 'marker':{
+            mouseTool.marker({
+              //同Marker的Option设置
+            });
+            break;
+        }
+        case 'polyline':{
+            mouseTool.polyline({
+              strokeColor:'#80d8ff'
+              //同Polyline的Option设置
+            });
+            break;
+        }
+        case 'polygon':{
+            mouseTool.polygon({
+              fillColor:'#00b0ff',
+              strokeColor:'#80d8ff'
+              //同Polygon的Option设置
+            });
+            break;
+        }
+        case 'rectangle':{
+            mouseTool.rectangle({
+              fillColor:'#00b0ff',
+              strokeColor:'#80d8ff'
+              //同Polygon的Option设置
+            });
+            break;
+        }
+        case 'circle':{
+            mouseTool.circle({
+              fillColor:'#00b0ff',
+              strokeColor:'#80d8ff'
+              //同Circle的Option设置
+            });
+            break;
+        }
+      }
+    }
+    var radios = document.getElementsByName('func');
+    for(var i=0;i<radios.length;i+=1){
+        radios[i].onchange = function(e){
+
+          draw(e.target.value)
+        }
+    }
+    draw('marker')
+	
+	// document.getElementById('save').onclick = function () {
+	// 	save();
+	// }
+
+	if (douMap.douType == 'add') {
+		document.getElementById('clear').onclick = function(){
+		    map.remove(overlays)
+		    overlays = [];
+			saveParam = {};
+		}
+		
+		document.getElementById('close').onclick = function(){
+		    mouseTool.close(true)//关闭，并清除覆盖物
+		    for(var i=0;i<radios.length;i+=1){
+		        radios[i].checked = false;
+		    }
+		}
+	}
+    
+    </script>
+  </body>
+</html>

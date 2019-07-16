@@ -1,0 +1,70 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>级别</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/layer.css" medidia="all" />
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+	</style>
+</head>
+<body>
+   <form class="layui-form layui-form-pane"  id="insert">
+			<div class="layui-form-item" align="center">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="name" id="name"  autocomplete="off" class="layui-input"   placeholder = "请输入">
+		      </div>
+		    </div>
+		   <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">备注</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="remark" id="remark"  autocomplete="off" class="layui-input"  placeholder = "请输入">
+		      </div>
+		    </div>
+		   </div>
+            <center>
+			 <div class="layui-form-item" >
+		    <div class="layui-inline">
+		      <button class="layui-btn"  id="demo1" onclick="add()">提交</button>
+		    </div>
+		  </div>
+		  </center>
+		</form> 
+		<script>
+		function add(){
+			 var name=document.getElementById("name").value;
+			 var remark=document.getElementById("remark").value;
+			 $.ajax({
+					url:"/level/addlevel",
+					type: "post",	 
+			 		 async:false,   
+					data:{'name':name,'remark':remark},
+					dataType: "json",	 
+					success: function(data){
+						parent.location.reload();
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+				   }
+				});
+    	 }
+		
+		</script>
+</body>
+</html>

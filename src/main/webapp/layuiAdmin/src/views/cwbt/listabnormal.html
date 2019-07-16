@@ -1,0 +1,92 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>异常反馈列表</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<style>
+	</style>
+</head>
+<body  style="width:100%;height:100%">
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>维保管理</cite></a>
+    <a><cite>异常反馈</cite></a>
+  </div>
+</div>
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          异常反馈列表
+			</div>
+          <div class="layui-card-body">
+			<table id="dataTable" lay-filter="dataTable">
+					 
+			</table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+  
+	
+	<script>
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var form;
+		
+		var $;
+		layui.use(['table','form','layer','laytpl','laydate'], function(){
+		  table = layui.table,
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  laydate = layui.laydate;
+		 
+		 form=layui.form,
+		  $ = layui.jquery;
+		  dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,url: '/ExceptionalController/selectExceptional' //数据接口
+			    ,toolbar: false
+			    ,page: true //开启分页 	
+			    ,cols: [[ //表头
+			      {checkbox: true,width:'5%'}
+			      ,{field: 'no', title: '序号',width:'5%',type:'numbers'}
+			      ,{field: 'name', title: '来源',sort: true}
+			      ,{field: 'exceptionalDescribe', title: '异常描述'}
+			      ,{field: 'overhaulFunction', title: '维修方式',sort: true,templet:function(d){
+			    	  if(d.overhaulFunction==0){
+			    		 return "自行维修"; 
+			    	  }else if(d.overhaulFunction==1){
+			    		  return "委外维修";
+			    	  }
+			    	  
+			      }}
+			      ,{field: 'workcardid2name', title: '去向'}
+			    ]]
+		  });
+		});
+		
+		
+		
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

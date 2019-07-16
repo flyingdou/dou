@@ -1,0 +1,226 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>角色列表</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+</head>
+<body  style="width:100%;height:100%">
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>角色管理</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          角色列表
+			</div>
+          <div class="layui-card-body">
+			
+           <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+           	
+	 			<button class="layui-btn layui-btn-primary layui-btn-radius" id="save">添加角色</button>
+           </div>
+		
+			<table id="dataTable" lay-filter="dataTable">
+						 
+			</table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+	<script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="editpriv" onmouseover="show1()" id="i1"><i class="layui-icon">&#xe642;</i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit" onmouseover="show2()" id="i2"><i class="layui-icon">&#xe63b;</i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="update" onmouseover="show3()" id="i3"><i class="layui-icon">&#xe672;</i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="del" onmouseover="show4()" id="i4"><i class="layui-icon">&#xe640;</i></a>
+	</script>
+	
+	<script>
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var form;
+		var $;
+		layui.use(['table','form','layer','laytpl','laydate'], function(){
+		  form=layui.form,
+		  table = layui.table,
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  $ = layui.jquery;
+		  dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,url: '/userPriv/selecprivtall' //数据接口
+			    ,toolbar: false
+			    ,page: true //开启分页 	
+			    ,cols: [[ //表头
+			       {field: 'no', title: '序号',width:'15%',type:'numbers'}
+			      ,{field: 'privName', title: '名称',width:'60%'}
+			      ,{fixed: 'right',title:'操作',align:'center',width:'25%', toolbar: '#barDemo'}
+			    ]]
+		  });
+		  
+		  //监听工具条
+		  table.on('tool(dataTable)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'edit'){
+		    	var seqId=data.seqId;
+		    	sessionStorage.setItem("privid",seqId);//角色id
+		    	var index = layui.layer.open({
+					title : "编辑小程序权限",
+					type : 2,
+					area: ['25%', '60%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"layuiAdmin/src/views/cwbt/werole/editpriv.html",
+					success : function(layero, index){
+						setTimeout(function(){
+							layui.layer.tips('点击返回', '.layui-layer-close', {
+								tips: 3
+							});
+						},500);
+					}
+				})
+				//改变窗口大小时，重置弹窗的高度，防止超出可视区域（如F12调出debug的操作）
+				//$(window).resize(function(){
+					//layui.layer.full(index);
+				//})
+				//layui.layer.full(index); 
+		    	//修改角色后台权限
+		    }else if(obj.event === 'update'){
+		    	var seqId=data.seqId;
+		    	sessionStorage.setItem("privid",seqId);//角色id
+		    	var index = layui.layer.open({
+					title : "编辑后台权限",
+					type : 2,
+					area: ['25%', '60%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"layuiAdmin/src/views/cwbt/werole/editprivb.html",
+					success : function(layero, index){
+						setTimeout(function(){
+							layui.layer.tips('点击返回', '.layui-layer-close', {
+								tips: 3
+							});
+						},500);
+					}
+				})
+		    }else if(obj.event === 'editpriv'){
+				layer.open({
+					title : "修改角色",
+					type : 2,
+					area: ['25%', '50%'], // 弹窗大小
+					shadeClose: true,
+					shade: 0.5,
+					content :"layuiAdmin/src/views/cwbt/werole/edituserpriv.html",
+					success : function(layero, index){
+						 var body = layui.layer.getChildFrame('body', index);
+						body.find("#seqId").val(data.seqId);
+						body.find("#privNo").val(data.privNo);
+						body.find("#privName").val(data.privName);
+						setTimeout(function(){
+							layui.layer.tips('点击返回', '.layui-layer-close', {
+								tips: 3
+							});
+						},500);
+					}
+				})	
+		    }else if(obj.event === 'del'){
+		    	layer.confirm('确定删除吗？', function(index){
+		    	  obj.del();
+		  	      $.ajax({
+		  	    	  url:'/userPriv/deluserpriv',
+		  	    	  type:'post',//method请求方式，get或者posts
+		  		  	  dataType:"json",
+		  		  	  async:false,
+		  		  	  data:{id:data.seqId},
+		  		  	  success: function(res){
+		  		  		  layer.msg("删除成功");
+		  		  	  }
+		  	      });
+		  	        layer.close(index);
+		  	  });
+		    }
+		  });
+		  
+
+			 $("#save").click(function(){
+				 layui.use(['table','form','layer','laytpl','laydate'], function(){
+				 table = layui.table,
+				  layer = layui.layer,
+				  laytpl = layui.laytpl;
+				  $ = layui.jquery;
+						layer.open({
+							title : "添加角色",
+							type : 2,
+							area: ['25%', '50%'], // 弹窗大小
+							shadeClose: true,
+							shade: 0.5,
+							content :"layuiAdmin/src/views/cwbt/werole/saveuserpriv.html",
+							success : function(layero, index){
+								setTimeout(function(){
+									layui.layer.tips('点击返回', '.layui-layer-close', {
+										tips: 3
+									});
+								},500);
+							}
+						})
+				 })	
+			 })
+		  
+		  });
+		
+		
+		
+		//鼠标悬浮提示
+		  function show1() {
+		        layer.tips("编辑角色","#i1", {
+		          tips: [1, "#4794ec"],
+		          time:2000
+		        });
+		    }
+		
+		  function show2() {
+		        layer.tips("编辑小程序权限","#i2", {
+		          tips: [1, "#4794ec"],
+		          time:2000
+		        });
+		    }
+		  
+		  function show3() {
+		        layer.tips("编辑后台权限","#i3", {
+		          tips: [1, "#4794ec"],
+		          time:2000
+		        });
+		    }
+		  
+		  function show4() {
+		        layer.tips("删除角色","#i4", {
+		          tips: [1, "#4794ec"],
+		          time:2000
+		        });
+		    }
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

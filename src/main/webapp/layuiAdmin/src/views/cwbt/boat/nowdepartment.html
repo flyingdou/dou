@@ -1,0 +1,133 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>调拨至部门</title>
+<link rel="stylesheet" href="/layuiAdmin/src/views/cwbt/js/layui/css/layui.css">
+<script type="text/javascript" src = "/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+<script type="text/javascript" src ="/layui//layui/layui.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="wraper" id="wraper" align="center">
+		<form class="layui-form"  action="" onsubmit="return false">
+		<input type="hidden" class="updateid" name="updateid"  id="updateid">
+		<input type="hidden" class="i" name="i" id="i" >
+		 <div class="layui-form-item"  >
+               <label class="layui-form-label">选择所在局</label>
+			    <div class="layui-input-inline" style="width: 200px;margin-top: 10px">
+			      <select class="select" id="pro" name="pro"  lay-filter="pro">
+			      </select>
+			    </div>
+	     </div>
+	     <div class="layui-form-item"  >
+	            <label class="layui-form-label">选择大处</label>
+			    <div class="layui-input-inline" style="width: 200px">
+			      <select class="select" id="city"  name="city"  lay-filter="city">
+			      </select>
+			    </div>
+		 </div>	    
+		 <div class="layui-form-item"  >
+		        <label class="layui-form-label">选择小处</label>
+			    <!-- 选择部门 -->
+			    <div class="layui-input-inline" style="width:200px">
+			      <select class="select" id="county"  name="county"  lay-filter="county" >
+			      </select>
+			    </div>
+		 </div>
+		  <div class="layui-form-item">
+		     <button class="layui-btn layui-btn-sm" onclick="update()" style="margin-top: 15px;">保存</button>
+		  </div> 
+		</form>
+	</div>
+<script type="text/javascript">	 
+
+function update(){
+	
+	var id=sessionStorage.boatid;
+	var department=document.getElementById("county").value;
+	$.ajax({
+		type:"post",
+		async:false,
+		url:"/WcBoat/allotboat",
+		data:{
+			id:id,
+            department:department
+		}
+	});
+	var index=parent.layer.getFrameIndex(window.name);
+	parent.layer.close(index);
+	parent.location.reload();
+}
+
+
+       
+	    layui.use('form', function(){
+			 var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	    $(function(){
+		    $.ajax({
+		        type:"POST",
+		        cache:false,
+		        url:"/treeController/selectbydepartment",
+		        data:{"pid":0},
+		        dataType:"json",
+		        success:function(data){	        	
+		        	var option='<option value="">选择所在局</option>';
+		            $.each(data,function(i,n){
+		            	option += '<option value="'+n.id+'">'+n.name+'</option>';
+		            })
+		            $("#pro").append(option);
+		            form.render('select');
+		        }
+		    });
+		}); 
+		 form.on('select(pro)', function(data){
+			 $.ajax({
+			        type:"POST",
+			        cache:false,
+			        url:"/treeController/selectbydepartment",
+			        data:{"pid":data.value},
+			        dataType:"json",
+			        success:function(data){
+			        //追加本机option前，先清除city和county的option，以免重选时干扰
+			            $("#city option").remove(); 
+			            $("#county option").remove();
+			            var option='<option value="">请选择所属处(市级)</option>';
+			            $.each(data,function(i,n){
+			            	  option += '<option value="'+n.id+'">'+n.name+'</option>';
+			            })
+			            $("#city").append(option);
+			            form.render('select');
+			        }
+			        });
+			 
+		});
+		 form.on('select(city)', function(data){
+			 
+			  $.ajax({
+			        type:"POST",
+			        cache:false,
+			        url:"/treeController/selectbydepartment",
+			        data:{"pid":data.value},
+			        dataType:"json",
+			        success:function(data){
+			        //同上
+			            $("#county option").remove();
+			            var option='<option value="">请选择处</option>';
+			            $.each(data,function(i,n){
+			            	 option += '<option value="'+n.id+'">'+n.name+'</option>';
+			            })
+			            
+			            $("#county").append(option);
+			            form.render('select');
+			        }
+			        });
+		});
+	 
+	    });
+	
+</script>
+</body>
+</html>

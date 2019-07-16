@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>级别</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+</head>
+<body>
+
+ <div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>维保管理</cite></a>
+    <a><cite>工作卡级别管理</cite></a>
+  </div>
+</div>
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          工作卡级别列表
+			</div>
+          <div class="layui-card-body">
+          	   <table id="dataTable" lay-filter="dataTable">
+			 
+				</table>
+				<div class="layui-tab-item">
+			      <div id="pageDemo"></div>
+			    </div>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+		
+    <script type="text/html" id="barDemo">
+         <button class="layui-btn layui-btn-sm" lay-event="add" id="add">新增</button>
+         <button class="layui-btn layui-btn-sm" lay-event="del" style="background-color: #FF5722;">批量删除</button>
+    </script>
+    <script type="text/html" id="switchTpl">
+  		<input type="checkbox" name="ismusttake" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchtest" {{ d.ismusttake == 1 ? 'checked' : '' }}>
+	</script>
+    
+    <script type="text/html" id="caozou">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" id="update">编辑</a>
+    </script>
+ 
+    <script>
+    var loading;
+	var dataTable;
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider','form'], function(){
+    	  var laydate = layui.laydate //日期
+    	  ,laypage = layui.laypage //分页
+    	  ,layer = layui.layer //弹层
+    	  ,table = layui.table //表格
+    	  ,carousel = layui.carousel //轮播
+    	  ,upload = layui.upload //上传
+    	  ,element = layui.element //元素操作
+    	  ,slider = layui.slider //滑块
+    	  ,form=layui.form//表单
+
+    	  ,loading = layer.load(1, { shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+        	dataTable=table.render({
+        		elem:"#dataTable",
+        		heigh:'auto',
+        		toolbar: '#barDemo',
+        		url:'/wcOverhaullevel/selectOvAll',
+        		method:'post',
+        		page:true,//开启分页
+        		cols:[[
+        		    {checkbox:true,width:'10%'},
+        		    {field:'name',title:'级别名称',sort: true},
+        		    {field:'regular',title:'定期制',sort: true},
+        		    {field:'timing',title:'定时制',sort: true},
+        		    {field:'color',title:'颜色',sort: true,templet:function(d){
+			    	  
+				    	  return "<div style=\"background-color:"+d.color+"\"><span style=\"color:"+d.color+";font-size:24px\">颜色样式</span></div>";
+			    	 
+			    	  }
+        		    },
+        		    {field:'ismusttake', title:'是否拍照',align:'center', templet: '#switchTpl', unresize: true},
+                  {fixed: 'right',title:'操作',width:'15%',align:'center', toolbar: '#caozou'} 
+        		]],
+        		done:function(){
+        			layer.close(loading);
+        		}
+        	});
+    	  laypage.render({
+    		    elem: 'pageDemo' //分页容器的id
+    		    ,count: 100 //总页数
+    		    ,skin: '#1E9FFF' //自定义选中色值
+    		    //,skip: true //开启跳页
+    		    ,jump: function(obj, first){
+    		      if(!first){
+    		        layer.msg('第'+ obj.curr +'页', {offset: 'b'});
+    		      }
+    		    }
+    		  });
+    	  //表头
+    	  table.on('toolbar(dataTable)', function(obj){
+    		  var checkStatus = table.checkStatus('dataTable');
+              var count = checkStatus.data.length;//选中的行数
+    	      switch(obj.event){
+    	        case 'del':
+    	        if(count==0){
+    	        	  layer.msg('未选择！');
+    	        }else{
+    	        	  layer.confirm('确定删除吗？', function(index){
+    	        		var dataid = checkStatus.data;
+    	        		var idlist=new Array();
+    	        		for(var i=0;i<dataid.length;i++){
+    	        			idlist.push(dataid[i].id);
+    	        		}
+    	        		deviDels(idlist);
+    	            	layer.close(index);
+    	            	dataTable.reload({
+    	    		        page: {
+    	    		          curr: 1 //重新从第 1 页开始
+    	    		      }
+    	  		        });
+    	        	  });
+    	          }
+    	        break;
+    	        case 'add':
+    	        	var index = layui.layer.open({
+						title : "增加级别",
+						type : 2,
+						area: ['40%','70%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						content :"/layuiAdmin/src/views/cwbt/OverhaullevelTable/OvAdd.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+    	        	break;
+    	      }
+    	    });
+    	  //工具条
+    	  table.on('tool(dataTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    		    var data = obj.data //获得当前行数据
+    		    ,layEvent = obj.event; //获得 lay-event 对应的值
+    		    if(layEvent === 'detail'){
+    		      layer.msg('查看操作');
+    		    } else if(layEvent === 'edit'){
+    		    	sessionStorage.setItem("ovid", data.id);
+    		    	var index = layui.layer.open({
+						title : "修改级别",
+						type : 2,
+						area: ['40%', '70%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						//?data.id
+						content :"/layuiAdmin/src/views/cwbt/OverhaullevelTable/OvUpdate.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+    		    }
+    		  });
+    	  form.on('switch(switchtest)', function(obj){
+    	  		var id = this.value;
+    	    	layer.confirm('确定修改吗？', function(index){
+    	    		var show = "";
+    	    		if(obj.elem.checked){
+    	    			show=1;
+    	    		}else{
+    	    			show=0;
+    	    		}
+    		        update(id,show);
+    		        //关闭弹窗
+    		        layer.close(index);
+    		        dataTable.reload();
+    		      },function(index){
+      		        dataTable.reload();
+    		      });
+    	  });
+    	  
+    	  
+    	  
+        });
+    
+    
+    
+    
+    
+    
+    
+    //删除
+    function deviDels(dats){
+    	$.ajax({
+			url:"/wcOverhaullevel/deleteOverhaullevel",
+			type: "post",	 
+	 		 async:false,   
+			data: {
+				id: JSON.stringify(dats)
+			},
+			dataType: "json",	 
+			success: function(data){
+		   }});
+    }
+    
+    function update(id,iam){
+    	$.ajax({
+			url:"/wcOverhaullevel/update",
+			type: "post",	 
+	 		 async:false,   
+			data: {
+				'id': id,
+				'ismusttake':iam
+			},
+			dataType: "json",	 
+			success: function(data){
+				
+		   }});
+    }
+    
+    </script>
+</body>
+</html>

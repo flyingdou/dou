@@ -1,0 +1,102 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>级别</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/layer.css" medidia="all" />
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+	</style>
+</head>
+<body>
+<form class="layui-form layui-form-pane"  id="update">
+			<div class="layui-form-item" align="center">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">督导内容</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="content" id="content"  autocomplete="off" class="layui-input"  readonly='true'>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">督导时间</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="auto_date" id="auto_date"  autocomplete="off" class="layui-input" readonly='true' >
+		      </div>
+		    </div>
+		    
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">内容</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="content1" id="content1"  autocomplete="off" class="layui-input" readonly='true' >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">时间</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="auto_date1" id="auto_date1"  autocomplete="off" class="layui-input" readonly='true'>
+		      </div>
+		    </div>
+		    
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">反馈内容</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="remark" id="remark"  autocomplete="off" class="layui-input"  readonly='true'>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;height:32px;">反馈时间</label>
+		      <div class="layui-input-inline">
+		       <input type="text" name="auto_date2" id="auto_date2"  autocomplete="off" class="layui-input" readonly='true' >
+		      </div>
+		    </div>
+		    
+		   </div>
+		</form> 
+		
+		<script>
+		$(function(){
+			var id = sessionStorage.getItem("visionid");
+			if(id!=null){
+				$.getJSON("/WcSupervision/selectta?id="+id+"&&v="+Math.random(),function(date){
+					list=date.visionlist;
+					$("#auto_date").val(createTime(list[0].auto_date));
+					$("#auto_date1").val(createTime(list[0].auto_date1));
+					$("#auto_date2").val(createTime(list[0].auto_date2));
+					
+					$("#content").val(list[0].content);
+					$("#content1").val(list[0].content1);
+					$("#remark").val(list[0].remark);
+				});	
+			}
+			function createTime(v){
+				var date = new Date(v);
+			    var y = date.getFullYear();
+			    var m = date.getMonth()+1;
+			    m = m<10?'0'+m:m;
+			    var d = date.getDate();
+			    d = d<10?("0"+d):d;
+			    var str = y+"-"+m+"-"+d;
+			    return str;
+			}			
+			
+			})
+		</script>
+		
+		
+</body>
+</html>

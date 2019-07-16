@@ -1,0 +1,190 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>意见反馈</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+</head>
+<body style="width: 100%;height: 100%">
+
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>意见反馈</cite></a>
+  </div>
+</div>
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+         意见列表
+			</div>
+          <div class="layui-card-body">
+				 <div class="test-table-reload-btn" style="margin-bottom: 10px;">		
+					
+				    <form class="layui-form" action="">
+					    <div class="layui-inline">
+						  <label class="layui-form-label" style="width: 60px;">状态</label>
+						    <div class="layui-input-inline">
+						    	<select name="status" id="status" lay-verify="" lay-search>
+						    		<option value="" selected="selected">全部</option>
+						    		<option value="0">未处理</option>
+						    		<option value="1">已处理</option>
+								</select>     
+						    </div>
+						</div> 
+				      
+				  <div class="layui-input-inline" >
+				        <button class="layui-btn" style="margin-right: 70px" id="search" name="search">
+				            <i class="layui-icon"></i>搜索
+				        </button>
+				    </div>
+				    </form>
+		  		</div>
+		  		
+			    <table id="dataTable" lay-filter="dataTable">
+				</table>
+				
+				<div class="layui-tab-item">
+			      <div id="pageDemo"></div>
+			    </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+    <script type="text/html" id="caozou">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" id="edit">查看</a>
+    </script>
+    
+    <script>
+    var loading;
+	var dataTable;
+	var form;
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider','form'], function(){
+    	  var laydate = layui.laydate //日期
+    	  ,laypage = layui.laypage //分页
+    	  ,layer = layui.layer //弹层
+    	  ,table = layui.table //表格
+    	  ,carousel = layui.carousel //轮播
+    	  ,upload = layui.upload //上传
+    	  ,element = layui.element //元素操作
+    	  ,slider = layui.slider //滑块
+    	  ,form=layui.form//表单
+
+    	  ,loading = layer.load(1, { shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+        	dataTable=table.render({
+        		elem:"#dataTable",
+        		heigh:'auto',
+        		url:'/proposal/selectproposal',
+        		method:'post',
+        		page:true,//开启分页
+        		cols:[[
+                  {field:'username',title:'建议人',sort:true},
+				  {field:'remark',title:'建议',sort: true},
+				  {field:'createtime',title:'建议时间',sort: true,templet:function (d){
+			    	  if(d.createtime==null){
+			    		  return "";
+			    	  }else{
+	                      return createTime(d.createtime);
+			    	  }
+                  }},
+                  {field:'status',title:'状态',sort:true,align:'center',templet:function(d){
+                	  if(d.status==0){
+                		  return "<i class=\"layui-icon layui-icon-close\" style=\"font-size: 20px; color: red;\"></i><span style=\"color:red;font-size:20px\">未处理</span>";
+                	  }else{
+                		  return "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 20px; color: green;\"></i><span style=\"color:green;font-size:20px\">已处理</span>";
+                	  }
+                  }},
+                  {fixed: 'right',title:'操作',width:'15%',align:'center', toolbar: '#caozou'} 
+        		]]
+        		
+        	});
+    	  laypage.render({
+    		    elem: 'pageDemo' //分页容器的id
+    		    ,count: 100 //总页数
+    		    ,skin: '#1E9FFF' //自定义选中色值
+    		    //,skip: true //开启跳页
+    		    ,jump: function(obj, first){
+    		      if(!first){
+    		        layer.msg('第'+ obj.curr +'页', {offset: 'b'});
+    		      }
+    		    }
+    		  });
+    	var index = layer.load(2, {time: 3*1000}); //又换了种风格，并且设定最长等待10秒 
+    	//关闭
+    	layer.close(index);
+    	form.render();
+    	  //工具条
+    	  table.on('tool(dataTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    		    var data = obj.data //获得当前行数据
+    		    ,layEvent = obj.event; //获得 lay-event 对应的值
+    		    if(layEvent === 'detail'){
+    		      layer.msg('查看操作');
+    		    } else if(layEvent === 'edit'){
+    		    	sessionStorage.setItem("proposalid", data.id);
+    		    	var index = layui.layer.open({
+						title : "查看",
+						type : 2,
+						area: ['50%', '80%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						//?data.id
+						content :"/layuiAdmin/src/views/cwbt/spare/WcProposalSelect.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+    		    }
+    		  });
+    	  $("#search").click(function(){
+              var status = $("#status").val();
+              console.log(name);
+              dataTable.reload({
+                  where: {
+                	  status: status
+                  }
+        });
+        return false;
+    });
+});
+    
+    function createTime(v){
+		var now = new Date(v);
+    	var yy = now.getFullYear();      //年
+    	var mm = now.getMonth() + 1;     //月
+    	var dd = now.getDate();          //日
+    	var hh = now.getHours();         //时
+    	var ii = now.getMinutes();       //分
+    	var ss = now.getSeconds();       //秒
+    	var clock = yy + "-";
+    	if(mm < 10) clock += "0";
+    	clock += mm + "-";
+    	if(dd < 10) clock += "0";
+    	clock += dd + " ";
+    	if(hh < 10) clock += "0";
+    	clock += hh + ":";
+    	if (ii < 10) clock += '0'; 
+    	clock += ii + ":";
+    	if (ss < 10) clock += '0'; 
+    	clock += ss;
+	    return clock;
+	}
+    </script>
+</div>    
+</body>
+</html>

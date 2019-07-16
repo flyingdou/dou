@@ -1,0 +1,432 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	String contextPath = request.getContextPath();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>船舶卡</title>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="/layuiAdmin/src/viewscwbt/css/layer.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/layuiAdmin/src/views/cwbt/js/layui/layui.js"></script>
+<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+
+<style type="text/css">
+	.wraper {
+		width: 100%;
+	}
+	
+	.button-wraper {
+		padding: 10px;
+	}
+	
+	.add-button {
+		font-size: 14px;
+	}
+	
+	.del-button {
+		margin-left: 10px;
+		font-size: 14px;
+	}
+	
+	.screen-list {
+		margin-top: 4px;
+		margin-left: 10px;
+	}
+	
+	.table-wraper {
+		width: 100%;
+		height: 100%;
+		overflow-x: scroll;
+	}
+
+	.font12 {
+		font-size: 12px;
+	}
+	
+	.sub-pagination {
+		margin-top: 10px;
+		margin-left: 10px;
+		width: 60px;
+		height: 30px;
+		text-align: center;
+		line-height: 30px;
+		font-size: 12px;
+		border: 1px solid #BBB;
+	}
+	
+	.layui-btn{display: inline-block; vertical-align: middle; height: 38px; line-height: 38px; padding: 0 18px; background-color: #009688; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; border: none; border-radius: 2px; cursor: pointer; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;}
+	.layui-btn:hover{opacity: 0.8; filter:alpha(opacity=80); color: #fff;}
+	.layui-btn:active{opacity: 1; filter:alpha(opacity=100);}
+	.layui-btn+.layui-btn{margin-left: 10px;}
+	.layui-btn-sm{height:30px;line-height:30px;padding:0 10px;font-size:12px}
+</style>
+</head>
+<body >
+	<div class="wraper" id="wraper" >
+		<div class="button-wraper" >
+		<form class="layui-form"  action="" onsubmit="return false">
+		    <input type="hidden" id="i" class="i" name="i" >
+		    <input type="hidden" id="upddepartment" class="upddepartment" name="upddepartment" >
+			<input type="button"  class="add-button layui-btn layui-btn-sm" value="添加船舶卡" @click="toUpdateWcBoat('add')" />
+			<input type="button" class="del-button layui-btn layui-btn-sm" value="删除船舶卡" onclick="deleteCard()" />
+			
+			名称<input type="text" id="nnn" class="screen-list" onchange="getDeviceCardList('reset')"/>
+			<!-- 部门<input type="text" id="ttt"/> -->
+			<input type="submit" class="del-button layui-btn layui-btn-sm" value="查询" onclick="chaaaaa()">
+		  </form>
+		</div>
+		<div class="table-wraper">
+			  <table id="table-javascript" class="table table-bordered text-nowrap font12">
+			    <thead>
+			      <tr>
+			      	<th><input type="checkbox" onclick="checkAll(this)" /></th>
+			        <th>编码</th>
+			        <th>名称</th>
+			        <th>部门</th>
+			        <!-- <th>是否为模板</th> -->
+			        <th>船舶类型</th>
+			        <th>船型</th>
+			        <!-- <th>靠泊位置</th> -->
+			        <th>购建时间(年)</th>
+			        <th>账面原值(万元)</th>
+			        <th>装船总功率(KW)</th>
+			        <th>船舶总吨数(T)</th>
+			        <th>修改调度</th>
+			        <th>查看船舶状态</th>
+			        <th>操作</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr v-for="(item,i) in pageInfo.data">
+			      	<td><input type="checkbox" :value="item.id" v-model="ids" /></td>
+			        <td><a href="javascript:void(0)" @click="toUpdateWcBoat('update', i)">{{item.number}}</a></td>
+			        <td><a href="javascript:void(0)" @click="toUpdateWcBoat('update', i)">{{item.name}}</a></td>
+			        <td><a href="javascript:void(0)" @click="updatedepartment('update', i)">{{item.departmentname}}</a></td>
+			       <!--  <td>{{item.is_model | isModel}}</td>    -->   
+			        <td>{{item.theshiptype}}</td>
+			        <td>{{item.shiptype}}</td>
+			        <!-- <td>{{item.berthingposition}}</td> -->
+			        <td>{{item.constructiontime}}</td>
+			        <td>{{item.papermoney}}</td>
+			        <td>{{item.shipmentpower}}</td>
+			        <td>{{item.shippower}}</td>
+			        <td>
+			        	<a href="javascript:void(0)" @click="updatenowdepartment('update', i)" v-if="item.nowdepartment==null">调配</a>
+			        	<a href="javascript:void(0)" @click="updatenowdepartment2('update', i)" v-if="item.nowdepartment!=null">调回</a>
+			        </td>
+			        <td>
+			            <a href="javascript:void(0)" @click="updatestatus('update', i)" v-if="item.status==0">暂停</a>
+			        	<a href="javascript:void(0)" @click="updatestatus2('update', i)" v-if="item.status==1">恢复</a>
+			         </td>
+			        <td><input type="button" class="del-button layui-btn layui-btn-sm" :value="item.id" @click="selectequipment(i)" value="查看设备卡"  /></td> 
+			      </tr>
+			    </tbody>
+			</table>
+		</div>
+		
+		<ul class="pagination">
+		    <li class="sub-pagination"><span v-if="pageInfo.totalPage">{{pageInfo.currentPage}}/{{pageInfo.totalPage}}</span></li>
+		    <li class="sub-pagination"><a href="javascript:void(0)" @click="pageUp()">上一页</a></li>
+		    <li class="sub-pagination"><a href="javascript:void(0)" @click="pageDown()">下一页</a></li>
+		</ul>
+	</div> <!-- wraper end -->
+	
+	<script>
+
+		var vue = new Vue({
+			el: "#wraper",
+			data: {
+				pageInfo: {
+					currentPage: 1,
+					pageSize: 10
+				},
+				ids: []
+			},
+			mounted: function () {
+				getDeviceCardList();
+			},
+			filters: {
+				isModel: function (value) {
+					return ["否", "是"][value];
+				}
+			},
+			methods: {
+				toUpdateWcBoat: function (type, i) {
+					if (type == "add") {
+						sessionStorage.removeItem("deviceCardsss");
+						sessionStorage.removeItem("deviceInfosss");
+					} else {
+						var data = this.pageInfo.data[i];
+						var deviceInfo = {
+								code: data.code,
+								primaryCode: data.primaryCode,
+								specificationModel: data.specificationModel,
+								manufacturer: data.manufacturer,
+								useDate: data.useDate
+						}
+						sessionStorage.setItem("deviceCardsss", JSON.stringify(data));
+						sessionStorage.setItem("deviceInfosss", JSON.stringify(deviceInfo));
+					}
+					location.href = "WcBoatUpdate.html";
+				},
+				pageUp: function () {
+					if (vue.pageInfo.currentPage <= 1) {
+						alert("当前已经是第一页");
+						return;
+					}
+					vue.pageInfo.currentPage--;
+					getDeviceCardList();
+				},
+				 
+				pageDown: function () {
+					if (vue.pageInfo.currentPage >= vue.pageInfo.totalPage) {
+						alert("当前已经是最后一页");
+						return;
+					}
+					vue.pageInfo.currentPage++;
+					getDeviceCardList();
+				},
+				
+				selectequipment:function (i){
+					var data=this.pageInfo.data[i];
+					sessionStorage.setItem("department",data.number);
+					window.location.href="/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardList.html";
+				},
+				
+			//修改部门(弹窗）
+			    updatedepartment: function(type, i){
+			    	
+			    	var data=this.pageInfo.data[i];
+			    	 layui.use(['layer','form'], function(){
+						 var layer = layui.layer;
+						 var form = layui.form;
+			    	 layui.layer.open({
+						  type: 2, 
+						  title: '修改部门',
+						  area: ['28%', '50%'],
+						  btnAlign: 'c',
+						  shade: 0.5 ,
+						  shadeClose: true,
+						  id: 'updatedepartment',
+						  content: '/layuiAdmin/src/views/cwbt/boat/updatewcBoatdepatment.html',
+						  success:function(layero,index){
+							  var body = layer.getChildFrame('body', index);
+							  var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+							  body.find('.updateid').val(data.id);
+							  body.find('.i').val(i);
+							  setTimeout (function () {
+									layui.layer.tips('点击返回','.layui-layer-setwin .layui-layer-close',{
+										tips:3
+									});
+								},500);
+						  }
+					});
+			      });
+				}, 	
+				
+				
+				//修改调配信息(弹窗）
+			    updatenowdepartment: function(type, i){
+			    	
+			    	var data=this.pageInfo.data[i];
+			    	 layui.use(['layer','form'], function(){
+						 var layer = layui.layer;
+						 var form = layui.form;
+			    	 layui.layer.open({
+						  type: 2, 
+						  title: '修改调配',
+						  area: ['28%', '50%'],
+						  btnAlign: 'c',
+						  shade: 0.5 ,
+						  shadeClose: true,
+						  id: 'updatenowdepartment',
+						  content: '/layuiAdmin/src/views/cwbt/boat/nowdepartment.html',
+						  success:function(layero,index){
+							  var body = layer.getChildFrame('body', index);
+							  var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+							  body.find('.updateid').val(data.id);
+							  body.find('.i').val(i);
+							  setTimeout (function () {
+									layui.layer.tips('点击返回','.layui-layer-setwin .layui-layer-close',{
+										tips:3
+									});
+								},500);
+						  }
+					});
+			      });
+				},
+				
+				
+				//修改调回信息
+			    updatenowdepartment2: function(type, i){
+			    	
+			    	var data=this.pageInfo.data[i];
+			    	var id = data.id;
+						 $.ajax({
+					    		type:"post",
+					    		cache:false,
+					    		url:"/WcBoat/allotboatback",
+					    		data:{id:id},
+					    		success:function(data){
+					    			
+					    		}
+					    	});
+						 location.reload();
+				},
+				
+				
+				
+				
+				 //修改暂停信息
+			    updatestatus: function(type, i){
+			    	
+			    	var data=this.pageInfo.data[i];
+			    	var id = data.id;
+						 $.ajax({
+					    		type:"post",
+					    		cache:false,
+					    		url:"/WcBoat/pauseboat",
+					    		data:{id:id,
+					    			status:1},
+					    		success:function(data){
+					    		}
+					    	});
+						 location.reload();
+				},
+				
+				
+				//修改船舶恢复信息
+			    updatestatus2: function(type, i){
+			    	
+			    	var data=this.pageInfo.data[i];
+			    	var id = data.id;
+						 $.ajax({
+					    		type:"post",
+					    		cache:false,
+					    		url:"/WcBoat/pauseboat",
+					    		data:{id:id,
+					    			status:2},
+					    		success:function(data){
+					    			
+					    		}
+					    	});
+						 location.reload();
+				}
+				
+				
+			}
+		
+		});
+		$('input[name=upddepartment]').change(function() {
+            var i=$("#i").val();
+            alert("i:"+i)
+			var data = this.pageInfo.data[i];
+		});
+		function chaaaaa(){
+			getDeviceCardList();
+		}
+		
+		
+		function getDeviceCardList (type) {
+			 layui.use('layer', function(){
+				 var layer = layui.layer;
+				
+				
+			layer.ready(function(){ layui.layer.msg('加载中', {
+				  icon: 16
+				  ,shade: 0.01,
+				time: false
+				});
+			});
+			
+			var param = vue ? { currentPage: vue.pageInfo.currentPage, pageSize: vue.pageInfo.pageSize} 
+			: { currentPage: 1, pageSize: 10 };
+		var namess = document.getElementById("nnn").value;
+		/* var departmentss = document.getElementById("ttt").value; */
+		if (namess!=""&&namess!=null) {
+			param.name = namess;
+		}
+		/* //结束页面传值
+		var departmentss = sessionStorage.department;
+		if (departmentss!=""&&departmentss!=null) {
+			param.department = departmentss;
+		} */
+		if (type == "reset") {
+			param.currentPage = 1;
+		}
+		$.ajax({
+			url: "/WcBoat/selectallWcBoatList",
+			type: "post",
+			data: {
+				json: JSON.stringify(param)
+			},
+			dataType: "json",
+			success: function (res) {
+				vue.pageInfo = res;
+				layui.layer.closeAll();
+				if (vue.pageInfo.data.length == 0) {
+					alert("暂无数据");
+				}
+			}, 
+				error: function (e) {
+					alert("数据加载异常");
+					layui.layer.closeAll();
+					console.log(e);
+					console.log("aaa");
+				}
+			}); 
+		 });  
+		}
+		
+		function checkAll (elem) {
+			if (elem.checked) {
+				for (var i = 0; i < vue.pageInfo.data.length; i++) {
+					vue.ids.push(vue.pageInfo.data[i].id);
+				}
+			} else {
+				vue.ids = [];
+			}
+		}
+		
+		function deleteCard () {
+			if (vue.ids.length <= 0) {
+				alert("请选择需要删除的船舶卡");
+				return;
+			}
+			
+			if (!confirm("确认删除所选船舶卡?")) {
+				return;
+			}
+			
+			$.ajax({
+				url: "/WcBoat/deleteWcBoat",
+				type: "post",
+				data: {
+					json: JSON.stringify({ids: vue.ids})
+				},
+				dataType: "json",
+				success: function (res) {
+					alert("删除成功!");
+					vue.ids = [];
+					getDeviceCardList();
+				}, 
+				error: function (e) {
+					console.log(e); 
+					alert("删除失败");
+				}
+			}); 
+		}
+		
+	
+	</script>
+</body>
+</html>

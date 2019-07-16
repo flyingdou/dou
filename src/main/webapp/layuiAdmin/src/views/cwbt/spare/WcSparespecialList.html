@@ -1,0 +1,238 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>特殊属性</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+</head>
+<body style="width: 100%;height: 100%">
+
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>备件管理</cite></a>
+    <a><cite>特殊属性管理</cite></a>
+  </div>
+</div>
+
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          特殊属性列表
+			</div>
+          <div class="layui-card-body">
+			     <form class="layui-form" action="">
+			        <blockquote class="layui-elem-quote elem-quote" >
+				     <div class="demoTable">
+			  搜索名称：
+			  <div class="layui-inline">
+			    <input class="layui-input" name="name" id="name" autocomplete="off">
+			  </div>
+			  <div class="layui-input-inline" >
+			        <button class="layui-btn" style="margin-right: 70px" id="search" name="search">
+			            <i class="layui-icon"></i>搜索
+			        </button>
+			    </div>
+			</div>
+					  
+				    </blockquote>
+			    </form>
+			    
+		    <table id="dataTable" lay-filter="dataTable">
+					 
+			</table>
+			<div class="layui-tab-item">
+		      <div id="pageDemo"></div>
+		    </div>
+		    
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+ 
+    <script type="text/html" id="barDemo">
+         <button class="layui-btn layui-btn-sm" lay-event="add" id="add">新增</button>
+         <button class="layui-btn layui-btn-sm" lay-event="del" style="background-color: #FF5722;">批量删除</button>
+    </script>
+    <script type="text/html" id="caozou">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" id="update">编辑</a>
+    </script>
+    
+    
+    <script>
+    var loading;
+	var dataTable;
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider','form'], function(){
+    	  var laydate = layui.laydate //日期
+    	  ,laypage = layui.laypage //分页
+    	  
+    	  ,layer = layui.layer //弹层
+    	  ,table = layui.table //表格
+    	  ,carousel = layui.carousel //轮播
+    	  ,upload = layui.upload //上传
+    	  ,element = layui.element //元素操作
+    	  ,slider = layui.slider //滑块
+    	  ,form=layui.form//表单
+    	  ,loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+
+    	  
+        	dataTable=table.render({
+        		elem:"#dataTable",
+        		heigh:'auto',
+        		toolbar: '#barDemo',
+        		method:'post',
+        		url:'/special/selectspecial',
+        		page:true,//开启分页
+        		cols:[[
+        		    {checkbox:true,width:'10%'},
+        		    {field:'name',title:'名称',sort: true},
+        		    {field:'createtime',title:'创建时间',sort: true,templet:function (d){
+			    	  if(d.createtime==null){
+			    		  return "";
+			    	  }else{
+	                      return createTime(d.createtime);
+			    	  }
+                  }} ,
+                  {fixed: 'right',title:'操作',width:'15%',align:'center', toolbar: '#caozou'}
+        		]],
+        		done:function(){
+        			layer.close(loading);
+        		}
+        	});
+    	  laypage.render({
+    		    elem: 'pageDemo' //分页容器的id
+    		    ,count: 100 //总页数
+    		    ,skin: '#1E9FFF' //自定义选中色值
+    		    //,skip: true //开启跳页
+    		    ,jump: function(obj, first){
+    		      if(!first){
+    		        layer.msg('第'+ obj.curr +'页', {offset: 'b'});
+    		      }
+    		    }
+    		  });
+    	  
+    	//表头
+    	  table.on('toolbar(dataTable)', function(obj){
+    		  var checkStatus = table.checkStatus('dataTable');
+              var count = checkStatus.data.length;//选中的行数
+    	      switch(obj.event){
+    	      case 'del':
+      	        if(count==0){
+      	        	  layer.msg('未选择！');
+      	        }else{
+      	        	   layer.confirm('确定删除吗？', function(index){
+      	        		var dataid = checkStatus.data;
+      	        		 console.log(dataid);
+      	        		var idlist=new Array();
+      	        		for(var i=0;i<dataid.length;i++){
+      	        			idlist.push(dataid[i].id);
+      	        		}
+      	        		deviDels(idlist);
+      	            	layer.close(index);
+      	            	dataTable.reload({
+      	    		        page: {
+      	    		          curr: 1 //重新从第 1 页开始
+      	    		      }
+      	  		        });
+      	        	  }); 
+      	          }
+      	        break;
+    	        case 'add':
+    	        	var index = layui.layer.open({
+						title : "增加特殊属性",
+						type : 2,
+						area: ['40%','70%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						content :"/layuiAdmin/src/views/cwbt/spare/WcSparespecialAdd.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+    	        	break;
+    	      }
+    	    });
+    	 //工具栏
+    	  table.on('tool(dataTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+  		    var data = obj.data //获得当前行数据
+  		    ,layEvent = obj.event; //获得 lay-event 对应的值
+  		    if(layEvent === 'detail'){
+  		      layer.msg('查看操作');
+  		    } else if(layEvent === 'edit'){
+  		    	sessionStorage.setItem("specialid", data.id);
+  		    	var index = layui.layer.open({
+						title : "修改特殊属性",
+						type : 2,
+						area: ['40%', '70%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						//?data.id
+						content :"/layuiAdmin/src/views/cwbt/spare/WcSparespecialUpdate.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', ' .layui-layer-close', {
+									tips: 1
+								});
+							},500);
+						}
+					})
+  		    }
+  		  });
+    	 
+    	  $("#search").click(function(){
+              var name = $("#name").val();
+              console.log(name);
+              dataTable.reload({
+                  where: {
+                      name: name
+                  }
+        });
+        return false;
+ });
+        });
+    function createTime(v){
+		var date = new Date(v);
+	    var y = date.getFullYear();
+	    var m = date.getMonth()+1;
+	    m = m<10?'0'+m:m;
+	    var d = date.getDate();
+	    d = d<10?("0"+d):d;
+	    var str = y+"-"+m+"-"+d;
+	    return str;
+	}
+  //删除
+    function deviDels(dats){
+    	$.ajax({
+			url:"/special/delspecial",
+			type: "post",	 
+	 		 async:false,   
+			data: {
+				json: JSON.stringify(dats)
+			},
+			dataType: "json",	 
+			success: function(data){
+				 
+		   }});
+    }
+    
+    </script>
+</div>    
+</body>
+</html>

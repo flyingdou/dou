@@ -1,0 +1,259 @@
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>统计分析（详情）</title>
+<meta name="renderer" content="webkit">
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/echarts.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+</head>
+<body>
+
+<div  id="wraper">
+
+<center>
+
+<!-- <div id="main" style="width:450px; height:420px;"> 
+	
+</div> -->
+<table id="dataTable" lay-filter="dataTable">
+
+</center>
+
+</div>
+<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="view"  id="i1"><i class="layui-icon" ></i></a>
+</script>
+	
+<script type="text/javascript">
+		var boatid = sessionStorage.boatid;//船舶id
+		var style = sessionStorage.style;//入口
+		var time = sessionStorage.time;//时间
+		
+		sessionStorage.setItem("boatid",null);//船舶id
+		sessionStorage.setItem("style",null);//入口
+		sessionStorage.setItem("time",'');//时间
+/* 
+		var myChart = echarts.init(document.getElementById('main'));  */
+		
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var json = [];
+		layui.use(['table','form','layer','laytpl','laydate'], function(){
+			  table = layui.table,
+			  layer = layui.layer,
+			  laytpl = layui.laytpl;
+			  laydate = layui.laydate;
+			  $ = layui.jquery;
+				 dataTable=table.render({
+					    elem: '#dataTable'
+					    ,height: 'auto'
+					    ,data: json//数据接口
+					    ,page: true //开启分页
+					    ,sort: true
+					    ,cols: [[ //表头
+					      {field: 'no', title: '序号',width:'10%',type:'numbers'}
+					      ,{field: 'workname', title: '工作卡名称',sort: true}
+					      ,{field: 'workstatusname', title: '工作状态',sort: true}
+					      ,{field: 'executorname', title: '执行人',sort: true}
+					      ,{field: 'finishtime', title: '完成时间',sort: true,templet:function (d){
+					    	  if(d.finishtime==null){
+					    		  return "";
+					    	  }else{
+			                      return createTime(d.finishtime);
+					    	  }
+					    	  }}
+					      ,{field: 'checkstatusname', title: '验收状态',sort: true}
+					      ,{field: 'confirmname', title: '验收人',sort: true}
+					      ,{field: 'validdate', title: '验收时间',sort: true,templet:function (d){
+					    	  if(d.validdate==null){
+					    		  return "";
+					    	  }else{
+			                      return createTime(d.validdate);
+					    	  }}
+					      }
+					      ,{fixed: 'right',title:'操作',width:'10%',align:'center', toolbar: '#barDemo'}
+					    ]],
+				  });
+				//监听排序
+				  table.on('sort(dataTable)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+					  console.log(obj.field); //当前排序的字段名
+					  console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+					  console.log(this); //当前排序的 th 对象
+					  console.log(json);
+					  //尽管我们的 table 自带排序功能，但并没有请求服务端。
+					  //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+					  
+					$.ajax({
+					url: "/workCard/statisticsdetails",
+					type: "post",
+					data: {
+						boatid: boatid,
+						style:style,
+						time:time,
+						field: obj.field, //排序字段
+					    order: obj.type //排序方式
+					},
+					dataType: "json",
+					success: function (res) {
+						/* layer.closeAll(); */
+						if(res.data==null){
+							layer.alert("无相关数据");
+						}else{
+							console.log(res.data);
+							table.reload('dataTable',{data : res.data});
+						}
+					}
+				}); 
+			});
+			
+			  table.on('tool(dataTable)', function(obj){
+				    var data = obj.data;
+				    if(obj.event === 'view'){
+				    	var id=data.workid;
+				    	sessionStorage.setItem("id",id);//工作卡id
+				    	parent.layui.layer.open({
+							title : "查看详情",
+							type : 2,
+							area: ['80%', '80%'], // 弹窗大小
+							shadeClose: true,
+							shade: 0.5,
+							content :"/layuiAdmin/src/views/cwbt/showworkcord.html",
+							success : function(layero, index){
+								setTimeout(function(){
+									layui.layer.tips('点击返回', '.layui-layer-close', {
+										tips: 3
+									});
+								},500);
+							}
+						})
+
+				    }
+			  });
+		});
+		
+		
+		
+		//时间处理
+		function createTime(v){
+			var date = new Date(v);
+		    var y = date.getFullYear();
+		    var m = date.getMonth()+1;
+		    m = m<10?'0'+m:m;
+		    var d = date.getDate();
+		    d = d<10?("0"+d):d;
+		    var str = y+"-"+m+"-"+d;
+		    return str;
+		}
+	
+		
+		function show(){
+			/* layer.ready(function(){ layer.msg('加载中', {
+				  icon:6
+				  ,shade: 0.5,
+				time: false
+				});
+			}); */
+			  $.ajax({
+					url: "/workCard/statisticsdetails",
+					type: "post",
+					data: {
+						boatid: boatid,
+						style:style,
+						time:time
+					},
+					dataType: "json",
+					success: function (res) {
+						/* layer.closeAll(); */
+						if(res.data==null){
+							layer.alert("无相关数据");
+						}else{
+							table.reload('dataTable',{data : res.data});
+							json = res.data;
+							/* var number1 = res.WcWorkcardStatistics.number1;
+							var number2 = res.WcWorkcardStatistics.number2;
+							var number3 = res.WcWorkcardStatistics.number3;
+							var number4 = res.WcWorkcardStatistics.number4;
+							var option = {
+								    title : {
+								text: '工作卡完成情况',
+								x:'center',
+								},
+								tooltip : {
+								trigger: 'item',
+								formatter: "{a} <br/>{b} : {c} ({d}%)"
+								},
+								legend: {
+								orient : 'vertical',
+								x : 'left',
+								data:['未完成','正常完成','逾期完成','提前完成']
+								},
+								toolbox: {
+								show : true,
+								feature : {
+								    mark : {show: true},
+								    dataView : {show: true, readOnly: false},
+								    magicType : {
+								        show: true, 
+								        type: ['pie', 'funnel'],
+								        option: {
+								            funnel: {
+								                x: '25%',
+								                width: '50%',
+								                funnelAlign: 'left',
+								                max: 1548
+								            },
+								        }
+								    },
+								    restore : {show: true},
+								    saveAsImage : {show: true}
+								}
+								},
+								calculable : true,
+								series : [
+								{
+								    name:'完成情况',
+								    type:'pie',
+								    radius : '55%',
+								    center: ['60%', '70%'],
+								    data:[
+								        {value:number1, name:'未完成'},
+								        {value:number2, name:'完成'},
+								        {value:number3, name:'逾期完成'},
+								        {value:number4, name:'提前完成'}
+								    ]
+								}
+								]
+								};
+
+							// 为echarts对象加载数据 
+							myChart.setOption(option);  */
+						}
+					}
+				}); 
+		  };
+		
+		  
+		  setTimeout(function () {
+				 window.onload = show();
+			 }, 100);
+		
+</script>
+</body>
+</html>

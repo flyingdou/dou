@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<title>设置我的资料</title>
+<script type="text/javascript" src = "../layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+<script src="../layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>设置</cite></a>
+    <a><cite>我的资料</cite></a>
+  </div>
+</div>
+  
+<div class="layui-fluid" id="wraper">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">设置我的资料</div>
+        <div class="layui-card-body" pad15>
+          
+          <div class="layui-form" lay-filter="">
+            <div class="layui-form-item">
+            <input type="hidden" name="id" id="id" v-model ="User.id" >
+             <label class="layui-form-label">我的角色</label>
+			    <div class="layui-input-inline">
+			            <select name="role" id="role"  readonly lay-verify="required" >
+					     </select>
+			    </div>
+              <div class="layui-form-mid layui-word-aux">当前角色不可更改为其它角色</div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">用户名</label>
+              <div class="layui-input-inline">
+                <input type="text" name="account" v-model ="User.account" readonly class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">不可修改。一般用于后台登入名</div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">昵称</label>
+              <div class="layui-input-inline">
+                <input type="text" name="name" v-model ="User.name" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
+              </div>
+            </div>
+            <input name="sex" id="sex" type="hidden"  :value ="User.sex" v-model ="User.sex">
+            <div class="layui-form-item">
+              <label class="layui-form-label">性别</label>
+               <div class="layui-input-inline" id="usersex">
+			     <input type="radio"  name="x"  id="nan" value="0" title="男">
+			     <input type="radio"  name="x"  id="nv" value="1"  title="女">
+			    </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">头像</label>
+              <div class="layui-input-inline">
+                <input name="image" lay-verify="required" id="image" v-model ="User.image"   placeholder="图片地址"  class="layui-input">
+              </div>
+              <div class="layui-input-inline layui-btn-container" style="width: auto;">
+                <button type="button" class="layui-btn layui-btn-primary" id="LAY_avatarUpload">
+                  <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+                <button class="layui-btn layui-btn-primary" layadmin-event="avartatPreview" id="avartatPreview">查看图片</button >
+              </div>
+              <div class="layui-upload-list">
+    			<img class="layui-upload-img" id="demo1">
+    			<p id="demoText"></p>
+  			  </div>
+           </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">部门</label>
+              <div class="layui-input-inline">
+	            <input type="text" id="departmentid" name="departmentid"  v-model ="User.departmentid" lay-filter="departmentid" class="layui-input">
+	          </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">职位</label>
+              <div class="layui-input-inline">
+                <input type="text" name="position" v-model ="User.position" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">备注</label>
+              <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="remark"  v-model ="User.remark" ></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="setmyinfo" onclick="update()">确认修改</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">	 
+	var vue = new Vue({
+		el: "#wraper",
+		data: {
+			User:{}
+		},
+	});
+	
+	layui.use('upload', function(){
+		  var $ = layui.jquery
+		  ,upload = layui.upload;
+		  
+		  //普通图片上传
+		  var uploadInst = upload.render({
+		    elem: '#LAY_avatarUpload'
+		    ,url: '/uploadFile/uploadFile'
+		    ,data:{
+		    	filetype:"1"
+		    }
+		    ,before: function(obj){
+		      /* //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		        $('#demo1').attr('src', result); //图片链接（base64）
+		      }); */
+		    }
+		    ,done: function(res){
+		      //如果上传失败
+		      if(res.code > 0){
+		        return layer.msg('上传失败');
+		      }else if(res.code===0){//上传成功
+	    		layui.use('form', function(){
+	    			  var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+			    	  vue.User.image = res.fileurl;
+			    	  $("#image").val(vue.User.image);
+			    	  form.render();
+			    	  console.log(vue.User.image);
+	    		});
+		      }
+		      
+		    }
+		    ,error: function(){
+		      //演示失败状态，并实现重传
+		      var demoText = $('#demoText');
+		      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+		      demoText.find('.demo-reload').on('click', function(){
+		        uploadInst.upload();
+		      });
+		    }
+		  });
+	});
+	
+	$("#avartatPreview").click(function(){
+		if(vue.User.image!=null){
+			parent.parent.layer.open({
+				  type: 1,
+				  shade: false,
+				  title: false, //不显示标题
+				  content: "<img src="+vue.User.image+"/>", //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+				  cancel: function(){
+				  }
+				});
+		}else{
+			layer.msg("请先选择要上传的图片");
+		}
+	})
+	
+	var u = layui.data('layuiAdmin').user;
+	console.log(u);
+	
+	vue.User =u;
+	console.log(vue.User);
+	layui.use('form', function(){
+	  var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	  var $=layui.$;
+		if(vue.User.sex==0){
+			   $("#nv").removeAttr('checked');
+			   $("#nan").prop('checked','true');
+			   form.render();
+		}
+		if(vue.User.sex==1){
+			   $("#nan").removeAttr('checked');
+			   $("#nv").prop('checked','true');
+			   form.render();
+		}
+		/* $.ajax({
+	        type:"POST",
+	        cache:false,
+	        url:"/person/selectall2",
+	        dataType:"json",
+	        success:function(data){	        	
+	        	var option='<option value="">请选择类型</option>';
+	            $.each(data,function(i,n){
+	            	option += '<option value="'+n.seqId+'">'+n.deptName+'</option>';
+	            })
+	            $("#departmentid").append(option);
+	            form.render('select'); */
+	            /* $("#type").val(dou.WcWefunc.type);
+	            form.render('select'); */
+	  /*       }
+	    }) */
+	  
+	    layui.config({
+	        base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+	    }).extend({
+	    	treeSelect: 'treeSelect'
+	    });
+
+	     layui.use(['form', 'laydate','treeSelect'], function(){
+	       var $ = layui.$
+	       ,layer = layui.layer
+	       ,form = layui.form
+	       ,treeSelect= layui.treeSelect;
+	       
+	       form.render(null, 'component-form-group');
+	       form.render();
+	     
+	       
+	       treeSelect.render({
+	           // 选择器
+	           elem: '#departmentid',
+	           // 数据
+	           data: '/person/selectall2',
+	           // 异步加载方式：get/post，默认get
+	           type: 'post',
+	           // 占位符
+	           placeholder: '请选择',
+	           // 是否开启搜索功能：true/false，默认false
+	           search: true,
+	           // 点击回调
+	           click: function(d){
+	               document.getElementById("departmentid").value=d.current.id;
+	               vue.User.departmentid=d.current.id;
+	           },
+	           // 加载完成后的回调函数
+	           success: function (d) {
+	        	   treeSelect.checkNode('departmentid', vue.User.departmentid);
+	           }
+	       });
+	       
+		$.ajax({
+	        type:"POST",
+	        cache:false,
+	        url:"/userPriv/selecprivtall",
+	        dataType:"json",
+	        success:function(data){	        	
+	        	var option='<option value="">请选择角色</option>';
+	            $.each(data.data,function(i,n){
+	            	option += '<option value="'+n.seqId+'">'+n.privName+'</option>';
+	            })
+	            $("#role").append(option);
+	            form.render('select');
+	            $("#role").val(vue.User.role);
+	            form.render('select'); 
+	        }
+	    })
+	    
+	});
+ })
+
+layui.use('form', function(){
+	 var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	 var $=layui.$;
+	 form.render();
+});
+	function update(){
+	  /* dou.User.role=$('#IsPurchased input[name="role"]:checked ').val();
+	  console.log(dou); */
+	  var sex=$('#usersex input[name="x"]:checked ').val();
+	  $("#sex").attr("value",sex);
+	  vue.User.sex=sex;
+	   $.ajax({
+		  url:'/user/editu',
+		  type: 'POST',
+		  cache:false,
+		  data:{"user":JSON.stringify(vue.User)},
+		  success:function(result){
+			  if(result=200){
+				  parent.layer.msg("修改成功!");
+			  }else if(result=500){
+				  parent.layer.msg("修改失败!");
+			  }else{
+				  parent.layer.msg("未知错误!");
+			  }
+			 
+		  },
+		  error:function(result){
+			  alert("b");
+			  parent.layer.msg("未知错误aaa!");
+		  }
+	   });
+	   var index = parent.layer.getFrameIndex(window.name);
+		  parent.layer.close(index);
+		  parent.location.reload();
+	 }
+
+
+</script>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>级别</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/layui/css/layer.css" medidia="all" />
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+</head>
+<body>
+		<form class="layui-form"  action="" onsubmit="return false">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备卡详细信息</legend>
+			</fieldset>
+
+			<div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 30px;margin-left: 70px;">编码</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="encoding"  id="encoding"  class="layui-input"  disabled="disabled" placeholder = "编码自动生成无需输入">
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 50px;margin-left: 50px;">原编码</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="originalCode"  id="originalCode"  class="layui-input"  placeholder = "请输入">
+		            </div>
+		        </div>
+		    </div> 
+		    
+		    <div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 50px;margin-left: 50px;">所属船</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="in_boat"  id="in_boat"  class="layui-input"  disabled="disabled" placeholder = "所属船自动生成无需输入">
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 30px;margin-left: 70px;">名称</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="name"  id="name"  class="layui-input"  placeholder = "请输入">
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 30px;margin-left: 70px;">类型</label>
+		            <div class="layui-input-inline" >
+		                <select id="type" name="type">
+			            </select>
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 30px;margin-left: 70px;">型号</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="modelNumber"  id="modelNumber"  class="layui-input"  placeholder = "请输入">
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 50px;margin-left: 50px;">制作商</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="manufacturer"  id="manufacturer"  class="layui-input"   placeholder = "请输入">
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 60px;margin-left: 40px;">图纸编号</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="drawingNumber"  id="drawingNumber"  autocomplete="off" class="layui-input"  placeholder = "请输入">
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 90px;margin-left: 10px;">设备启用时间</label>
+		            <div class="layui-input-inline" >
+		                <input type="text" name="createtime"  id="createtime"   class="layui-input"  disabled="disabled" placeholder = "时间自动生成无需输入">
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 60px;margin-left: 40px;">设备状态</label>
+		            <div class="layui-input-inline" >
+		                <select name="equipmentStatus"  id="equipmentStatus">
+		                    <option value='0'>正常</option>
+		                    <option value='1'>暂停</option>
+		                    <option value='2'>异常</option>
+		                </select>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 90px;margin-left: 10px;">所属船舶部门</label>
+		            <div class="layui-input-inline" >
+		                <select name="ShippingDepartment"  id="ShippingDepartment">
+		                    <option value='1'>驾驶部</option>
+		                    <option value='2'>轮机部</option>
+		                </select>
+		            </div>
+		        </div>
+		        <div class="layui-inline">
+		            <label class="layui-form-label label-width" style="width: 50px;margin-left: 50px;">条形码</label>
+		            <div class="layui-input-inline" >
+		                <a href="barcode.html" target="_blank" class="layui-btn layui-btn-sm">查看</a> 
+		                <button class="layui-btn layui-btn-sm" onclick="seachwork()">工作卡查看</button>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="layui-form-item">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label label-width" style="width: 30px;margin-left: 70px;">备注</label>
+                    <div class="layui-input-block" style="margin-bottom: 20px;">
+                        <textarea placeholder="请输入内容" name="remark" style="width: 520px;" id="remark" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备图片</legend>
+		    </fieldset>
+		    <div class="layui-form-item">
+			    <input type="hidden" id="image" name="image" v-model = "device.image"/>
+			    <img class="layui-upload-img" v-if="device.imageurl" id="imageurl" :src="window.location.protocol+'//'+window.location.host+'/'+device.imageurl">
+		    </div>
+            <!-- <div class="layui-form-item">
+		        <div class="layui-upload" style="margin-left: 30px;">
+  			    <button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+ 			    <div class="layui-upload-list">
+    			    <img class="layui-upload-img" id="demo1">
+    			    <p id="demoText"></p>
+  			    </div>
+		        </div> 
+		    </div> -->
+		    <!-- 设备参数 -->
+		    <div>
+				<button type="button" id="adddrive" class="layui-btn layui-btn-sm" data-type="addRow" title="添加一行">
+						<i class="layui-icon layui-icon-add-1"></i> 添加一行
+				</button>					
+			</div>
+		    
+			<div id="tableRes" class="table-overlay">
+				<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
+			</div>
+			<!-- 备件参数 -->
+		    <div>
+					<button type="button" id="add" class="layui-btn layui-btn-sm" data-type="addRow" title="添加一行">
+						<i class="layui-icon layui-icon-add-1"></i> 添加一行
+					</button>					
+				</div>
+			
+			<div id="tableRes" class="table-overlay">
+				<table id="sparedataTable" lay-filter="sparedataTable" class="layui-hide"></table>
+			</div>
+		    
+		    
+		    
+		    
+            <center>
+	            <div class="layui-form-item" >
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
+                        
+                    </div>
+                </div>
+            </center>
+            
+            
+            
+		 </form> 
+		  
+		  <!-- <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">所属船</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="suoshucard" id="in_boat" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.boatname" disabled="disabled" placeholder = "编码自动生成无需输入" >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="sjname" id="yuanid" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.name">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">类型</label>
+		        <input type="text" name="number" id="yuantype" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.type">data-key="device.type"
+		      	<select id="cetestse"  >
+			    </select> 
+		    </div>
+		    
+		    
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">型号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="xinghaokong" id="yuanmodel" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.model">
+		      </div>
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">制作商</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="createday" id="yuanmanufacturer" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.manufacturer" >
+		      </div>
+		    </div> 
+		    
+		     <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备参数图片</label>
+		      <div class="layui-input-inline" id="shebeicanshutupian">
+		        <input type="file" name="prephone" lay-verify="date" autocomplete="off" width="120px;" class="layui-input" >
+		         <input type="file" name="myfile" id="prephoneid" onchange="uploadpic(this)"  class="layui-input"/> 
+		      </div>
+		    </div> 
+		    
+		     <div class="layui-inline">
+		      <label class="layui-form-label label-width">图纸编号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="tuzhibianhao" id="drawing_number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.drawing_number">
+		      </div>
+		    </div> 
+		  </div> 
+		  <input type="hidden" id="number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model="device.number">
+		 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">备注</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="msgnamefeikong" id="mark" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.mark">
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">备件信息</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="date"  id="equipment_msg" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.equipment_msg">
+		        <table cellpadding="0" id="msgtable" style="background-color: #FAFFBE" cellspacing="0">
+		              <tr id="msgtr" >
+		                  <td><input type="checkbox"  name='checkboxmsg' onclick="msgall"/></td>
+		                  <td colspan="3"><button class="layui-btn layui-btn-sm" id="addaddadd" onclick="msgadd()">添加备件信息</button></td>
+		                  <td><button class="layui-btn layui-btn-sm" onclick="masgdelete()">删除设备参数</button></td>
+		              </tr>
+		        </table>
+		      </div>
+		    </div>
+		 
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备启用时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="createdate" lay-verify="date" autocomplete="off" class="layui-input"  id="date_realJobTime" disabled="disabled"  v-model = "device.createtime" placeholder = "创建时间自动生成无需输入" >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备状态</label>
+		      <div class="layui-input-inline">
+		        <select id="status" name="status" data-key="device.status">
+			    </select>
+		      </div>
+		    </div>
+		    
+		    
+		  </div>  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">所属船舶部门</label>
+		      <div class="layui-input-inline">
+		      	<select id="select-boatdepartment" data-key="device.boatdepartment">
+			    </select>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">条形码</label>
+		      <div class="layui-input-inline">
+		        <a href="barcode.html" target="_blank" class="layui-btn layui-btn-sm">查看</a> 
+		        <a href="../1.png" target="_blank" class="layui-btn layui-btn-sm">查看</a>
+		        <button class="layui-btn layui-btn-sm" onclick="seachwork()">工作卡查看</button>
+		      </div>
+		    </div>
+		  </div>
+		  
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备图片</legend>
+		</fieldset>
+		<div class="layui-form-item">
+			<input type="hidden" id="image" name="image" v-model = "device.image"/>
+			<img class="layui-upload-img" v-if="device.imageurl" id="imageurl" :src="window.location.protocol+'//'+window.location.host+'/'+device.imageurl">
+		</div>
+		  
+		</form>
+	</div>
+	
+	<div class="layui-form-item">
+		<div class="layui-upload">
+  			<button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+  			
+ 			 <div class="layui-upload-list">
+    			<img class="layui-upload-img" id="demo1">
+    			<p id="demoText"></p>
+  			</div>
+		</div> 
+		</div>
+	
+	<div  align="center" id="container">
+		 <table cellpadding="0" id="tbalecheck" style="margin-left:78px;background-color: #FAFFBE" align="left"  cellspacing="0">
+		      <tr id="faisttr" >
+		          <td><input type="checkbox"  id="suoyou" onclick="swapCheck()"/></td>
+		          <td><button class="layui-btn layui-btn-sm" id="addaddadd" onclick="addcheck()">添加设备参数</button></td>
+		          <td><button class="layui-btn layui-btn-sm" onclick="deletepre()">删除设备参数</button></td>
+		      </tr>
+		      <tr style="margin-left: 100px" tabindex="3">
+		          <td></td>
+		          <td colspan="1"><button class="layui-btn layui-btn-sm"   onclick="history.go(-1)">返回上一页</button></td>
+		          <td><button class="layui-btn layui-btn-sm" onclick="dianji()" style="width: 84px">保存</button></td>
+		     </tr>
+		     <tr id="faisttr">
+		     <td>&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm" id="addaddadd" onclick="addcheck()">添加设备参数</button></td>
+		     <td colspan="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm"   onclick="history.go(-1)">返回上一页</button></td>
+		     <td>&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm" onclick="dianji()" >保存</button>
+		     </td>
+		     </tr>
+		     
+		</table>
+	</div> -->
+	
+	<!-- 表头 -->
+	<script type="text/html" id="bardrive">
+        <button type="button" id="adddrive" class="layui-btn layui-btn-sm" data-type="addRow" title="添加一行">
+						<i class="layui-icon layui-icon-add-1"></i> 添加一行
+		</button>
+    </script>
+    <script type="text/html" id="barsparepart">
+        <button type="button" id="add" class="layui-btn layui-btn-sm" data-type="addRow" title="添加一行">
+						<i class="layui-icon layui-icon-add-1"></i> 添加一行
+		</button>
+    </script>
+    <input type="hidden" name="msglist" id="msglist" class="layui-input" >
+	
+	<!-- 操作栏 -->
+	<script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="dels"  id="i3"><i class="layui-icon" ></i></a>
+	</script>
+	<script type="text/html" id="sparePartbarDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="del"  id="i4"><i class="layui-icon" ></i></a>
+	</script>
+	
+	<script type="text/javascript">
+	var table;
+	var tablemsg;
+	var numberid=sessionStorage.getItem("drivenumberid");
+	
+	
+	var searchid;//设备id
+	var boatname;//船名
+	var eqname;//设备名称
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var pre=[];
+	var msg=[];
+	var json = [];//增加设备参数
+	var jsons=[];//增加备件参数
+    //图片上传
+	layui.use('upload', function(){
+		  var $ = layui.jquery
+		  ,upload = layui.upload;
+		  
+		  //普通图片上传
+		  var uploadInst = upload.render({
+		    elem: '#test1'
+		    ,url: '/uploadFile/uploadFile'
+		    ,data:{
+		    	filetype:"1"
+		    }
+		    ,before: function(obj){
+		      /* //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		        $('#demo1').attr('src', result); //图片链接（base64）
+		      }); */
+		    }
+		    ,done: function(res){
+		      //如果上传失败
+		      if(res.code > 0){
+		        return layer.msg('上传失败');
+		      }else if(res.code===0){//上传成功
+		    	  dou.device.image = res.fileid;
+		    	  dou.device.imageurl = res.fileurl; 
+		    	  console.log(dou.device);
+		      }
+		    } 
+		    ,error: function(){
+		      //演示失败状态，并实现重传
+		      var demoText = $('#demoText');
+		      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+		      demoText.find('.demo-reload').on('click', function(){
+		        uploadInst.upload();
+		      });
+		    }
+		  });
+	});
+    //编辑表格
+    
+		/* renderSelectOptions: function(data, settings){
+			settings =  settings || {};
+			var valueField = settings.valueField || 'value',
+				textField = settings.textField || 'text',
+				selectedValue = settings.selectedValue || "";
+			var html = [];
+			for(var i=0, item; i < data.length; i++){
+				item = data[i];
+				html.push('<option value="');
+				html.push(item[valueField]);
+				html.push('"');
+				if(selectedValue && item[valueField] == selectedValue ){						
+					html.push(' selected="selected"');
+				}			
+				html.push('>');		
+				html.push(item[textField]);
+				html.push('</option>');
+			}
+			return html.join('');
+		}
+	}; */
+	
+	//layui 模块化引用
+	
+	//设备参数表格增加
+	 layui.use(['jquery', 'table', 'layer'], function(){
+		 
+		 
+		 
+		 
+		 table = layui.table
+		 var $ = layui.$
+		,form = layui.form
+		, layer = layui.layer;
+		console.log(numberid);
+		//数据表格实例化			
+		 tableIns = table.render({
+			elem: '#dataTable'
+			,height: 'auto'
+			,data:pre
+			//"/WcEquipmentcard/updateprepamter?workid="+numberid//数据接口
+			,limit:100 //不开启隔行背景
+			//,toolbar:"#bardrive"
+			,cols: [[
+				{field: 'parameter_name',title: '设备参数名称',edit: 'text'},
+				{field: 'parameter_value', title: '设备参数值',edit: 'text'},
+				{fixed: 'right',title:'操作',width:'10%',align:'center', toolbar: '#barDemo'}
+			]]
+		});
+		document.getElementById('adddrive').addEventListener('click',function (data) {
+			var oldData =  table.cache["dataTable"];
+			var data1={
+	        		 
+	        		 
+	        		 "id":"",
+	        		 
+	        		 "parameter_name":"",
+	        		 "parameter_value":""
+	        		 
+	        		 }; 
+	         oldData.push(data1);
+	         console.log(oldData);
+	         table.reload('dataTable',{data : oldData});
+	     });
+		
+		table.on('tool(dataTable)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'dels'){
+		      layer.confirm('确定删除吗？', function(index){
+	              var oldData =  table.cache["dataTable"];
+	              oldData.splice(obj.tr.data('index'),1);
+	              if(data.id!=null){
+	              prepmentdel(data.id);
+	              }
+	              //关闭弹窗
+		        layer.close(index);
+	            table.reload('dataTable',{data : oldData});
+		      });
+		    } 
+		  });
+		//提交
+		form.on('submit(add)', function(data){
+		    	var formData = data.field;
+			 	var b = JSON.stringify(formData);
+			 	var oldData =  table.cache["dataTable"];//表格数据
+			 	var a = JSON.stringify(oldData);
+				return update(b,a);
+		});
+		
+		$(function(){
+			$.getJSON("/WcEquipmentcard/updateprepamter?workid="+numberid,function(data){
+				  console.log(data.data);
+		 		  table.reload('dataTable',{data : data.data});
+			  })
+		})
+		
+		
+    }); 
+	//备件参数增加
+	layui.use(['jquery', 'table', 'layer'], function(){
+		tablemsg = layui.table
+		var $ = layui.$
+		,form = layui.form
+		, layer = layui.layer;	
+		//数据表格实例化			
+		var tableIns = tablemsg.render({
+			elem: '#sparedataTable'
+			,height: 'auto'
+			//,url: "/WcEquipmentcard/updatemsg?msgid="+numberid//数据接口
+			,data:msg
+			,limit:100 //不开启隔行背景
+			,cols: [[
+				{field: 'parts',title: '备件参数名称',edit: 'text'},
+				{field: 'partsmsg', title: '备件参数值',edit: 'text'},
+				{fixed: 'right',title:'操作',width:'10%',align:'center', toolbar: '#sparePartbarDemo'}
+			]]
+			
+		});
+		document.getElementById('add').addEventListener('click',function (data) {
+	         var oldData =  table.cache["sparedataTable"];
+	         var data1={"id":"","parts":"","partsmsg":""};
+	         oldData.push(data1);
+	         console.log(oldData);
+	         tablemsg.reload('sparedataTable',{data : oldData});
+	     });
+		//监听编辑
+		tablemsg.on('edit(sparedataTable)', function(obj){
+		 	var oldData =  tablemsg.cache["sparedataTable"];
+		 	var msglist= JSON.stringify(oldData);
+		 	$("#msglist").val(msglist);
+		});
+		var oldData =  tablemsg.cache["sparedataTable"];
+		var s=JSON.stringify(msglist);
+		$("msglist").val(s);
+		
+		//工具栏
+		tablemsg.on('tool(sparedataTable)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'del'){
+		      layer.confirm('确定删除吗？', function(index){
+	              var oldData =  tablemsg.cache["sparedataTable"];
+	              oldData.splice(obj.tr.data('index'),1);
+	              if(data.id!=null){
+		              prepmentdel(data.id);
+		              }
+	              msgdel(data.id);
+	              //关闭弹窗
+		        layer.close(index);
+		        tablemsg.reload('sparedataTable',{data : oldData});
+		      });
+		    } 
+		  });
+		$(function(){
+			//查询备件参数
+			$.getJSON("/WcEquipmentcard/updatemsg?msgid="+numberid,function(data){
+				tablemsg.reload('sparedataTable',{data:data.data});
+			}) 
+		})
+		
+		
+    });
+	
+	
+	function update(date,json){
+		var reqUrl = "/WcEquipmentcard/eqEdit";
+		var equipmentids=sessionStorage.getItem("equipmentids");
+		var s=$("#msglist").val();
+		$.ajax({
+			url:reqUrl,
+			type:"post",
+			data:{
+				json: json,//设备
+				'jsons':s,//参数
+				eqment:date,//设备信息
+				'equipmentids':equipmentids//设备id
+			},
+			dataType:"json",
+			success: function (res) {
+				if (res.success){
+					alert("保存成功");
+					//location.href = "WcEquipmentcardList.html";
+					parent.location.reload();
+					var index=parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+				}
+			},
+			error: function (e) {
+				console.log(e);
+				alert("保存失败");
+			}
+		});
+    }
+     function seachwork(){
+		sessionStorage.setItem("seachworkid", searchid)
+		 window.location.href="/layuiAdmin/src/views/cwbt/listworkcord.html";
+	 }  
+		
+		//设备删除
+		function prepmentdel(preid){
+			$.getJSON("/WcEquipmentcard/deletepre?preid="+preid+"&&v="+Math.random(),function(date){});
+			window.location.href="/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardEdit.html";
+		}
+		//备件删除
+		function msgdel(msgidjsp){
+			$.getJSON("/WcEquipmentcard/deletemsg?msgid="+msgidjsp+"&&v="+Math.random(),function(date){});
+			window.location.href="/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardEdit.html";
+		}
+		
+	
+		$(function(){
+			
+		    var equipmentids=sessionStorage.getItem("equipmentids");
+		    var type;
+		    $.getJSON("/WcEquipmentcard/getlistcardid?equipmentids="+equipmentids,function(res){
+		    	
+		    	layui.use('form', function(){
+					var form = layui.form;
+					type=res[0].type;//类型
+					console.log(type);
+					console.log(res);
+					searchid=res[0].id;
+					boatname=res[0].boatname;
+					eqname=res[0].name;
+					var eqid=res[0].number;
+					sessionStorage.setItem("ideqssss",eqid)
+					sessionStorage.setItem("boatnames",boatname);//
+			    	sessionStorage.setItem("eqname",eqname);
+					
+					$("#encoding").val(res[0].number);//编码
+					$("#originalCode").val(res[0].source_number);//原编码
+					$("#in_boat").val(res[0].boatname);//船名
+					$("#name").val(res[0].name);//名称
+					$("#modelNumber").val(res[0].model);//型号
+					$("#manufacturer").val(res[0].manufacturer);//制作商
+					$("#drawingNumber").val(res[0].drawing_number);//图纸编号
+					$("#createtime").val(res[0].createtime);//创建时间
+					$("#remark").val(res[0].mark);
+					//设备状态
+					$("#equipmentStatus").val(res[0].status);
+					//船舶部门
+					$("#ShippingDepartment").val(res[0].boatdepartment);
+					$("#image").val(res[0].image);//图片
+					form.render(); 
+		       })
+		  })
+		  //查询类型
+			$.getJSON("/WcEquipmentcard/getlisttype?v="+Math.random(),function(date){
+				layui.use('form', function(){
+				var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加() 
+				var getlisttype=date.typelist;
+				$.each(getlisttype,function(i,item){
+					 $("#type").append("<option value='"+item.id+"' >"+item.name+"</option>");
+					 if(item.id==type){
+						 $("#type").val(item.id);
+					 } 
+				  });
+				  form.render(); 
+			  });
+		   })
+		})
+		
+		
+		
+		
+		
+    
+    
+    
+	</script>
+	
+	
+	
+	
+	<!-- //工作卡跳转
+	/* function seachwork(){
+	var devices = sessionStorage.getItem("deviceCardsss");
+	var deviceInfos = sessionStorage.getItem("deviceInfosss");
+	if(devices&&deviceInfos){
+	devices = JSON.parse(devices);
+	deviceInfos= JSON.parse(deviceInfos);
+	//sessionStorage.setItem("seachworkid", JSON.stringify(devices.number));
+	//sessionStorage.setItem("seachworkid", JSON.stringify(devices.number))
+	sessionStorage.setItem("seachworkid", JSON.stringify(devices.id))
+	window.location.href="/layuiAdmin/src/views/cwbt/listworkcord.html";
+	}
+	} */ -->
+	
+	
+</body>
+</html>

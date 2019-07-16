@@ -1,0 +1,172 @@
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+ <div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>公告管理</cite></a>
+    <a><cite>模板管理</cite></a>
+  </div>
+</div>
+ 
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          模板列表
+			</div>
+          <div class="layui-card-body">
+			  <table class="layui-hide" id="test" lay-filter="test"></table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+ 
+
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+     <button  class="layui-btn layui-btn-sm" id="insert" lay-event="save">
+         <i class="layui-icon">&#xe608;</i> 添加
+     </button>
+  </div>
+</script>
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+              
+          
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
+ 
+<script>
+layui.use(['table','layer'], function(){
+  var table = layui.table;
+  var layer =layui.layer;
+  var $=layui.$;
+  dataTable=table.render({
+    elem: '#test'
+    ,url:'/noticemodel/selectbypage'
+    ,toolbar: '#toolbarDemo'
+    ,title: '公告模板信息'
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field:'id', title:'ID',  fixed: 'left', unresize: true, sort: true,align: 'center'}
+      ,{field:'title', title:'标题',align: 'center'}
+      ,{field:'name', title:'名称',align: 'center'}
+      ,{field:'typename', title:'类型',align: 'center'}
+      ,{field:'createtime', title:'创建时间', sort: true,align: 'center',templet:function (d){
+    	  if(d.createtime==null){
+    		  return "";
+    	  }else{
+              return createTime(d.createtime);
+    	  }
+      }}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo',align: 'center'}
+    ]]
+    ,page: true
+  });
+  //头工具栏事件
+  table.on('toolbar(test)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'getCheckData':
+        var data = checkStatus.data;
+        layer.alert(JSON.stringify(data));
+      break;
+      case 'getCheckLength':
+        var data = checkStatus.data;
+        layer.msg('选中了：'+ data.length + ' 个');
+      break;
+      case 'isAll':
+        layer.msg(checkStatus.isAll ? '全选': '未全选');
+      break;
+      case 'save':
+     	 layer.open({
+  	    	title : "添加详细内容",
+  			type : 2,
+  			area: ['50%', '60%'], // 弹窗大小
+  			shadeClose: true,
+  			shade: 0.5,
+  			content :"/layuiAdmin/src/views/cwbt/notice/savemodelnotice.html",
+  			success : function(layero, index){
+  				setTimeout(function(){
+  					layui.layer.tips('点击返回', ' .layui-layer-close', {
+  						tips: 3
+  					});
+  				},500);
+  				
+  			}
+  		});
+      break;
+    
+    };
+  });
+  
+  //监听行工具事件
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+      layer.confirm('确认要删除吗？', function(index){
+        $.ajax({
+        	url:'/noticemodel/del',
+        	data:{"id":data.id},
+        	type:'post',//method请求方式，get或者post
+    		dataType:"json",
+    		async:false,
+    		success:function(){
+    			 layer.msg("删除成功");
+    		}
+        });
+        layer.close(index);
+        dataTable.reload();
+      });
+    } else if(obj.event === 'edit'){
+    	sessionStorage.setItem("sid",data.id);
+    	layer.tab({
+    		  area: ['900px', '400px'],
+    		  shadeClose: true,
+  			  shade: 0.5,
+    		  tab: [{
+    		    title: '版本', 
+    		    content: '<iframe src="/layuiAdmin/src/views/cwbt/notice/updatemodelnotice.html" width="100%" height="400px" frameborder="0" style="float:left;margin: 0;padding: 0;"></iframe>'
+    		  },{
+    		    title: '详细内容', 
+    		    content: '<iframe src="/layuiAdmin/src/views/cwbt/notice/updatemodelnoticecontent.html" width="100%" height="400px" frameborder="0" style="float:left;margin: 0;padding: 0;"></iframe>'
+    		  }]
+    		});
+    }
+  });
+});
+
+
+//时间格式处理
+function createTime(v){
+		var date = new Date(v);
+	    var y = date.getFullYear();
+	    var m = date.getMonth()+1;
+	    m = m<10?'0'+m:m;
+	    var d = date.getDate();
+	    d = d<10?("0"+d):d;
+	    var str = y+"-"+m+"-"+d;
+	    return str;
+	}
+	
+	
+	
+</script>
+
+</body>
+</html>

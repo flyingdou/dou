@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<meta name="renderer" content="webkit">
+	<script type="text/javascript" src="../cwbt/js/echarts.js"></script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="../layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="../layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="../layui/layui/css/change.css" medidia="all" />
+	<script type="text/javascript" src="../layui/layui/layui.js"></script>
+	<script type="text/javascript" src="../layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="../cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="../ubsys/inforesource/tree/js/jquery.js"></script>
+	<script src="../cwbt/js/vue.min.js"></script>
+	<script src="../cwbt/js/vue.min.js"></script>
+</head>
+<body>
+<center>
+<div id="main" style="width:450px; height:420px;" id="wraper"> 
+	
+</div>
+</center>
+	
+<script type="text/javascript">
+		var workcordid = sessionStorage.id;
+		var vue = new Vue({
+			el: "#wraper",
+			data: {
+				wcWorkcard:{}
+			}
+		});
+
+		var myChart = echarts.init(document.getElementById('main')); 
+		
+		var option = {
+		    title : {
+		text: '工作卡完成情况',
+		x:'center',
+		},
+		tooltip : {
+		trigger: 'item',
+		formatter: "{a} <br/>{b} : {c} ({d}%)"
+		},
+		legend: {
+		orient : 'vertical',
+		x : 'left',
+		data:['完成','未完成','逾期未完成','逾期完成','进行中','超期未完成','提前完成']
+		},
+		toolbox: {
+		show : true,
+		feature : {
+		    mark : {show: true},
+		    dataView : {show: true, readOnly: false},
+		    magicType : {
+		        show: true, 
+		        type: ['pie', 'funnel'],
+		        option: {
+		            funnel: {
+		                x: '25%',
+		                width: '50%',
+		                funnelAlign: 'left',
+		                max: 1548
+		            },
+		        }
+		    },
+		    restore : {show: true},
+		    saveAsImage : {show: true}
+		}
+		},
+		calculable : true,
+		series : [
+		{
+		    name:'完成情况',
+		    type:'pie',
+		    radius : '55%',
+		    center: ['60%', '70%'],
+		    data:[
+		        {value:335, name:'完成'},
+		        {value:310, name:'未完成'},
+		        {value:234, name:'逾期未完成'},
+		        {value:135, name:'逾期完成'},
+		        {value:1548, name:'进行中'},
+		        {value:135, name:'超期未完成'},
+		        {value:135, name:'提前完成'}
+		    ]
+		}
+		]
+		};
+		
+		// 为echarts对象加载数据 
+		myChart.setOption(option); 
+		
+		function select1(workcordid){
+			 $.ajax({
+					url: "/workCard/selectbyid",
+					type: "post",
+					data: {
+						id: workcordid
+					},
+					dataType: "json",
+					success: function (res) {
+						vue.wcWorkcard = res;
+					}
+					
+				}); 
+		}
+</script>
+</body>
+</html>

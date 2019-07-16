@@ -1,0 +1,174 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>设备类型管理</title>
+<link rel="stylesheet" href="/layuiAdmin/src/views/cwbt/css/layui.css">
+<link rel="stylesheet" href="/layuiAdmin/src/views/cwbt/css/laydate.css">
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/layui.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/all.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/form.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/laydate.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/JsBarcode.all.js"></script>
+<style>
+	.label-width{
+		width: 130px;	
+	} 
+</style>
+</head>
+<body>
+	 <div class="wraper" id="wraper">
+		<form class="layui-form" action="" onsubmit="return false">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备类型详细信息</legend>
+			</fieldset>
+			
+			<div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备类型名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="snumber" id="typename" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.name"/>
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">备注</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="bnumber" id="mark" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.mark" />
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">创建时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="crdate" lay-verify="date" autocomplete="off" disabled="disabled" class="layui-input"  id="date_realJobTime" v-model = "device.createtime" placeholder = "时间自动生成无需输入">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">上次修改时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="upname" lay-verify="required|number" disabled="disabled" autocomplete="off" class="layui-input"  id="date_planJobTime" v-model = "device.updatetime" placeholder = "时间自动生成无需输入"   >
+		      </div>
+		    </div>
+		  </div>  
+		  <div class="layui-form-item">
+		     <button class="layui-btn layui-btn-sm" style="margin-left: 300px;" onclick="history.go(-1)">返回上一页</button>
+		     <button class="layui-btn layui-btn-sm" onclick="save()">保存</button>
+		  </div>
+	    </form>
+	</div> 
+	
+	
+	<script>
+	var dou = new Vue({
+		el: "#wraper",
+		data: {
+			device: {},
+			deviceInfo: {}
+		},
+		mounted: function () {
+			setTimeout(this.init,100);
+		},
+		methods: {
+			init: function () {
+	 			getDevice();
+	 			this.$nextTick(function () {
+		      layui.use(['form', 'layer'], function(){
+		        var form = layui.form;
+		        var laydate = layui.laydate;
+		        form.on('select', function(data){
+		        	var key = data.elem.attributes["data-key"].value;
+		        	var keys = key.split(".");
+		        	dou[keys[0]][keys[1]] = data.value;
+		        });        
+		        laydate.render({
+		        	  elem: '#date_planJobTime',
+		        	  done: function (value, date, endDate) {
+		        		  dou.device.updatetime = value;
+		        	  }
+		        	});
+			        
+			        laydate.render({
+		        	  elem: '#date_realJobTime',
+		        	  done: function (value, date, endDate) {
+		        		  dou.device.createtime = value;
+		        	  }
+		        	});
+		        form.render(); 
+		      });
+	 			});
+	 		 }
+		}
+	});
+	
+	function getDevice () {
+		var device = sessionStorage.getItem("esssssssssqtype");
+		var deviceInfo = sessionStorage.getItem("essssssssqtypeInfo");
+		if (device && deviceInfo) {
+			device = JSON.parse(device);
+			deviceInfo = JSON.parse(deviceInfo);
+			 $("#typename").val(device.name);
+			 $("#mark").val(device.mark);
+		} else {
+			device = {};
+			deviceInfo = {};
+			
+			/* document.getElementById("date_realJobTime").disabled=false;
+			document.getElementById("date_planJobTime").disabled=true; */
+		}
+		dou.device = device;
+		dou.deviceInfo = deviceInfo;
+	}
+	var klhuakuiae=true;
+	
+	/* 保存或修改  */
+	function save () {
+		var reqUrl = "/WcEquipmenttype/SaveWcEquipmenttype";
+		var device = dou.device;
+		// 保存数据
+		if(yanz()){
+			if(klhuakuiae){
+		$.ajax({
+			url:reqUrl,
+			type:"post",
+			data:{
+				json: encodeURI(JSON.stringify(device))
+			},
+			dataType:"json",
+			success: function (res) {
+				if (res.success){
+					alert("保存成功");
+					location.href = "WcEquipmenttypeList.html";
+				}
+			},
+			error: function (e) {
+				console.log(e);
+				alert("保存失败");
+			}
+		});
+		klhuakuiae=false;
+		}
+	}
+	}
+	function yanz(){
+	       var s=$("[name='snumber']").val();
+	       var ksss=$("[name='bnumber']").val();
+	       $("[name=upname]").val('时间自动生成无需填入');
+	       $("[name=crdate]").val('时间自动生成无需填入');
+	        if(ksss==''||ksss==null){
+	        	alert("表单数据不能为空");
+	        	return false;
+	        }else if(s==''||s==null){
+	        	alert("表单数据不能为空");
+	        	return false
+	        }else{
+	        	return true;
+	        }
+		}
+	
+	</script>
+</body>
+</html>
+

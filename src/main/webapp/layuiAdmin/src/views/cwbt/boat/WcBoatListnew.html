@@ -1,0 +1,367 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>船舶卡列表(组织架构)</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+	
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+          
+           <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+          		
+				<form class="layui-form" action="">
+          		
+				<div class="layui-inline">
+        			<input class="layui-input" id="name" name = "name" value="" placeholder="输入名称">
+        			<input type="hidden" id="department" name="department">
+        		
+        		</div>
+      				<button class="layui-btn" id="btn-search"  lay-submit lay-filter="searchForm" >搜索</button>
+			</div>
+			</form>
+    		<table id="dataTable" class="layui-table" lay-filter="dataTable"></table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+		
+		 <script type="text/html" id="test-table-toolbar-toolbarDemo">
+     <div class="layui-btn-container" style="margin-left:5px;">
+            <button class="layui-btn" id="save" lay-event="save"><i class="layui-icon">&#xe654;</i> 添加</button>
+            <button class="layui-btn layui-btn-danger" id="getCheckData" lay-event="getCheckData"><i class="layui-icon">&#xe640;</i>批量删除</button>
+</div>
+	</script>
+		
+		<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="viewequipment"  id="i1">设备<i class="layui-icon" ></i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="updatenowdepartment" id="i2">调拨<i class="layui-icon" ></i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="updatestatus"  id="i3">
+		{{#	if(d.status==0){  }}
+					修船<i class="layui-icon layui-icon-pause" ></i>
+		{{#	}else if(d.status==1){            }}
+					结束<i class="layui-icon layui-icon-play" ></i>
+		{{#	}                 }}
+
+		
+		</a>
+	</script>
+		
+		<script>
+
+		var table;
+		var form;
+		var loading;
+		
+		var departmentss = sessionStorage.department;
+		document.getElementById("department").value=departmentss;
+		
+		
+		layui.use(['table','form'], function(){
+			  layer = layui.layer;
+			loading = window.parent.layer.load(1, {
+		    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+			    });
+			 table = layui.table;
+			 form=layui.form;
+			 $ = layui.jquery;
+			 dataTable=table.render({
+				    elem: '#dataTable'
+				    ,height: 'auto'
+				    ,url: '/WcBoat/getWcBoatListnew' //数据接口
+				    ,request: {     
+				    	page: 'start'
+					   ,limit: 'limitsize' 
+					}
+					,where:{
+						department:departmentss
+					}
+				    ,toolbar: '#test-table-toolbar-toolbarDemo'
+				    ,page: true //开启分页 	
+				    ,cols: [[ //表头
+				      {checkbox: true,width:'5%',fixed: 'left'}
+				      ,{field: 'number', width:100,title: '编码',sort: true}
+				      ,{field: 'name', width:100, title: '名称'}
+				      ,{field: 'department', title: '部门(点击可修改)',event:'updatedepartment',  width:100,sort: true,templet:function(d){
+				    	return d.departmentname  
+				      }
+				      }
+				      ,{field: 'nowdepartment', title: '调拨至',event:'updatenowdepartment',  width:100,sort: true,templet:function(d){
+				    	if(d.nowdepartmentname){
+				    		return d.nowdepartmentname;
+				    	} else{
+				    		return "";
+				    	}
+				      }
+				      }
+				      ,{field: 'theshiptype', title: '船舶类型', width:100,sort: true}
+				      ,{field: 'shiptype', title: '船型', width:100,sort: true}
+				      ,{field: 'constructiontime', title: '购建时间(年)', width:100,sort: true}
+				      ,{field: 'papermoney', title: '账面原值(万元)',  width:100,sort: true}
+				      ,{field: 'shipmentpower', title: '装船总功率(KW)', width:100, sort: true}
+				      ,{field: 'shippower', title: '船舶总吨数(T)', width:100,sort: true}
+				      ,{fixed: 'right',title:'操作',align:'center', width:'30%',toolbar: '#barDemo'}
+				    ]],
+				    done:function(){
+				    	window.parent.layer.close(loading);
+				    }
+			  });
+		
+
+			  //监听表格排序问题
+			  table.on('sort(dataTable)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+
+				  table.reload('dataTable', { //testTable是表格容器id
+				    initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+				    ,where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+				      field: obj.field //排序字段
+				      ,order: obj.type //排序方式
+				    }
+				  });
+				});
+			  
+			  form.on('submit(searchForm)', function(data){
+					loading = window.parent.layer.load(1, {
+				    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+					    });
+					document.getElementById("department").value=departmentss;
+					reloadData(data.field);
+					return false;
+				});
+			  
+			  function reloadData(formData) {
+					//console.log(formData);
+					dataTable.reload({
+						where: formData
+					});
+				}
+			  
+			//监听行双击击
+				table.on('rowDouble(dataTable)', function(obj){
+					var data = obj.data;
+					var deviceInfo = {
+							code: obj.data.code,
+							primaryCode: obj.data.primaryCode,
+							specificationModel: obj.data.specificationModel,
+							manufacturer: obj.data.manufacturer,
+							useDate: obj.data.useDate
+					}
+					sessionStorage.setItem("deviceCardsss", JSON.stringify(data));
+					sessionStorage.setItem("deviceInfosss", JSON.stringify(deviceInfo));
+					
+					
+			    	var index = window.parent.layui.layer.open({
+						title : "修改船舶信息",
+						type : 2,
+						area: ['80%', '80%'], // 弹窗大小
+						shadeClose: true,
+						shade: 0.5,
+						content :"/layuiAdmin/src/views/cwbt/boat/WcBoatUpdate.html",
+						success : function(layero, index){
+							setTimeout(function(){
+								layui.layer.tips('点击返回', '.layui-layer-close', {
+									tips: 3
+								});
+							},500);
+						}
+					})
+					//改变窗口大小时，重置弹窗的高度，防止超出可视区域（如F12调出debug的操作）
+					//$(window).resize(function(){
+						//layui.layer.full(index);
+					//})
+					//layui.layer.full(index); 
+				});
+			
+				  //头工具栏事件
+			    table.on('toolbar(dataTable)', function(obj){
+			      var data = obj.data;
+			      var checkStatus = table.checkStatus(obj.config.id);
+			      if(obj.event === 'getCheckData'){
+			    	  var data = checkStatus.data;
+			          if(data.length==0){
+			        	  layer.msg('未选择！');
+			          }else{
+			        	  layer.confirm('确定删除吗？', function(index){
+			            	  deviDels(JSON.stringify(data));
+			            	  layer.close(index);
+			  		        dataTable.reload({
+			  			    	 page:{
+			  			    		 curr:1
+			  			    	 }
+			  		        });
+			        	  });
+			          }
+			      }else if(obj.event === 'save'){
+			    	  sessionStorage.removeItem("deviceCardsss");
+						sessionStorage.removeItem("deviceInfosss");
+						 var index = window.parent.layui.layer.open({
+								title : "新增船舶",
+								type : 2,
+								area: ['70%', '80%'], // 弹窗大小
+								shadeClose: true,
+								shade: 0.5,
+								content :"/layuiAdmin/src/views/cwbt/boat/WcBoatUpdate.html",
+								success : function(layero, index){
+									setTimeout(function(){
+										window.parent.layui.layer.tips('点击返回', ' .layui-layer-close', {
+											tips: 3
+										});
+									},500);
+									
+								}
+							});		
+			      }
+			     
+			    });
+				  
+
+				  //监听工具条
+			    table.on('tool(dataTable)', function(obj){
+			    	var data = obj.data;
+			    	if(obj.event === 'viewequipment'){
+							sessionStorage.setItem("department",data.number);
+			    			window.parent.tabAdd(1,data.number,data.name,'/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardList.html');
+			    			
+				      }else if(obj.event === 'updatedepartment'){
+
+						sessionStorage.setItem("boatid", data.id);
+						
+				    	  window.parent.layui.layer.open({
+							  type: 2, 
+							  title: '修改部门',
+							  area: ['30%', '60%'],
+							  btnAlign: 'c',
+							  shade: 0.5 ,
+							  shadeClose: true,
+							  id: 'updatedepartment',
+							  content: '/layuiAdmin/src/views/cwbt/boat/updatewcBoatdepatment.html',
+							  success:function(layero,index){
+								  setTimeout (function () {
+										layui.layer.tips('点击返回','.layui-layer-setwin .layui-layer-close',{
+											tips:3
+										});
+									},500);
+							  }
+						});
+				      }else if(obj.event === 'updatenowdepartment'){
+				    	  if(data.nowdepartmentname){//调回
+				    		  
+				    		  layer.confirm('确定调回原部门吗？', function(index){
+				    			  var id = data.id;
+									 $.ajax({
+								    		type:"post",
+								    		cache:false,
+								    		url:"/WcBoat/allotboatback",
+								    		data:{id:id},
+								    		success:function(data){
+												layer.close(index);
+								  		        dataTable.reload({
+								  			    	 page:{
+								  			    		 curr:1
+								  			    	 }
+								  		        });
+								    		}
+								    	});
+				        	  });
+				    		  
+				    	  }else{//调拨
+
+								sessionStorage.setItem("boatid", data.id);
+				    	  
+				    		  window.parent.layui.layer.open({
+								  type: 2, 
+								  title: '调拨',
+								  area: ['30%', '60%'],
+								  shade: 0.5 ,
+								  shadeClose: true,
+								  id: 'updatenowdepartment',
+								  content: '/layuiAdmin/src/views/cwbt/boat/nowdepartment.html',
+								  success:function(layero,index){
+									 
+									  setTimeout (function () {
+											layui.layer.tips('点击返回','.layui-layer-setwin .layui-layer-close',{
+												tips:3
+											});
+										},500);
+								  }
+							});
+				    	  }
+				      }else if(obj.event === 'updatestatus'){
+				    	  var id = data.id;
+				    	  if(data.status===0){//暂停
+				    		  loading = window.parent.layer.load(1, {
+						    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+							    });
+				    		  $.ajax({
+						    		type:"post",
+						    		async:false,
+						    		url:"/WcBoat/pauseboat",
+						    		data:{id:id,
+						    			status:1},
+						    		success:function(data){
+						    			layer.close(loading);
+						    		}
+						    	});
+							 location.reload();
+				    	  }else if(data.status===1){//恢复
+				    		  loading = window.parent.layer.load(1, {
+						    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+							    });
+				    		  $.ajax({
+						    		type:"post",
+						    		async:false,
+						    		url:"/WcBoat/pauseboat",
+						    		data:{id:id,
+						    			status:0},
+						    		success:function(data){
+						    			layer.close(loading);
+						    		}
+						    	});
+							 location.reload();
+				    	  }
+				      }
+			    });
+				  
+				  
+				  //删除
+				  function deviDels(ids){
+					  $.ajax({
+							url: "/WcBoat/deleteWcBoat",
+							type: "post",
+							data: {
+								json: JSON.stringify({ids: ids})
+							},
+							dataType: "json",
+							success: function (res) {
+								alert("删除成功!");
+								vue.ids = [];
+								getDeviceCardList();
+							}, 
+							error: function (e) {
+								console.log(e); 
+								alert("删除失败");
+							}
+						}); 
+				  }
+				  
+			  
+			 
+		});
+		</script>
+</body>
+</html>

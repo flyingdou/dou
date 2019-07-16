@@ -1,0 +1,473 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>修改工作卡模板</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+	</style>
+</head>
+<body  style="width:100%;height:100%">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>工作卡模板基本信息</legend>
+	</fieldset>
+<form class="layui-form" action="" onsubmit="return false">
+<div style="margin-left: 10%;" id="wraper">
+			<div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">工作卡名称</label>
+		      <div class="layui-input-inline">
+		      	 <input type="hidden" name="id" class="layui-input" id="id" :value="wcWorkcard.id">
+		        <input type="text" name="name" class="layui-input" id="name" autocomplete="off" placeholder = "名称自动生成无需输入" disabled="disabled" :value="wcWorkcard.name">
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">设备名称</label>
+		      <div class="layui-input-inline">
+		      	 <input type="hidden" name="equipmentId" class="layui-input" id="equipmentId" :value="wcWorkcard.equipmentId">
+		        <input type="text" name="equipmentname" id="equipmentname" class="layui-input"  placeholder = "输入设备编号查询设备" :value="wcWorkcard.equipmentname">
+		      </div>
+	        <button class="layui-btn layui-btn-sm" style="margin-top: 2.5px;" onclick="search()">查询</button>
+		    </div> 
+		  </div>
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">工作卡卡号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" id="number" :value="wcWorkcard.number" autocomplete="off" class="layui-input"  disabled="disabled" placeholder = "卡号自动生成无需输入">
+		      </div>
+		    </div>
+		   <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">工作卡类别</label>
+		      <div class="layui-input-inline">
+		       <select lay-filter="type"  class="select"  lay-verify="type" name="type" id="type">
+			        <option value="1">周期</option>
+			        <option value="2" disabled>临时</option>
+			    </select>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		    	<div class="layui-form-mid layui-word-aux">PC端尚未开放新建临时工作卡功能</div>
+		    </div>
+		   </div>
+		 
+		  <div class="layui-form-item" id='div1'>
+			  <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">计时制式</label>
+			      <div class="layui-input-inline">
+			        <select  class="select"  name="chronograph" id="chronograph" lay-filter="chronograph"   lay-verify="chronograph">
+			        <option value="0">定期制</option>
+			        <option value="1" disabled>定时制</option>
+			    </select>
+			      </div>
+			    </div> 
+			    <div class="layui-inline">
+			    <div id="div2">
+			    <label class="layui-form-label label-width" style="width: 90px;">维修级别</label>
+			      <div class="layui-input-inline">
+			       <select class="select"  name="levelid" id="levelid">
+			       
+					</select>  
+			      </div>
+			    </div>
+			      <div id="div3" style="display:none;">
+			    <label class="layui-form-label label-width" style="width: 90px;">维修级别</label>
+			      <div class="layui-input-inline">
+			       <select class="select"  name="levelid2" id="levelid2">
+			       
+					</select>  
+			      </div>
+			    </div>
+			    </div> 
+		  </div>
+		  
+		  <div class="layui-form-item">
+		  <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">风险等级</label>
+		      <div class="layui-input-inline">
+		        <select  class="select"  name="riskGrade" id="riskGrade">
+			        <option value="1">一级</option>
+			        <option value="2">二级</option>
+			        <option value="3">三级</option>
+			    </select>
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		    <div  id="div4">
+		      <label class="layui-form-label label-width" style="width: 90px;">周期开始时间</label>
+		      <div class="layui-input-inline">
+		         <input type="text" name="plannedtime" :value="wcWorkcard.plannedtime" id="plannedtime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" >
+		      </div>
+		      </div>
+		      <div id="div5"  style="display:none;">
+		    	<label class="layui-form-label label-width" style="width: 90px;">维修方式</label>
+		      <div class="layui-input-inline">
+		        <select  class="select"  name="overhaulfunction" id="overhaulfunction">
+			        <option value="0">自行维修</option>
+			        <option value="1">委外维修</option>
+			    </select>
+		      </div>
+		    </div>
+		    </div> 
+		  </div>
+		  
+		  <div class="layui-form-item">
+		  	<div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">计划时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="expectedtime" id="expectedtime" :value="wcWorkcard.expectedtime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" >
+		      </div>
+		    </div> 
+		  </div>
+		  
+		  <div class="layui-form-item">
+		  <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">风险评估</label>
+		      <div class="layui-input-inline">
+		        <textarea  class="layui-textarea" name="riskAssessment" :value="wcWorkcard.riskAssessment" id="riskAssessment" style="width:500px"></textarea>
+		      </div>
+		    </div> 
+		  </div>
+	</div>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>工作任务</legend>
+	</fieldset>	
+	<div class="layui-btn-container" style="margin-left:5px;">
+		<button class="layui-btn" id="add" style="background-color:#009688">
+ 			 <i class="layui-icon">&#xe608;</i> 添加
+		</button>
+		 <input type="hidden" name="olddata" class="layui-input" id="olddata">
+	</div>
+	<table id="dataTable" lay-filter="dataTable" >
+			 
+	</table>
+	<center>
+	 <div class="layui-form-item" >
+    <div class="layui-inline">
+      <button class="layui-btn" lay-submit="" lay-filter="create">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary" id="reset">重置</button>
+    </div>
+  </div>
+  </center>
+</form>
+	
+	<script type="text/javascript" src="/layui/layui/layui.js"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+	<script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="del" onmouseover="show3()" id="i3"><i class="layui-icon" ></i></a>
+
+	</script>
+	<script>
+	var table;
+	var layer;
+	var laytpl;
+	var dataTable;
+	var laydate;
+	var form;
+	var $;
+	var json = [];
+	var workcordid = sessionStorage.id;
+	
+	 
+	  var vue = new Vue({
+			el: "#wraper",
+			data: {
+				wcWorkcard:{}
+			},
+	  });
+	  
+	
+	
+	 
+	layui.use(['table','form','layer','laytpl','laydate'], function(){
+	  table = layui.table,
+	  layer = layui.layer,
+	  laytpl = layui.laytpl;
+	  laydate = layui.laydate;
+	  laydate.render({
+		    elem: '#plannedtime' //指定元素
+		  });
+	  laydate.render({
+		    elem: '#expectedtime' //指定元素
+		  });
+	 form=layui.form,
+	  $ = layui.jquery;
+	 dataTable=table.render({
+		    elem: '#dataTable'
+		    ,height: 'auto'
+		    ,data: json//数据接口
+		    ,limit:100
+		    ,cols: [[ //表头
+		      {field: 'no', title: '序号',width:'10%',type:'numbers'}
+		      ,{field: 'id', title: 'id',edit:'text'}
+		      ,{field: 'name', title: '内容',width:'40%',edit:'text'}
+		      ,{field: 'mark', title: '验收标准',width:'40%',edit:'text'}
+		      ,{fixed: 'right',title:'操作',width:'10%',align:'center', toolbar: '#barDemo'}
+		    ]],
+		    done: function () {
+		        $("[data-field='id']").css('display','none');
+		    }
+	  });
+	 //保存
+	 form.on('submit(create)', function(data){
+		 	var oldData =  table.cache["dataTable"];
+		 	var b = JSON.stringify(oldData);
+		 	document.getElementById("olddata").value=b;
+			return saveData(data);;
+		});
+	 
+	 //监听单元格编辑
+	 table.on('edit(dataTable)', function(obj){
+		 	var oldData =  table.cache["dataTable"];
+		 	var b = JSON.stringify(oldData);
+		 	document.getElementById("olddata").value=b;
+		  });
+	 
+	//监听工具条
+	  table.on('tool(dataTable)', function(obj){
+	    var data = obj.data;
+	    if(obj.event === 'del'){
+	      layer.confirm('确定删除吗？', function(index){
+              var oldData =  table.cache["dataTable"];
+              oldData.splice(obj.tr.data('index'),1);
+	        //关闭弹窗
+	        layer.close(index);
+            table.reload('dataTable',{data : oldData});
+	      });
+	    } 
+	  });
+	 
+	 
+	 //监控类型下拉框
+	 form.on('select(type)', function(data){
+		 var div1=document.getElementById("div1");
+		 var div4=document.getElementById("div4");
+		 var div5=document.getElementById("div5");
+		 if(data.value==2){
+			 div1.style.display="none";
+			 div4.style.display="none";
+			 div5.style.display="block";
+		 }else if(data.value==1){
+			 div1.style.display="block";
+			 div4.style.display="block";
+			 div5.style.display="none";
+		 }
+		 
+	 });
+	 //监控计时制式下拉框
+	 form.on('select(chronograph)', function(data){
+		 var div2=document.getElementById("div2");
+		 var div3=document.getElementById("div3");
+		 if(data.value==0){
+			 div2.style.display="block";
+			 div3.style.display="none";
+		 }else if(data.value==1){
+			 div2.style.display="none";
+			 div3.style.display="block";
+		 }
+		 
+	 });
+	 
+	});
+	
+	//提交
+	function saveData(formData) {
+			var result = false;
+			$.ajax({
+				url: "/workCard/editworkcord",
+				async: false,
+				dataType: "json",
+				type: "post",
+				data: formData.field,
+				success: function(data) {
+					
+					finalily();
+				}
+			});
+			return result;
+		}
+	//关闭窗口
+	function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+		}
+	
+	 //下拉框(维修级别)（定期）
+	  function selectlevel1() {
+		  $("select[name=levelid]").empty();
+		   $.ajax({
+		    async: false,
+		    type: "POST",
+		    url: "/wcOverhaullevel/selectAll",
+		    dataType: "json",
+		    data: {},
+		    success: function (res) {
+		  for(var i=0; i<res.data.length; i++){
+			  if(res.data[i].id!=null && res.data[i].id!='' && res.data[i].id!=9){
+				  var option="<option value=\""+res.data[i].id+"\"";
+				  option += ">"+res.data[i].name+"-"+res.data[i].regular+"天"+"</option>"; //动态添加数据
+				  $("select[name=levelid]").append(option);
+			  }
+		  }
+		      
+		    }
+		   });
+		  }
+	 
+	  //下拉框(维修级别)（定时）
+	  function selectlevel2() {
+		  $("select[name=levelid2]").empty();
+		   $.ajax({
+		    async: false,
+		    type: "POST",
+		    url: "/wcOverhaullevel/selectAll",
+		    dataType: "json",
+		    data: {},
+		    success: function (res) {
+		  for(var i=0; i<res.data.length; i++){
+			  if(res.data[i].id!=null && res.data[i].id!='' && res.data[i].id!=9 ){
+		  var option="<option value=\""+res.data[i].id+"\"";
+		  option += ">"+res.data[i].name+"-"+res.data[i].timing+"时"+"</option>"; //动态添加数据
+		  $("select[name=levelid2]").append(option);
+		  }
+		  } 
+		    }
+		   });
+		  }
+	  
+	  //新增任务(任务列表添加一条空数据)
+	  document.getElementById('add').addEventListener('click',function (data) {
+	         var oldData =  table.cache["dataTable"];
+	         var data1={"id":"","name":"","mark":""};
+	         oldData.push(data1);
+	         table.reload('dataTable',{data : oldData});
+	     });
+		 
+	  //提示框
+	  function show3() {
+	        layer.tips("删除","#i3", {
+	          tips: [1, "#4794ec"],
+	          time:2000
+	        });
+	    }
+	  
+	  //查询设备名称（点击查询）
+	  function search(){
+		  var number=document.getElementById("equipmentname").value;
+		  if(number === null || number==""){
+			  layer.alert('请输入设备编码查询！');
+		  }else{
+			  selectequipment(number);
+		  }
+		  
+		  
+	  }
+	  
+	  //查询设备名称
+	  function selectequipment(number){
+		  $.ajax({
+				url: "/workCard/selectequipmentname",
+				type: "post",
+			    async: false,
+				data: {
+					idnumber: number
+				},
+				dataType: "json",
+				success: function (res) {
+					var equipmentname=document.getElementById("equipmentname");
+					var equipmentId=document.getElementById("equipmentId");
+					equipmentname.value = res.name;
+					equipmentId.value = res.id;
+				}
+				
+			}); 
+	  }
+	 
+	
+	  
+	  //获取工作任务
+	  function selectstak(){
+		  var workcordid = sessionStorage.id;
+		  $.ajax({
+				url: '/worktasktable/select',
+				type: "post",
+				data: {
+					workcordid: workcordid
+				},
+				dataType: "json",
+				success: function (res) {
+					table.reload('dataTable',{data : res.data});
+					document.getElementById("olddata").value=res.data;
+				}
+				
+			}); 
+	  }
+	  
+	//查询工作卡
+	  function falst(){
+		  $.ajax({
+				url: "/workCard/selectbyid",
+				type: "post",
+				data: {
+					id: workcordid
+				},
+				dataType: "json",
+				success: function (res) {
+					vue.wcWorkcard = res;
+					//给下拉框赋值
+					$("#type").val(vue.wcWorkcard.type);
+					$("#chronograph").val(vue.wcWorkcard.chronograph);
+					$("#levelid").val(vue.wcWorkcard.levelid);
+					$("#riskGrade").val(vue.wcWorkcard.riskGrade);
+					if(vue.wcWorkcard.overhaulfunction!=undefined){
+						$("#overhaulfunction").val(vue.wcWorkcard.overhaulfunction);
+					}
+					form.render(); 
+					
+				}
+				
+			}); 
+	  }
+	
+	
+	  
+	//重置
+	  document.getElementById('reset').addEventListener('click',function (data) {
+		  falst();
+		  selectstak();
+	     });
+	  
+
+		 window.onload = selectlevel1();
+
+		 window.onload = selectlevel2();
+		 
+		 setTimeout(function () {
+			 window.onload = selectstak();
+			 window.onload = falst();
+		 }, 100);
+		 
+		
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

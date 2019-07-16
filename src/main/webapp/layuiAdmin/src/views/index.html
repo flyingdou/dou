@@ -1,0 +1,314 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+</head>
+<body>
+
+<title>主页</title>
+
+
+<div id="zuo">
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">   
+  
+    <div class="layui-col-sm6 layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          周期工作卡总量
+          <span class="layui-badge layui-bg-blue layuiadmin-badge">月</span>
+        </div>
+        <div class="layui-card-body layuiadmin-card-list">
+          <p class="layuiadmin-big-font">{{workcord.workcordnum1}}</p>
+          <p>
+           本月
+            <span class="layuiadmin-span-color"> <i class="layui-icon">&#xe66c;</i></span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-sm6 layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          正常完成
+          <span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span>
+        </div>
+        <div class="layui-card-body layuiadmin-card-list">
+          <p class="layuiadmin-big-font">{{workcord.workcordnum2}}</p>
+          <p>
+            占比
+            <span class="layuiadmin-span-color">{{workcord.workcordnum5}}<i class="layui-icon">&#xe650;</i></span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-sm6 layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">
+        提前完成 
+          <span class="layui-badge layui-bg-green layuiadmin-badge">月</span>
+        </div>
+        <div class="layui-card-body layuiadmin-card-list">
+
+          <p class="layuiadmin-big-font">{{workcord.workcordnum3}}</p>
+          <p>
+            占比
+            <span class="layuiadmin-span-color">{{workcord.workcordnum6}}<i class="layui-icon">&#xe664;</i></span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-sm6 layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          逾期完成
+          <span class="layui-badge layui-bg-orange layuiadmin-badge">月</span>
+        </div>
+        <div class="layui-card-body layuiadmin-card-list">
+
+          <p class="layuiadmin-big-font">{{workcord.workcordnum4}}</p>
+          <p>
+            占比
+            <span class="layuiadmin-span-color">{{workcord.workcordnum7}}<i class="layui-icon">&#xe69c;</i></span>
+          </p>
+        </div>
+      </div>
+    </div> 
+      
+       <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">燃油使用情况</div>
+        <div class="layui-card-body" id="echarts1">
+		      <div id="main" style="height:300px;" ></div>
+        </div>
+      </div>
+    </div>
+  
+      
+     <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">数据报表</div>
+        <div class="layui-card-body" id="echarts2">
+        	    
+			<table id="dataTable" lay-filter="dataTable" >
+			
+			</table>
+        </div>
+      </div>
+    </div>
+      
+		</div>
+	
+   
+  </div>
+</div>
+
+    </div>
+<script>
+layui.use('sample', layui.factory('sample'));
+
+
+var vue = new Vue({
+	el: "#zuo",
+	data: {
+		workcord:{
+			workcordnum1:"",
+			workcordnum2:"",
+			workcordnum3:"",
+			workcordnum4:"",
+			workcordnum5:"",
+			workcordnum6:"",
+			workcordnum7:""
+		}
+	},
+});
+
+
+var table;
+var layer;
+var laytpl;
+var dataTable;
+var laydate;
+var form;
+var loading;
+var treeSelect;
+var json = [];
+
+
+layui.use(['table','form','layer','laytpl','laydate','echarts','treeSelect'], function(){
+	 table = layui.table,
+	  loading = layer.load(1, {
+    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+	    });
+	  layer = layui.layer,
+	  laytpl = layui.laytpl;
+	  laydate = layui.laydate;
+	  treeSelect= layui.treeSelect;
+	  
+	  
+	 form=layui.form,
+	  $ = layui.jquery;
+	 
+	
+
+
+	
+
+	//查询接口
+		function show(){
+			  $.ajax({
+					url: "/index/getdata",
+					type: "post",
+					dataType: "json",
+					success: function (res) {
+						
+						vue.workcord.workcordnum1 = res.workcordnum1;
+						vue.workcord.workcordnum2 = res.workcordnum2;
+						vue.workcord.workcordnum3 = res.workcordnum3;
+						vue.workcord.workcordnum4 = res.workcordnum4;
+						
+						vue.workcord.workcordnum5 = GetPercent(res.workcordnum2,res.workcordnum1);
+						vue.workcord.workcordnum6 = GetPercent(res.workcordnum3,res.workcordnum1);
+						vue.workcord.workcordnum7 = GetPercent(res.workcordnum4,res.workcordnum1);
+						
+						/* layer.closeAll(); */
+						if(res.data==null){
+							layer.msg("查询无数据");
+
+							layer.close(loading);
+						}else{
+							if(res.data.length===0){
+								layer.msg("查询无数据");
+
+								layer.close(loading);
+								
+							}else if(res.data.length>0){
+								var mons = [];//x轴月份
+								if(res.listht.length>0){
+									var colstr = [];
+									colstr.push({field: 'departmentname', title: '部门/月份'});
+									           
+									for(var i = 0;i<res.listht.length;i++){
+										var ht = res.listht[i];
+										colstr.push({field: res.listht[i], title: res.listht[i]});
+										mons.push(res.listht[i]);
+									}
+								//数据表刷新
+									 dataTable=table.render({
+										    elem: '#dataTable'
+										    ,height: 'auto'
+										    ,page: false //分页 
+										    ,limit:Number.MAX_VALUE
+										    ,toolbar:true
+										    ,data: res.data//数据接口
+										    ,cols:[colstr]
+										    ,done:function(){
+										    	
+										    }
+									  });
+								}
+								
+								//定义echarts宽度
+								//折线图
+								  var o = document.getElementById("echarts1");
+								  var w = o.clientWidth||o.offsetWidth;
+								  var main=document.getElementById("main");
+								  main.style.width=w-50+"px";
+								 var myChart = echarts.init(document.getElementById('main'));
+								
+								//标题
+									var title;
+									//饼图数据
+									var mon = [];
+									var depart = [];
+									//柱状图数据
+									var ser = [];
+									
+								 var datalist = res.data;
+									for(var i=0;i<datalist.length;i++){
+										title = datalist[i].materialname;
+										depart.push(datalist[i].departmentname);
+										
+										var dataec = [];
+										for(var j = 0;j<res.listht.length;j++){
+											var a = res.listht[j];
+											dataec.push(datalist[i][a]);
+										}
+										
+										ser.push({name:datalist[i].departmentname,type:'line',data:dataec,smooth: true});
+									}
+								 option = {
+										    title: {
+										        text: title+'使用情况'
+										    },
+										    tooltip: {
+										        trigger: 'axis'
+										    },
+										    legend: {
+										        data:depart
+										    },
+										    grid: {
+										        left: '3%',
+										        right: '4%',
+										        bottom: '3%',
+										        containLabel: true
+										    },
+										    toolbox: {
+										        show : true,
+										        feature : {
+										            saveAsImage : {show: true}
+										        }
+										    },
+										    xAxis: {
+										        type: 'category',
+										        boundaryGap: false,
+										        data: mons
+										    },
+										    yAxis: {
+										        type: 'value'
+										    },
+										    series: ser
+										};
+
+
+									// 为echarts对象加载数据 
+									myChart.setOption(option); 
+									layer.close(loading);
+									
+							}
+								
+						}
+					}
+				}); 
+			  
+			  
+		  };
+	 
+		  function GetPercent(num, total) {
+			    /// <summary>
+			    /// 求百分比
+			    /// </summary>
+			    /// <param name="num">当前数</param>
+			    /// <param name="total">总数</param>
+			    num = parseFloat(num);
+			    total = parseFloat(total);
+			    if (isNaN(num) || isNaN(total)) {
+			        return "-";
+			    }
+			    return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00)+"%";
+			}
+		  
+		  show();
+		  
+});
+</script>
+
+
+</body>
+</html>

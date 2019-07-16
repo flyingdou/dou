@@ -1,0 +1,23 @@
+ .hyyd_form{
+ 	background: #fff;
+ 	border-radius: 4px;
+ 	border: 1px solid #dbdbdb;
+ }
+.hyyd_title{
+	line-height: 46px;
+	font-size: 18px;
+	padding-left: 20px;
+	border-bottom: 1px solid #DBDBDB;
+}
+.layui-laydate .layui-this {
+    background-color: #fab003!important;
+    color: #fff!important;
+}
+.layui-laydate-header i:hover, .layui-laydate-header span:hover {
+    color: #fab003;
+}
+.layui-layer-title {
+    background: #fdaf04;
+    color: #fff;
+}
+.layui-laydate-footer span:hover{color:#fdaf04;}

@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<link rel="stylesheet" href="/layuiAdmin/start/layui/css/layui.css" media="all">
+	<script type="text/javascript" src = "/layuiAdmin/start/layui/layui.js"></script>
+</head>
+<style>
+	.layui-footer{
+		position: fixed;
+		bottom: 0;
+		width:100%;
+		background-color: #fff;
+		box-shadow: 0 -1px 2px 0 rgba(0,0,0,.05);
+		height: 44px;
+		line-height: 44px;
+	}
+</style>
+<body>
+
+<form class="layui-form" action="" lay-filter="component-form-group">
+	<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+     <div class="layui-form-item">
+            <label class="layui-form-label">编码</label>
+            <div class="layui-input-block">
+              <input type="text" name="deptCode" id="deptCode" placeholder = "编码自动生成无需输入"  autocomplete="off" class="layui-input" disabled="disabled">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-inline">
+            <input type="text" name="deptName" id="deptName"  lay-verify="required" autocomplete="off" placeholder="请输入名称" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">序号</label>
+            <div class="layui-input-block">
+              <input type="text" name="deptNo" id="deptNo" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">上级部门</label>
+          <div class="layui-input-block">
+            <input type="text" id="deptParent" name="deptParent" lay-filter="deptParent" class="layui-input">
+          </div>
+        </div>
+        
+       
+        <div class="layui-form-item layui-form-text">
+          <label class="layui-form-label">备注</label>
+          <div class="layui-input-block">
+            <textarea name="leader1" id="leader1" placeholder="请输入内容" class="layui-textarea"></textarea>
+          </div>
+        </div>  
+    </div>
+        
+  </div>
+</div>
+  
+        <div class="layui-form-item">
+          	
+            <div class="layui-footer" >
+            <center>
+              <button class="layui-btn" lay-submit="" lay-filter="component-form-demo1" >立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </center>
+            </div>
+        </div>
+</form>
+<script>
+
+layui.config({
+    base: '/layui/layui/' //此处路径请自行处理, 可以使用绝对路径
+}).extend({
+	treeSelect: 'treeSelect'
+});
+
+ layui.use(['form', 'laydate','treeSelect'], function(){
+   var $ = layui.$
+   ,layer = layui.layer
+   ,form = layui.form
+   ,treeSelect= layui.treeSelect;;
+   
+   form.render(null, 'component-form-group');
+   form.render();
+ 
+   
+   treeSelect.render({
+       // 选择器
+       elem: '#deptParent',
+       // 数据
+       data: '/person/selectall2',
+       // 异步加载方式：get/post，默认get
+       type: 'post',
+       // 占位符
+       placeholder: '请选择',
+       // 是否开启搜索功能：true/false，默认false
+       search: true,
+       // 点击回调
+       click: function(d){
+           document.getElementById("deptParent").value=d.current.id;
+       },
+       // 加载完成后的回调函数
+       success: function (d) {
+       }
+   });
+
+ 
+   
+   /* 监听提交 */
+   form.on('submit(component-form-demo1)', function(data){
+	   $.ajax({
+	      	url:"/treeController/adddepartment",
+	  		dataType:'json',
+	  		async:false,
+	  		type:'POST',
+	  		data:data.field,
+	  		success:function(res){
+	  			if(res.SUCCESS){
+		  			layer.msg(res.mag);
+		  			finalily();	
+	  			}else{
+		  			layer.msg(res.mag);
+	  			}
+	  		}
+	      });
+   });
+   function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+ });
+</script>
+	
+	
+</body>
+
+
+
+</html>

@@ -1,0 +1,18 @@
+[{
+	"id": 0,
+	"name": "长江航道局",
+	"open": false,
+	"checked": false,
+	"children": [{
+		"id": 2,
+		"name": "长江武汉航道局",
+		"open": false,
+		"checked": false,
+		"children": [{
+			"id": 21,
+			"name": "荆州航道处",
+			"open": false,
+			"checked": false
+		}]
+	}]
+}]

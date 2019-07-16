@@ -1,0 +1,490 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>新建备件</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<style>
+		#layui-table-page1{text-align:center;}
+		.layui-table-view {border-top-left-radius: 0px;border-top-right-radius: 0px;}
+	</style>
+</head>
+<body  style="width:100%;height:100%">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>备件基本信息</legend>
+	</fieldset>
+<form class="layui-form" action="" onsubmit="return false">
+<div id="wraper">
+<div style="margin-left: 10%;">
+
+
+			<div class="layui-form-item">
+			    <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">备件编码</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="code" id="code" :value="wcSparesum.code"  autocomplete="off" class="layui-input"  disabled="disabled" >
+			      	<input type="hidden" name = "id" id="id"  :value="wcSparesum.id" />
+			      </div>
+			    </div>
+			
+			</div>
+			
+			<div class="layui-form-item">
+			
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="name" class="layui-input" id="name" :value="wcSparesum.name"  autocomplete="off" >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">原编码</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="sourceCode" id="sourceCode" :value="wcSparesum.sourceCode"  autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">规格型号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="model" id="model"  :value="wcSparesum.model" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		  </div>
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">厂家</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="code" id="manufactor"   :value="wcSparesum.manufactor" autocomplete="manufactor" class="layui-input" >
+		      </div>
+		    </div>
+		   <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">所属部门</label>
+		     <div class="layui-input-inline">
+		    	<input type="text" id="department" name="department" lay-filter="tree" class="layui-input" >
+		    </div>
+		    </div>
+		    <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">仓库级别</label>
+			      <div class="layui-input-inline">
+			    	<select class="select"  name="level" id="level" lay-filter="level"   lay-verify="level">
+			       
+					</select>  
+			      </div>
+			    </div> 
+		    
+		   </div>
+		 
+		  <div class="layui-form-item" >
+			  <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">技术属性</label>
+			      <div class="layui-input-inline">
+			    	<select class="select"  name="skillAttribute" id="skillAttribute" lay-filter="skillAttribute"   lay-verify="skillAttribute">
+			       
+					</select>  
+			      </div>
+			    </div> 
+			    <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">特殊属性</label>
+			      <div class="layui-input-inline">
+			    	<select class="select"  name="specialAttribute" id="specialAttribute" lay-filter="specialAttribute"   lay-verify="specialAttribute">
+			       
+					</select>  
+			      </div>
+			    </div> 
+			    <div class="layui-inline">
+			      <label class="layui-form-label label-width" style="width: 90px;">专业属性</label>
+			      <div class="layui-input-inline">
+			    	<select class="select"  name="majorAttribute" id="majorAttribute" lay-filter="majorAttribute"   lay-verify="majorAttribute">
+			       
+					</select>  
+			      </div>
+			    </div>
+		  </div>
+		  <div class="layui-form-item" >
+		  <div class="layui-inline">
+		      <label class="layui-form-label label-width" style="width: 90px;">备注</label>
+		      <div class="layui-input-inline">
+		        <textarea  class="layui-textarea" name="remarks" :value="wcSparesum.remarks" id="remarks" style="width:500px"></textarea>
+		      </div>
+		    </div>
+		  </div>
+		  
+	</div>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>计量</legend>
+	</fieldset>	
+<div style="margin-left: 10%;">
+	<div class="layui-form-item" >
+		<div class="layui-inline">
+			<label class="layui-form-label label-width" style="width: 90px;">数量</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" id="number"  autocomplete="off" :value="wcSparesum.number" class="layui-input" disabled="disabled" lay-verify="require|double">
+		      </div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label label-width" style="width: 90px;">单位</label>
+		      <div class="layui-input-inline">
+		        <select class="select"  name="unit" id="unit" lay-filter="unit"   lay-verify="unit">
+			     </select> 
+		      </div>
+		</div>
+	</div>
+</div>
+	
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>预警设置</legend>
+</fieldset>	
+<div style="margin-left: 10%;">
+	<div class="layui-form-item" >
+		<div class="layui-inline">
+			<label class="layui-form-label label-width" style="width: 90px;">预警数量</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="alertnumber" id="alertnumber" :value="wcSparesum.alertnumber" autocomplete="off" value="0" class="layui-input" lay-verify="require|double">
+		      </div>
+		</div>
+	</div>
+</div>
+
+	 
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  
+	</fieldset>	
+	<center>
+	 <div class="layui-form-item" >
+    <div class="layui-inline">
+      <button class="layui-btn" lay-submit="" lay-filter="create">保存</button>
+    </div>
+  </div>
+  </center>
+</form>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>库存记录</legend>
+	</fieldset>	
+		
+<div id="div1" style="margin-left: 10%;">
+	
+</div>
+	
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/cwbt/js/layer.js"></script>
+	<script type="text/javascript" src="/cwbt/spare/treeSelect.js"></script>
+	<script type="text/javascript" src="/subsys/inforesource/tree/js/jquery.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+	<script>
+	var table;
+	var layer;
+	var laytpl;
+	var dataTable;
+	var laydate;
+	var form;
+	var $;
+	var loading;
+	var treeSelect; 
+	var json = [];
+	var id = sessionStorage.id;
+	sessionStorage.setItem("id",null);//清空
+	
+	 var vue = new Vue({
+			el: "#wraper",
+			data: {
+				wcSparesum:{}
+			},
+	  });
+	
+	layui.use(['table','form','layer','laytpl','laydate','treeSelect'], function(){
+	  table = layui.table,
+	  layer = layui.layer,
+	  loading = layer.load(1, {
+    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+	    });
+	  laytpl = layui.laytpl;
+	  treeSelect= layui.treeSelect;
+	  laydate = layui.laydate;
+	  $ = layui.jquery;
+		 $(document).ajaxStop(function (){
+			 layer.close(loading);
+			 
+		 });
+	 
+	 form=layui.form,
+	 
+	 treeSelect.render({
+         // 选择器
+         elem: '#department',
+         // 数据
+         data: '/person/selectall',
+         // 异步加载方式：get/post，默认get
+         type: 'post',
+         // 占位符
+         placeholder: '请选择',
+         // 是否开启搜索功能：true/false，默认false
+         search: true,
+         // 点击回调
+         click: function(d){
+             document.getElementById("department").value=d.current.id;
+         },
+         // 加载完成后的回调函数
+         success: function (d) {
+        	 select1();
+        	 timelineshow();
+         }
+     });
+	 
+	 //保存
+	 form.on('submit(create)', function(data){
+		 loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+			return saveData(data);;
+		});
+	 
+	
+	 form.verify({
+         
+		    double: function(value){
+		    if(/^\d+$/.test(value)==false && /^\d+\.\d+$/.test(value)==false)
+		    {
+		     return '您输入的不是数字';
+		    }
+		   }
+		});
+	 
+	 
+	});
+	
+
+	
+	//提交
+	function saveData(formData) {
+			var result = false;
+				$.ajax({
+					url: "wcSparesum/addoreditspare",
+					async: false,
+					dataType: "json",
+					type: "post",
+					data: formData.field,
+					success: function(data) {
+						finalily();
+					}
+				});
+			return result;
+		}
+	//跳转页面
+	function  finalily(){
+		parent.location.reload();
+		var index=parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+	
+	 //下拉框(维修级别)（定期）
+	  function select1() {
+		  $("select[name=level]").empty();
+		  $("select[name=skillAttribute]").empty();
+		  $("select[name=specialAttribute]").empty();
+		  $("select[name=majorAttribute]").empty();
+		  $("select[name=unit]").empty();
+		   $.ajax({
+		    async: false,
+		    type: "POST",
+		    url: "/wcSparesum/showselect",
+		    dataType: "json",
+		    data: {},
+		    success: function (res) {
+		  for(var i=0; i<res.wcSparelevellist.length; i++){
+			  if(res.wcSparelevellist[i].id!=null && res.wcSparelevellist[i].id!=''){
+				  var option="<option value=\""+res.wcSparelevellist[i].id+"\"";
+				  option += ">"+res.wcSparelevellist[i].name+"</option>"; //动态添加数据
+				  $("select[name=level]").append(option);
+			  }
+		  }
+		  for(var i=0; i<res.wcSpareskilllist.length; i++){
+			  if(res.wcSpareskilllist[i].id!=null && res.wcSpareskilllist[i].id!=''){
+				  var option="<option value=\""+res.wcSpareskilllist[i].id+"\"";
+				  option += ">"+res.wcSpareskilllist[i].name+"</option>"; //动态添加数据
+				  $("select[name=skillAttribute]").append(option);
+			  }
+		  }
+		  for(var i=0; i<res.WcSparespeciallist.length; i++){
+			  if(res.WcSparespeciallist[i].id!=null && res.WcSparespeciallist[i].id!='' ){
+				  var option="<option value=\""+res.WcSparespeciallist[i].id+"\"";
+				  option += ">"+res.WcSparespeciallist[i].name+"</option>"; //动态添加数据
+				  $("select[name=specialAttribute]").append(option);
+			  }
+		  }
+		  for(var i=0; i<res.WcSparemajorlist.length; i++){
+			  if(res.WcSparemajorlist[i].id!=null && res.WcSparemajorlist[i].id!='' ){
+				  var option="<option value=\""+res.WcSparemajorlist[i].id+"\"";
+				  option += ">"+res.WcSparemajorlist[i].name+"</option>"; //动态添加数据
+				  $("select[name=majorAttribute]").append(option);
+			  }
+		  }
+		  for(var i=0; i<res.wcUnitlist.length; i++){
+			  if(res.wcUnitlist[i].id!=null && res.wcUnitlist[i].id!='' ){
+				  var option="<option value=\""+res.wcUnitlist[i].id+"\"";
+				  option += ">"+res.wcUnitlist[i].name+"</option>"; //动态添加数据
+				  $("select[name=unit]").append(option);
+			  }
+		  } 
+
+		  falst();//填充数据
+		    }
+		   });
+		  }
+	 
+	//查询工作卡
+	  function falst(){
+		  $.ajax({
+				url: "/wcSparesum/selectbyid",
+				type: "post",
+				data: {
+					id: id
+				},
+				dataType: "json",
+				success: function (res) {
+					vue.wcSparesum = res;
+					//给下拉框赋值
+					treeSelect.checkNode('tree', vue.wcSparesum.department);//treeSelect选中
+		        	document.getElementById("department").value=vue.wcSparesum.department;
+					$("#level").val(vue.wcSparesum.level);
+					$("#skillAttribute").val(vue.wcSparesum.skillAttribute);
+					$("#specialAttribute").val(vue.wcSparesum.specialAttribute);
+					$("#majorAttribute").val(vue.wcSparesum.majorAttribute);
+					$("#unit").val(vue.wcSparesum.unit);
+					form.render(); 
+					
+				}
+				
+			}); 
+	  }
+	
+		
+		 /**************************************时间格式化处理(data转字符串)************************************/
+		 function dateFtt(fmt,date)   
+		 { //author: meizz   
+		   var o = {   
+		     "M+" : date.getMonth()+1,                 //月份   
+		     "d+" : date.getDate(),                    //日   
+		     "h+" : date.getHours(),                   //小时   
+		     "m+" : date.getMinutes(),                 //分   
+		     "s+" : date.getSeconds(),                 //秒   
+		     "q+" : Math.floor((date.getMonth()+3)/3), //季度   
+		     "S"  : date.getMilliseconds()             //毫秒   
+		   };   
+		   if(/(y+)/.test(fmt))   
+		     fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
+		   for(var k in o)   
+		     if(new RegExp("("+ k +")").test(fmt))   
+		   fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+		   return fmt;   
+		 }
+		
+		 
+		//时间格式处理（时间戳转字符串）
+		  function createTime(v){
+				var date = new Date(v);
+			    var y = date.getFullYear();
+			    var m = date.getMonth()+1;
+			    m = m<10?'0'+m:m;
+			    var d = date.getDate();
+			    d = d<10?("0"+d):d;
+			    var h = date.getHours();
+			    h = h<10?("0"+h):h;
+			    var ms = date.getMinutes();
+			    ms = ms<10?("0"+ms):ms;
+			    var s = date.getSeconds();
+			    s = s<10?("0"+s):s;
+			    var str = y+"-"+m+"-"+d+" "+h+":"+ms+":"+s;
+			    return str;
+			}
+		 
+		 function timelineshow(){
+			 $.ajax({
+					url: "/wcSparesum/intoandout",
+					type: "post",
+					data: {
+						id: id
+					},
+					dataType: "json",
+					success: function (res) {
+						if(res.SUCCESS===true){
+
+							var list = res.data;
+							
+							var uls = "<ul class=\"layui-timeline\">";
+							var uls2 = "</ul>";
+							var lis = "<li class=\"layui-timeline-item\">";
+							var lis2 = "</li>";
+							var is = "<i class=\"layui-icon layui-timeline-axis\"></i>";
+							var divs = "<div class=\"layui-timeline-content layui-text\">";
+							var divs2 = "</div>";
+							var h3s = "<h3 class=\"layui-timeline-title\">";
+							var h3s2 = "</h3>";
+							var ps = "<p>";
+							var ps2 = "</p>";
+							var br = "</br>";
+							
+							var t1 = "时间:";
+							var t2 = "状态:";
+							var t3 = "数量:";
+							var t4 = "备注:";
+							var t5 = "负责人:";
+							
+							if(list.length>0){
+								var content1 = "";
+								content1 = content1+uls;
+								for(var i=0; i<list.length; i++){
+									var content2 = "";
+									content2 = content2+lis+is+divs;
+									if(list[i].time!=null&&list[i].time!=''){
+										content2 = content2+h3s+t1+createTime(list[i].time)+h3s2
+									}
+									if(list[i].type!=null&&list[i].type!=''){
+										content2 = content2+ps+t2+list[i].type+ps2;
+									}
+									if(list[i].username!=null&&list[i].username!=''){
+										content2 = content2+ps+t5+list[i].username+ps2;
+									}
+									if(list[i].number!=null&&list[i].number!=''){
+										content2 = content2+ps+t3+list[i].number+ps2;
+									}
+									if(list[i].remark!=null&&list[i].remark!=''){
+										content2 = content2+ps+t4+list[i].remark+ps2;
+									}
+									
+									//可扩展
+									content2 = content2 + divs2+lis2;
+									content1 =content1+content2;
+								}
+								content1 = content1 +uls2;
+
+								//再跟你想追加的代码加到一起插入div中
+								document.getElementById("div1").innerHTML = content1;
+							}
+						}else if(res.SUCCESS===false){
+							layer.msg(res.msg);
+						}
+					}
+					
+				}); 
+		 }
+		 
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

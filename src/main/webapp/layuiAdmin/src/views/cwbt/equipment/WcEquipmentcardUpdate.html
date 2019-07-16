@@ -1,0 +1,735 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>设备卡管理</title>
+<link rel="stylesheet" href="/layui/layui/css/layui.css">
+<link rel="stylesheet" href="/layuiAdmin/src/views/cwbt/css/laydate.css">
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/all.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/form.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/laydate.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/JsBarcode.all.js"></script>
+<script src="https://cdn.bootcss.com/jsbarcode/3.8.0/JsBarcode.all.min.js"></script>
+<style>
+	.label-width{
+		width: 130px;	
+	} 
+	input { 
+        background-color:#CCC; 
+        color:green; 
+        border-radius:18px;
+    } 
+             
+            
+	
+</style>
+</head>
+<body>
+	<div class="wraper" id="wraper">
+		<form class="layui-form"  action="" onsubmit="return false">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备卡详细信息</legend>
+			</fieldset>
+			<div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">编码</label>
+		      <div class="layui-input-inline">
+		        
+		        <input type="text" name="feibianma" id="yuansssssssss" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.number" disabled="disabled" placeholder = "编码自动生成无需输入">
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">源编码</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="bianmayuan" id="source_number" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.source_number" >
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">所属船</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="suoshucard" id="in_boat" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.boatname" disabled="disabled" placeholder = "编码自动生成无需输入" >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="sjname" id="yuanid" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.name">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">类型</label>
+		        <input type="text" name="number" id="yuantype" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.type">data-key="device.type"
+		      	<select id="cetestse"  >
+			    </select> 
+		    </div> -->
+		    
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">类型</label>
+		      <div class="layui-input-inline">
+		        <select id="cetestse" name="cetestse">
+			    </select>
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">型号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="xinghaokong" id="yuanmodel" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.model">
+		      </div>
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">制作商</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="createday" id="yuanmanufacturer" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.manufacturer" >
+		      </div>
+		    </div> 
+		    
+		     <!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备参数图片</label>
+		      <div class="layui-input-inline" id="shebeicanshutupian">
+		        <input type="file" name="prephone" lay-verify="date" autocomplete="off" width="120px;" class="layui-input" >
+		         <input type="file" name="myfile" id="prephoneid" onchange="uploadpic(this)"  class="layui-input"/> 
+		      </div>
+		    </div>  -->
+		    
+		     <div class="layui-inline">
+		      <label class="layui-form-label label-width">图纸编号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="tuzhibianhao" id="drawing_number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.drawing_number">
+		      </div>
+		    </div> 
+		  </div> 
+		  <input type="hidden" id="number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model="device.number">
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">备注</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="msgnamefeikong" id="mark" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.mark">
+		      </div>
+		    </div> 
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">备件信息</label>
+		      <div class="layui-input-inline">
+		        <!-- <input type="text" name="date"  id="equipment_msg" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.equipment_msg"> -->
+		        <table cellpadding="0" id="msgtable" style="background-color: #FAFFBE" cellspacing="0">
+		              <tr id="msgtr" >
+		                 <!--  <td><input type="checkbox"  name='checkboxmsg' onclick="msgall"/></td> -->
+		                  <td colspan="3"><button class="layui-btn layui-btn-sm" id="addaddadd" onclick="msgadd()">添加备件信息</button></td>
+		                  <!-- <td><button class="layui-btn layui-btn-sm" onclick="masgdelete()">删除设备参数</button></td> -->
+		              </tr>
+		        </table>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备启用时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="createdate" lay-verify="date" autocomplete="off" class="layui-input"  id="date_realJobTime" disabled="disabled"  v-model = "device.createtime" placeholder = "创建时间自动生成无需输入" >
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备状态</label>
+		      <div class="layui-input-inline">
+		        <select id="status" name="status" data-key="device.status">
+			    </select>
+		      </div>
+		    </div>
+		    
+		    
+		    <!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">设备参数图片</label>
+		      <div class="layui-input-inline">
+		        <input type="file" name="prephone" lay-verify="date" autocomplete="off" width="120px;" class="layui-input" >
+		        <input type="file" name="myfile" id="prephoneid" onchange="uploadpic(this)"  class="layui-input"/>
+		      </div>
+		    </div> -->
+		    
+		  </div>  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">所属船舶部门</label>
+		      <div class="layui-input-inline">
+		      	<select id="select-boatdepartment" data-key="device.boatdepartment">
+			    </select>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">条形码</label>
+		      <div class="layui-input-inline">
+		        <a href="barcode.html" target="_blank" class="layui-btn layui-btn-sm">查看</a> 
+		        <!-- <a href="../1.png" target="_blank" class="layui-btn layui-btn-sm">查看</a> -->
+		        <button class="layui-btn layui-btn-sm" onclick="seachwork()">工作卡查看</button>
+		      </div>
+		    </div>
+		  </div>
+		  
+		    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>设备图片</legend>
+		</fieldset>
+		<div class="layui-form-item">
+			<input type="hidden" id="image" name="image" v-model = "device.image"/>
+			<img class="layui-upload-img" v-if="device.imageurl" id="imageurl" :src="window.location.protocol+'//'+window.location.host+'/'+device.imageurl">
+		</div>
+		  
+		</form>
+	</div>
+	
+	<div class="layui-form-item">
+		<div class="layui-upload">
+  			<button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+  			<!-- 
+ 			 <div class="layui-upload-list">
+    			<img class="layui-upload-img" id="demo1">
+    			<p id="demoText"></p>
+  			</div> -->
+		</div> 
+		</div>
+	
+	<div  align="center" id="container">
+		 <table cellpadding="0" id="tbalecheck" style="margin-left:78px;background-color: #FAFFBE" align="left"  cellspacing="0">
+		      <!-- <tr id="faisttr" >
+		          <td><input type="checkbox"  id="suoyou" onclick="swapCheck()"/></td>
+		          <td><button class="layui-btn layui-btn-sm" id="addaddadd" onclick="addcheck()">添加设备参数</button></td>
+		          <td><button class="layui-btn layui-btn-sm" onclick="deletepre()">删除设备参数</button></td>
+		      </tr>
+		      <tr style="margin-left: 100px" tabindex="3">
+		          <td></td>
+		          <td colspan="1"><button class="layui-btn layui-btn-sm"   onclick="history.go(-1)">返回上一页</button></td>
+		          <td><button class="layui-btn layui-btn-sm" onclick="dianji()" style="width: 84px">保存</button></td>
+		     </tr> -->
+		     <tr id="faisttr">
+		     <td>&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm" id="addaddadd" onclick="addcheck()">添加设备参数</button></td>
+		     <td colspan="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm"   onclick="history.go(-1)">返回上一页</button></td>
+		     <td>&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-sm" onclick="dianji()" >保存</button>
+		     </td>
+		     </tr>
+		     
+		</table>
+	</div>
+	<script type="text/javascript">
+	
+	layui.use('upload', function(){
+		  var $ = layui.jquery
+		  ,upload = layui.upload;
+		  
+		  //普通图片上传
+		  var uploadInst = upload.render({
+		    elem: '#test1'
+		    ,url: '/uploadFile/uploadFile'
+		    ,data:{
+		    	filetype:"1"
+		    }
+		    ,before: function(obj){
+		      /* //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		        $('#demo1').attr('src', result); //图片链接（base64）
+		      }); */
+		    }
+		    ,done: function(res){
+		      //如果上传失败
+		      if(res.code > 0){
+		        return layer.msg('上传失败');
+		      }else if(res.code===0){//上传成功
+		    	  dou.device.image = res.fileid;
+		    	  dou.device.imageurl = res.fileurl; 
+		    	  console.log(dou.device);
+		      }
+		      
+		    }
+		    ,error: function(){
+		      //演示失败状态，并实现重传
+		      var demoText = $('#demoText');
+		      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+		      demoText.find('.demo-reload').on('click', function(){
+		        uploadInst.upload();
+		      });
+		    }
+		  });
+	});
+	
+	
+	 var pre;
+	 var msg;
+	 var parprite;
+	 $(function(){
+		 var numberid;
+		 var gettypeid;
+		 var devices = sessionStorage.getItem("deviceCardsss");
+		var deviceInfos = sessionStorage.getItem("deviceInfosss");
+		
+		devices = JSON.parse(devices);
+		deviceInfos= JSON.parse(deviceInfos);
+		if(devices&&deviceInfos){
+			numberid=JSON.stringify(devices.number);
+			gettypeid=devices.type;
+			$.getJSON("/WcEquipmentcard/updateprepamter?workid="+numberid+"&&v="+Math.random(),function(date){
+				pre=date.prelist;
+				var s="";
+				$.each(pre,function(index,ss){
+					s+="<tr style='padding-bottom: 100px' id='shebeitr'>"
+					s+="<td>&nbsp;&nbsp;设备参数名称<input type='text' name='shebeiname' id='shebeiname'  height='24px' value='"+ss.parameter_name+"' />"
+					s+="<input type='hidden' name='preid' value='"+ss.id+"'></td>"
+					s+="<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备参数值<input type='text' id='shebeiname' name='shebeican'   value='"+ss.parameter_value+"'  /></td>"
+					s+="<td>"
+					//s+="<input type='file' name='myfile' id='prephoneid' onchange='uploadpic(this)'  class='layui-input'/>"
+					s+="&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' class='layui-btn layui-btn-sm'     onclick='deletepre("+ss.id+")'  value='删除' />"
+					s+="</td>";
+					s+="</tr>"
+					
+					
+					
+				});
+					$("#tbalecheck").append(s); 
+			});
+			
+			$.getJSON("/WcEquipmentcard/updatemsg?msgid="+numberid+"&&v="+Math.random(),function(date){
+				msg=date.msglist;
+				var tian="";
+				$.each(msg,function(ko,m){
+					tian+="<tr style='padding-bottom: 100px' id='msgtr'>"
+					tian+="<td>备件名称<input type='text' id='msgname' name='msgname'  value='"+m.parts+"' />"
+					tian+= "<input type='hidden' name='msgid' value='"+m.id+"'></td>"
+					tian+="<td>备件详情<input type='text' name='msgvalue' id='msgvalue'   value='"+m.partsmsg+ "' /></td>"
+					tian+="<td><input type='button' class='layui-btn layui-btn-sm' onclick='deletemsg("+m.id+")' value='删除' /></td>"
+					tian+="</tr>"
+				});
+				$("#msgtable").append(tian);
+			});	
+			
+			
+			
+			
+		}
+		
+		
+		$.getJSON("/WcEquipmentcard/getlisttype?v="+Math.random(),function(date){
+			layui.use('form', function(){
+			var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加() 
+			var getlisttype=date.typelist;
+			$.each(getlisttype,function(i,item){
+				$("#cetestse").append("<option value='"+item.id+"' >"+item.name+"</option>");
+				if(item.id==gettypeid){
+					 $("#cetestse").val(item.id);
+				}
+			});
+			form.render(); 
+			});
+		})
+	}) 
+	var msatableadd="<tr style='padding-bottom: 100px' id='shebeitr'>"
+		//msatableadd+="<td><input type='checkbox'  name='checkboxmsg'  width='20px'  height='20px' /></td>"
+		msatableadd+="<td>备件名称<input type='text' id='msgname' name='msgname'   />"
+		msatableadd+="<input type='hidden'  name='msgid'/>"
+		msatableadd+= "</td>"
+		msatableadd+="<td>备件详情<input type='text' name='msgvalue' id='msgvalue'    /></td>"
+		msatableadd+="<td class='msgdelss'><input type='button' class='layui-btn layui-btn-sm' onclick='deletemsg(0)' value='删除' /></td>"
+		msatableadd+="</tr>"
+	function msgadd(){
+			$("#msgtable").append(msatableadd);
+		}
+	function msgall(){
+		if (ischeck){
+			$("input[name='checkboxmsg']").each(function() {
+				this.checked = false;
+			});
+			ischeck = false;
+		} else {
+			$("input[name='checkboxmsg']").each(function() {
+				this.checked = true;
+			});
+			ischeck = true;
+		}
+	}
+	/* function msgdelete(){
+		$("input[name='checkboxmsg']:checked").each(function() { // 遍历选中的checkbox
+	         n = $(this).parents("tr").index();  // 获取checkbox所在行的顺序
+	         $("table#msgtable").find("tr:eq("+n+")").remove();
+	         //var skueuia= $("table#tbalecheck").find("tr:eq("+n+") td#preid");
+	         //alert(skueuia[1].value);
+	     }); 
+	}; */
+	
+	/* function deletepre(){
+		     $("input[name='checkboxlist']:checked").each(function() { // 遍历选中的checkbox
+		         n = $(this).parents("tr").index();  // 获取checkbox所在行的顺序
+		         $("table#tbalecheck").find("tr:eq("+n+")").remove();
+		         var skueuia= $("table#tbalecheck").find("tr:eq("+n+") td#preid");
+		         //alert(skueuia[1].value);
+		     });       
+	 } */
+	
+	function deletepre(preid){
+		if(preid==0){
+			$('td.sssssdel').on('click', function() {
+			    $(this).parent('tr').remove()
+			});
+		}else{
+			
+			$.getJSON("/WcEquipmentcard/deletepre?preid="+preid+"&&v="+Math.random(),function(date){});
+			window.location.href="/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardUpdate.html";
+		}
+	};
+	 
+	 
+	
+	function deletemsg(msgidjsp){
+		if(msgidjsp==0){
+			$('td.msgdelss').on('click', function() {
+			    $(this).parent('tr').remove()
+			});
+		}else{
+			$.getJSON("/WcEquipmentcard/deletemsg?msgid="+msgidjsp+"&&v="+Math.random(),function(date){});
+			window.location.href="/layuiAdmin/src/views/cwbt/equipment/WcEquipmentcardUpdate.html";
+		}
+	}
+	 
+	
+	//点击跳转工作卡页面
+	function seachwork(){
+	var devices = sessionStorage.getItem("deviceCardsss");
+	var deviceInfos = sessionStorage.getItem("deviceInfosss");
+	if(devices&&deviceInfos){
+	devices = JSON.parse(devices);
+	deviceInfos= JSON.parse(deviceInfos);
+	//sessionStorage.setItem("seachworkid", JSON.stringify(devices.number));
+	//sessionStorage.setItem("seachworkid", JSON.stringify(devices.number))
+	sessionStorage.setItem("seachworkid", JSON.stringify(devices.id))
+	window.location.href="/layuiAdmin/src/views/cwbt/listworkcord.html";
+	}
+	}
+	var isCheckAll = false;
+	var k="<tr  id='shebeitr'>"
+		k+="<td>&nbsp;&nbsp;设备参数名称<input type='text'   height='24px' id='shebeiname' name='shebeiname'   />";
+		k+="<input type='hidden' name='preid' ></td>";
+		k+="</td>";
+		k+="<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备参数值<input type='text'  height='24px' id='shebeiname' name='shebeican'    /></td>";
+		k+="<td colspan='1' class='sssssdel'>"
+		//k+="<input type='file' name='myfile' id='prephoneid' onchange='uploadpic(this)'  class='layui-input'/>";
+		//k+="<input type='file' name='myfile' id='prephoneid' onchange='uploadpic(this)'  class='layui-input'/>";
+		k+="&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' class='layui-btn layui-btn-sm' onclick='deletepre(0)'   value='删除' />";
+		k+="</td>";
+		k+="</tr>";
+	/* function swapCheck(){
+		if (isCheckAll){
+			$("input[name='checkboxlist']").each(function() {
+				this.checked = false;
+			});
+			isCheckAll = false;
+		} else {
+			$("input[name='checkboxlist']").each(function() {
+				this.checked = true;
+			});
+			isCheckAll = true;
+		}
+	} */
+    function addcheck(){
+    		$("#tbalecheck").append(k);
+    }
+    /**
+    ?* 编辑表格
+    ?*/
+	var dou = new Vue({
+		el: "#wraper",
+		data: {
+			device: {},
+			deviceInfo: {}
+		},
+		mounted: function () {
+			setTimeout(this.init,100);
+		},
+		methods: {
+			init: function () {
+	 			getDevice();
+	 			this.$nextTick(function () {
+		      layui.use(['form', 'layer'], function(){
+		        var form = layui.form;
+		        var laydate = layui.laydate;
+		        
+		        form.on('select', function(data){
+		        	var key = data.elem.attributes["data-key"].value;
+		        	var keys = key.split(".");
+		        	dou[keys[0]][keys[1]] = data.value;
+		        }); 
+		        
+		        laydate.render({
+	        	  elem: '#date_planJobTime',
+	        	  done: function (value, date, endDate) {
+	        		  dou.device.updatetime = value;
+	        	  }
+	        	});
+		        
+		        laydate.render({
+	        	  elem: '#date_realJobTime',
+	        	  done: function (value, date, endDate) {
+	        		  dou.device.createtime = value;
+	        	  }
+	        	});
+		      	
+		        form.render(); 
+		      });
+	 			});
+	 		 }
+		}
+	});
+	function getDevice () {
+		var device = sessionStorage.getItem("deviceCardsss");
+		var deviceInfo = sessionStorage.getItem("deviceInfosss");
+		
+		if (device && deviceInfo) {
+			device = JSON.parse(device);
+			sessionStorage.setItem("numberssssasdasdasd", JSON.stringify(device.number));
+			deviceInfo = JSON.parse(deviceInfo);
+			//$("#select-is_model").val(device.is_model);
+            if(device.boatdepartment==1){
+            	//$("#select-is_model").val("否");
+            	$("#select-boatdepartment").append("<option value='1'selected='selected' >驾驶部</option>");
+            	$("#select-boatdepartment").append("<option value='2'>轮机部</option>");
+            }else if(device.boatdepartment==2){
+            	$("#select-boatdepartment").append("<option value='2'selected='selected' >轮机部</option>");
+            	$("#select-boatdepartment").append("<option value='1'>驾驶部</option>");
+            }
+             if(device.status==0){
+            	$("#status").append("<option value='0'selected='selected' >正常</option>");
+            	$("#status").append("<option value='1'>暂停</option>");
+            	$("#status").append("<option value='2'>异常</option>");
+            }else if(device.status==1){
+            	$("#status").append("<option value='0' >正常</option>");
+            	$("#status").append("<option value='1' selected='selected'>暂停</option>");
+            	$("#status").append("<option value='2'>异常</option>");
+            }else if(device.status==2){
+            	$("#status").append("<option value='0'>正常</option>");
+            	$("#status").append("<option value='1'>暂停</option>");
+            	$("#status").append("<option value='2' selected='selected'>异常</option>");
+            }
+             device.status=$("#status").val();
+             /* if(parprite!=null||parprite!=''){
+            	 alert(parprite);
+            	 var ahref="<a href='D:\java\picture\'"+parprite+" target='_blank'>查看</a>";
+            	 $("#shebeicanshutupian").html(ahref);
+             }else{
+            	 var ah="<input type='file' name='myfile' id='prephoneid' onchange='uploadpic(this)'  class='layui-input'/>"
+            	 $("#shebeicanshutupian").html(ah);
+             } */
+             
+             
+		} else {
+			device = {
+					deviceJobType: ""
+				};
+				deviceInfo = {};
+				$("#select-boatdepartment").append("<option value='1' >驾驶部</option>");
+            	$("#select-boatdepartment").append("<option value='2'>轮机部</option>");
+            	
+            	$("#status").append("<option value='0'>正常</option>");
+            	$("#status").append("<option value='1'>暂停</option>");
+            	$("#status").append("<option value='2'>异常</option>");
+            	device.status=$("#status").val();
+            	/* var ah="<input type='file' name='myfile' id='prephoneid' onchange='uploadpic(this)'  class='layui-input'/>"
+               	 $("#shebeicanshutupian").html(ah); */
+		}
+		
+		if(!device.image){
+			device.image="";
+			device.imageurl="";
+		}
+		
+		dou.device = device;
+		dou.deviceInfo = deviceInfo;
+	}
+	var iscliskdianji=true;
+	var kahuansduqwknansd=true;
+	function dianji(){	
+		if(yanz()){
+			if(kahuansduqwknansd){
+				save();
+				kahuansduqwknansd=false;
+			}
+		}
+		
+	}
+	
+     
+	/* 保存或修改  */
+	function save () {
+		
+		//var prephone=document.getElementById("prephoneid").value;
+		var reqUrl = "/WcEquipmentcard/insertWcEquipmentcard";
+		var device = dou.device;
+		//var tablelee=$('#tbalecheck');
+		var PreNames = new Array();//设备名称集合
+		var PreValues = new Array();//设备值集合
+		var PreId = new Array();//设备id集合
+		var pritefilelist=new Array();//设备上传路劲；
+		var Msgnamelist=new Array();
+		var Msgvaluelist=new Array();
+		var Msgidlist=new Array();
+		var inputArr=document.getElementsByName("shebeiname");//获取设备名称
+		var inputArrs=document.getElementsByName("shebeican");//获取设备参数
+		var inputpreid=document.getElementsByName("preid");//获取设备id
+		var prite=document.getElementsByName("myfile");//获取设备上传文件路劲
+		var msgname=document.getElementsByName("msgname");
+		var msgvalue=document.getElementsByName("msgvalue");
+		var msgid=document.getElementsByName("msgid");
+		
+		for(var i=0;i<inputArr.length;i++) {
+			PreNames.push(inputArr[i].value);  
+		    }
+		for(var i=0;i<inputArrs.length;i++){
+			PreValues.push(inputArrs[i].value);   
+		    }
+		for(var i=0;i<inputpreid.length;i++){
+			PreId.push(inputpreid[i].value);
+		}
+		for(var i=0;i<prite.length;i++){
+			pritefilelist.push(prite[i].value);
+		}
+		for(var i=0;i<msgname.length;i++){
+			Msgnamelist.push(msgname[i].value);
+		}
+		for(var i=0;i<msgvalue.length;i++){
+			Msgvaluelist.push(msgvalue[i].value);
+		}
+		for(var i=0;i<msgid.length;i++){
+			Msgidlist.push(msgid[i].value);
+		}
+		
+		var typeid=$("#cetestse").val();
+		device.type=typeid;
+		var bot=$("#select-boatdepartment").val();
+		device.boatdepartment=bot;
+		//船的编码
+		var careeqparnumber=sessionStorage.getItem("department");
+		device.cardnumber=careeqparnumber;
+		var value = device.value ? parseInt(device.value) : 0;
+		var timeUnit = 1;
+		if (device.timeUnit == 2) {
+			timeUnit = 30;
+		} else if (device.timeUnit == 3) {
+			timeUnit = 365;
+		}
+		device.maintainCycle = value * timeUnit;
+		if (device.deviceJobType != 1) {
+			device.maintainCycle = 0;
+		}
+		// 保存数据
+		$.ajax({
+			url:reqUrl,
+			type:"post",
+			data:{
+				json: encodeURI(JSON.stringify(device)),
+				parname:encodeURI(JSON.stringify(PreNames)),
+				parvalue:encodeURI(JSON.stringify(PreValues)),
+				preid:encodeURI(JSON.stringify(PreId)),
+				msgid:encodeURI(JSON.stringify(Msgidlist)),
+				msgname:encodeURI(JSON.stringify(Msgnamelist)),
+				msgvalue:encodeURI(JSON.stringify(Msgvaluelist)),
+				pritefile:encodeURI(JSON.stringify(pritefilelist))
+			},
+			dataType:"json",
+			success: function (res) {
+				if (res.success){
+					alert("保存成功");
+					location.href = "WcEquipmentcardList.html";
+				}
+			},
+			error: function (e) {
+				console.log(e);
+				alert("保存失败");
+			}
+		});
+		
+		
+	}
+	
+	function uploadpic(fileDom) {
+		var file = fileDom.files[0];
+		var reader = new FileReader();
+	    reader.readAsDataURL(file);
+		var formData = new FormData(); 
+		formData.append('myfile', $('#prephoneid')[0].files[0]); //添加图片信息的参数
+		console.log(formData);
+		$.ajax({
+			//http://fish.ecartoon.com.cn/uploadFile
+		    url: '/api/cwbtMP/uploadFile',
+		    type: 'POST',
+		    cache: false, //上传文件不需要缓存
+		    data: formData,
+		    processData: false, // 告诉jQuery不要去处理发送的数据
+		    contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+		    success: function (data) {
+		        var rs = JSON.parse(rs);
+		        if(rs.success){ // 判断方法是否成功
+		          dou.device.pic = rs.picture;
+		        }
+		    },
+		    error: function (data) {
+		        console.log('上传失败');
+		    }
+		})  
+	}
+	
+	function yanz(){
+		 /* $("[name='updatename']").val('时间自动填写无需输入');
+		 $("[name='createdate']").val('时间自动填写无需输入');
+		 $("[name='suoshucard']").val('编码自动生成无需输入');
+		 $("[name='feibianma']").val('时间自动填写无需输入'); */
+		 /* var bianmayuan=$("[name='bianmayuan']").val();
+		 var suoshucard=$("[name='sjname']").val();
+		 var xinghaokong=$("[name='xinghaokong']").val();
+		 var createday=$("[name='createday']").val();
+		// var tuzhibianhao=$("[name='tuzhibianhao']").val();
+		 var msgnamefeikong=$("[name='msgnamefeikong']").val();
+		 var msgname=$("[name='msgname']").val();
+		 var msgvalue=$("[name='msgvalue']").val();
+		 var shebeiname=$("[name='shebeiname']").val();
+		 var shebeican=$("[name='shebeican']").val();
+		 
+		 if(bianmayuan==''||bianmayuan==null){
+			 alert('表单数据不能为空1');
+			 return false;
+		 }else if(suoshucard==''||suoshucard==null){
+			 alert('表单数据不能为空2');
+			 return false;
+		 }else if(xinghaokong==''||xinghaokong==null){
+			 alert('表单数据不能为空3');
+			 return false;
+		 }else if(createday==''||createday==null){
+			 alert('表单数据不能为空4');
+			 return false;
+		 }else if(msgnamefeikong==''||msgnamefeikong==null){
+			 alert('表单数据不能为空6');
+			 return false;
+		 }else if(msgname==''){
+			 alert('表单数据不能为空7');
+			 return false;
+		 }else if(msgvalue==''){
+			 alert('表单数据不能为空8');
+			 return false;
+		 }else if(shebeiname==''){
+			 alert('表单数据不能为空9');
+			 return false;
+		 }else if(shebeican==''){
+			 alert('表单数据不能为空10');
+			 return false;
+		 }else{ */
+			 return true;
+	/* 	 } */
+		 
+	}
+
+	
+	</script>
+</body>
+</html>
+

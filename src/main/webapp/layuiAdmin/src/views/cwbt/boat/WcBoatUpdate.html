@@ -1,0 +1,606 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>船舶卡管理</title>
+<link rel="stylesheet" href="/layui/layui/css/layui.css">
+<link rel="stylesheet" href="/layuiAdmin/src/views/cwbt/css/laydate.css">
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/jquery-3.3.1.min.js"></script>
+<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/all.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/form.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/laydate.js"></script>
+<script type="text/javascript" src = "/layuiAdmin/src/views/cwbt/js/JsBarcode.all.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+<style>
+	.label-width{
+		width: 130px;	
+	} 
+</style>
+</head>
+<body>
+	<div class="wraper">
+		<form class="layui-form"  action="" onsubmit="return false">
+		
+	<div class="wraper" id="wraper">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>船舶卡基本信息</legend>
+			</fieldset>
+			
+			<div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">编码</label>
+		      <div class="layui-input-inline">
+		        
+		        <input type="text" name="date" id="date" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.number" autocomplete="off" placeholder = "编码自动生成无需输入" disabled="disabled" >
+		      </div>
+		    </div>   
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">名称</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" id="date" lay-verify="date" autocomplete="off" class="layui-input" v-model = "device.name" >
+		      </div>
+		    </div>
+		    <!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">是否模板</label>
+		      <div class="layui-input-inline"  id="annou">
+		      	<select id="select-is_model"  data-key="device.is_model"  lay-filter="select-is_model">
+		      	  <option value="">是否为模板</option>
+			    </select>
+		      </div>
+		    </div> -->
+		    <!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">创建时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="date" lay-verify="date" autocomplete="off" class="layui-input"  id="date_realJobTime" v-model = "device.createtime">
+		      </div>
+		    </div> -->
+		  </div>
+		  
+		  <div class="layui-form-item" style="margin-left: 50px" v-if="device.number==null">
+               <label class="layui-form-label">部门选择</label>
+			    <div class="layui-input-inline">
+			      <select id="pro" name="pro"  lay-filter="pro" v-model ="device.parents">
+			        
+			      </select>
+			    </div>
+			    <div class="layui-input-inline">
+			      <select id="city"  name="city"  lay-filter="city" v-model ="device.son">
+			        
+			      </select>
+			    </div>
+			    
+			    <!-- 选择部门 -->
+			    <div class="layui-input-inline">
+			      <select id="county"  name="county"  lay-filter="county" data-key="device.department" v-model ="device.department">
+			       
+			      </select>
+			    </div>
+		  </div>
+		   <div class="layui-form-item" style="margin-left: 50px;">
+		    <label class="layui-form-label">备注</label>
+		    <div class="layui-input-inline" style="width: 565px;">
+		      <textarea placeholder="请输入内容" name="number" lay-verify="required|number" autocomplete="off" v-model = "device.mark" class="layui-textarea"></textarea>
+		    </div>
+		    <div class="layui-input-inline"></div>
+		   </div>
+			<!-- <div class="layui-inline">
+		      <label class="layui-form-label label-width">备注</label>
+		      <div class="layui-input-block">
+		       <textarea placeholder="请输入内容" name="number" lay-verify="required|number" autocomplete="off" v-model = "device.mark" class="layui-textarea"></textarea>
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.mark">
+		      </div>
+		    </div> -->
+		  
+		 <!--  <div class="layui-form-item">
+		      <div class="layui-inline">
+		      <label class="layui-form-label label-width">结束时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="name" lay-verify="required|number" autocomplete="off" class="layui-input"  id="date_planJobTime" v-model = "device.updatetime">
+		      </div>
+		    </div>
+		  </div>  -->   
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船舶类型</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.theshiptype">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船型</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shiptype">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">购建时间(年)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"  v-model = "device.constructiontime">
+		      </div>
+		    </div>
+		  </div>  
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">账面原值(万元)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.papermoney">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">装船总功率(KW)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input" v-model = "device.shipmentpower">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船舶总吨数(T)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shippower">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>船舶主要项目</legend>
+	</fieldset>
+	
+		 <div class="layui-form-item">
+		   <div class="layui-inline">
+		      <label class="layui-form-label label-width">安放龙骨时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="plannedtime" lay-verify="date" autocomplete="off" class="layui-input"  id="date_realJobTime" v-model = "device.putkeeldete">
+		      </div>
+		      </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">建造完工时间</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="plannedtime" lay-verify="required|number" autocomplete="off" class="layui-input"  id="date_planJobTime" v-model = "device.buildcompletiondate">
+		      </div>
+		      
+		      
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船舶制造厂</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shipfactory">
+		      </div>
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船舶改造厂</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shipreform">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船舶所有人</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shippeople">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船检登记号</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shipregistration">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>船体部分</legend>
+	</fieldset>
+	<div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">总长(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.chief">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船长(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.thecaptain">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">满载水长线(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.fullloadwater">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width"> 船宽(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.thebeam">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">最大船宽(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shipwidth">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">型深(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.typedeep">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width"> 最大船高(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.shipishigh">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">空载吃水(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.lightdraft">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">满载吃水(m)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.loadeddraft">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width"> 满载排水量(t)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.loadeddisplacement">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">空载排水量(t)</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.loaddisplacement">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">结构型式</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.structuraltype">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">航区</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.lightcorridor">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">急流航段</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.jetsegment">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">船体材料</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.hullmaterial">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">货舱的数量</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.quantityofhold">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">货舱盖型式</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.typeofcargocover">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label label-width">水密横舱壁数</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input"v-model = "device.watertightbulkhead">
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			  <legend>船舶图片</legend>
+		</fieldset>
+		<div class="layui-form-item">
+			<input type="hidden" id="image" name="image" v-model = "device.image"/>
+			<img class="layui-upload-img" v-if="device.imageurl" id="imageurl" :src="window.location.protocol+'//'+window.location.host+'/'+device.imageurl">
+		</div>
+	</div><!-- wraper end -->
+		
+		
+		<div class="layui-form-item">
+		<div class="layui-upload">
+  			<button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+  			<!-- 
+ 			 <div class="layui-upload-list">
+    			<img class="layui-upload-img" id="demo1">
+    			<p id="demoText"></p>
+  			</div> -->
+		</div> 
+		</div>
+		
+		  
+		  
+		
+
+			 <div class="layui-form-item">
+		     <button class="layui-btn layui-btn-sm" style="margin-left: 300px;" onclick="history.go(-1)">返回上一页</button>
+		     <button class="layui-btn layui-btn-sm" onclick="save()">保存</button>
+		  </div>
+		</form> <!-- from end -->
+	</div> 
+	
+	
+	<script>
+	
+
+	var dou = new Vue({
+		el: "#wraper",
+		data: {
+			device: {
+			},
+			deviceInfo: {}
+		},
+		mounted: function () {
+			setTimeout(this.init,100);
+		},
+		methods: {
+			init: function () {
+	 			getDevice();
+	 			this.$nextTick(function () {
+		      layui.use(['form', 'layer'], function(){
+		        var form = layui.form;
+		        var laydate = layui.laydate;   
+		        
+		       
+			        
+		        laydate.render({
+	        	  elem: '#date_planJobTime',
+	        	  done: function (value, date, endDate) {
+	        		  dou.device.updatetime = value;
+	        	  }
+	        	});
+		        
+		        laydate.render({
+	        	  elem: '#date_realJobTime',
+	        	  done: function (value, date, endDate) {
+	        		  dou.device.createtime = value;
+	        	  }
+	        	});
+		      	
+		        form.render(); 
+		      });
+	 			});
+	 		 }
+		}
+	});
+	
+	layui.use('upload', function(){
+		  var $ = layui.jquery
+		  ,upload = layui.upload;
+		  
+		  //普通图片上传
+		  var uploadInst = upload.render({
+		    elem: '#test1'
+		    ,url: '/uploadFile/uploadFile'
+		    ,data:{
+		    	filetype:"1"
+		    }
+		    ,before: function(obj){
+		      /* //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		        $('#demo1').attr('src', result); //图片链接（base64）
+		      }); */
+		    }
+		    ,done: function(res){
+		      //如果上传失败
+		      if(res.code > 0){
+		        return layer.msg('上传失败');
+		      }else if(res.code===0){//上传成功
+		    	  dou.device.image = res.fileid;
+		    	  dou.device.imageurl = res.fileurl; 
+		    	  console.log(dou.device);
+		      }
+		      
+		    }
+		    ,error: function(){
+		      //演示失败状态，并实现重传
+		      var demoText = $('#demoText');
+		      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+		      demoText.find('.demo-reload').on('click', function(){
+		        uploadInst.upload();
+		      });
+		    }
+		  });
+	});
+	
+	
+	
+	function getDevice () {
+		var device = sessionStorage.getItem("deviceCardsss");
+		var deviceInfo = sessionStorage.getItem("deviceInfosss");
+		
+		if (device && deviceInfo) {
+			device = JSON.parse(device);
+			deviceInfo = JSON.parse(deviceInfo);
+			//$("#select-is_model").val(device.is_model);
+            if(device.is_model==0){
+            	//$("#select-is_model").val("否");
+            	/* $("#select-is_model").find("option").each(function() {
+           				 $(this).removeAttr("selected");
+       			}); */
+            	$("#select-is_model").append("<option value='0'selected='selected' >否</option>");
+            	$("#select-is_model").append("<option value='1'>是</option>");
+            }else if(device.is_model==1){
+            	/* $("#select-is_model").find("option").each(function() {
+      				 $(this).removeAttr("selected");
+  			    }); */
+            	$("#select-is_model").append("<option value='1' selected='selected'>是</option>");
+            	$("#select-is_model").append("<option value='0'>否</option>");
+            }
+            
+		} else {
+			device = {
+					deviceJobType: ""
+				};
+				deviceInfo = {};
+				
+				$("#select-is_model").append("<option value='0' >否</option>");
+            	$("#select-is_model").append("<option value='1'>是</option>");
+		}
+		
+		if(!device.image){
+			device.image="";
+			device.imageurl="";
+		}
+		
+		dou.device = device;
+		
+		
+		dou.deviceInfo = deviceInfo;
+	}
+	
+	/* 保存或修改  */
+	function save () {
+		var reqUrl = "/WcBoat/insertWcBoat";
+		var device = dou.device;
+		var value = device.value ? parseInt(device.value) : 0;
+		var timeUnit = 1;
+		if (device.timeUnit == 2) {
+			timeUnit = 30;
+		} else if (device.timeUnit == 3) {
+			timeUnit = 365;
+		}
+		device.maintainCycle = value * timeUnit;
+		if (device.deviceJobType != 1) {
+			device.maintainCycle = 0;
+		}
+		// 保存数据
+		$.ajax({
+			url:reqUrl,
+			type:"post",
+			data:{
+				json: encodeURI(JSON.stringify(device))
+			},
+			dataType:"json",
+			success: function (res) {
+				if (res.success){
+					layer.alert("保存成功");
+					window.history.back(-1);
+				}
+			},
+			error: function (e) {
+				console.log(e);
+				layer.alert("保存失败");
+			}
+		});
+	
+	}
+	
+	
+	</script>
+	
+	
+	<script type="text/javascript">	   
+	    layui.use('form', function(){
+			 var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
+	    $(function(){
+		    $.ajax({
+		        type:"POST",
+		        cache:false,
+		        url:"/treeController/selectbydepartment",
+		        data:{"pid":0},
+		        dataType:"json",
+		        success:function(data){	        	
+		        	var option='<option value="">请选择所属局</option>';
+		            $.each(data,function(i,n){
+		            	option += '<option value="'+n.id+'">'+n.name+'</option>';
+		            })
+		            $("#pro").append(option);
+		            form.render('select');
+		        }
+		        
+		    });
+		}); 
+		
+		 form.on('select(pro)', function(data){
+			 
+			 $.ajax({
+			        type:"POST",
+			        cache:false,
+			        url:"/treeController/selectbydepartment",
+			        data:{"pid":data.value},
+			        dataType:"json",
+			        success:function(data){
+			        //追加本机option前，先清除city和county的option，以免重选时干扰
+			            $("#city option").remove(); 
+			            $("#county option").remove();
+			            var option='<option value="">请选择所属处(市级)</option>';
+			            $.each(data,function(i,n){
+			            	  option += '<option value="'+n.id+'">'+n.name+'</option>';
+			            })
+			            $("#city").append(option);
+			            form.render('select');
+			        }
+			        });
+			 
+		});
+		 form.on('select(city)', function(data){
+			 
+			  $.ajax({
+			        type:"POST",
+			        cache:false,
+			        url:"/treeController/selectbydepartment",
+			        data:{"pid":data.value},
+			        dataType:"json",
+			        success:function(data){
+			        //同上
+			            $("#county option").remove();
+			            var option='<option value="">请选择处</option>';
+			            $.each(data,function(i,n){
+			            	 option += '<option value="'+n.id+'">'+n.name+'</option>';
+			            })
+			            
+			            $("#county").append(option);
+			            form.render('select');
+			        }
+			        });
+			 
+		});
+		 form.on('select(county)', function(data){
+			 dou.device.department=data.value;
+		 });
+		 
+		 form.on('select(select-is_model)', function(data){
+			 dou.device.is_model=data.value;
+		 });
+	  });
+ 	
+</script> 
+
+</body>
+</html>
+

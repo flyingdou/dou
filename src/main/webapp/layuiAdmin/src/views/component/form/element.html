@@ -1,0 +1,262 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Insert title here</title>
+</head>
+<body>
+<link rel="stylesheet" href="./layuiAdmin/start/layui/css/common.css"/>
+<title>菜单管理</title>
+
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>菜单管理</cite></a>
+  </div>
+</div>
+
+<style>
+/* 这段样式只是用于演示 */
+
+</style>
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          菜单列表
+			</div>
+          <div class="layui-card-body">
+           <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+          		<button class="layui-btn" id="save"><i class="layui-icon">&#xe654;</i> 添加</button>
+				<button class="layui-btn layui-btn-primary up-all">全部收起</button>
+				<button class="layui-btn layui-btn-primary down-all">全部展开</button>
+				<div class="layui-inline">
+        			<input class="layui-input" id="edt-search" value="" placeholder="输入关键字">
+        		</div>
+      				<button class="layui-btn" id="btn-search"  type="button">搜索</button>
+			</div>
+    		<table id="auth-table" class="layui-table" lay-filter="auth-table"></table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+</script>
+
+
+	<script type="text/html" id="switchTpl">
+  		<!-- 这里的 checked 的状态只是演示 -->
+  		<input type="checkbox" name="isshow" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchtest" {{ d.isdel == 0 ? 'checked' : '' }}>
+	</script>
+
+<script>
+
+layui.config({
+    base: '/layuiAdmin/start/layui/lay/modules/' //此处路径请自行处理, 可以使用绝对路径
+}).extend({
+	treetable: 'treetable'
+});
+
+    layui.use(['table', 'treetable','layer'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var layer=layui.layer;
+	    var form = layui.form;
+        // 渲染表格
+        layer.load(2);
+        var dataTable=treetable.render({
+            treeColIndex: 1,
+            treeSpid: 0,
+            treeIdName: 'id',
+            treePidName: 'pid',
+            elem: '#auth-table',
+            treeDefaultClose:true,//默认不展开
+            icon: {
+        		open: 'layui-icon layui-icon-triangle-d',
+        		close: 'layui-icon layui-icon-triangle-r',
+        		left: 16,
+        	},
+            url: '/menu/showtreetable',
+            page: false,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'title', minWidth: 200, title: '名称'},
+                {field: 'id', minWidth: 200, title: 'id'},
+                {field: 'mno', minWidth: 200, title: '序号'},
+                {field: 'function', title: '权限标识'},
+                {field: 'jump', title: '菜单url'},
+                {
+                    field: 'type', width: 80, align: 'center', templet: function (d) {
+                        if (d.type == 1) {
+                            return '<span class="layui-badge layui-bg-gray">菜单</span>';
+                        }
+                        if (d.type == 2) {
+                            return '<span class="layui-badge layui-bg-blue">功能</span>';
+                        } else {
+                            return '<span class="layui-badge-rim">未知</span>';
+                        }
+                    }, title: '类型'
+                },
+				{field:'sex', title:'状态', width:85, templet: '#switchTpl', unresize: true},
+                {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+        
+      //监听显示操作
+		  form.on('switch(switchtest)', function(obj){
+		  		var id = this.value;
+		  		var show = obj.elem.checked;
+	            layer.open({
+	                content: '确定修改吗？'
+	                ,btn: ['确定', '取消']
+	                ,yes: function(index, layero){
+	                	obj.elem.checked=show;
+	                	deviDel(id,show);
+	                    form.render();
+	                    layer.close(index);
+	                    //按钮【按钮一】的回调
+	                }
+	                ,btn2: function(index, layero){
+	                    //按钮【按钮二】的回调
+	                    obj.elem.checked=!show;
+	                    form.render();
+	                    layer.close(index);
+	                    //return false 开启该代码可禁止点击该按钮关闭
+	                }
+	                ,cancel: function(){
+	                    //右上角关闭回调
+	                    obj.elem.checked=!show;
+	                    form.render();
+	                    //return false 开启该代码可禁止点击该按钮关闭
+	                }
+	            });
+		    /* 	layer.confirm('确定修改吗？', function(index){
+		    		var show = obj.elem.checked;
+			        deviDel(id,show);
+			        //关闭弹窗
+			        layer.close(index);
+			        location.reload();
+			      },function(index){
+				        location.reload();
+			      }); 
+		    	table.reload('dataTable');*/
+		  });
+		
+		  
+		//是否显示
+		function deviDel(id,status){
+			$.ajax({
+				url:"/menu/del",
+				type: "post",
+				 data:{
+					 id : id,
+					 status:status
+				 },
+		 		 async:false,   	
+				 
+				success: function(res){
+					layer.msg(res.msg);
+			   }});
+ 	 		
+		}
+
+        
+        table.on('tool(auth-table)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+            ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'edit'){
+            	layer.open({
+              	  type: 2,
+              	  title:'菜单修改',
+              	  skin: 'layui-layer-demo', //样式类名
+              	  closeBtn: 0, //不显示关闭按钮
+              	  area:['35%','80%'],
+              	  anim: 2,
+              	  shadeClose: true, //开启遮罩关闭
+              	  content: '/layuiAdmin/src/views/component/form/groupupdate.html',
+              	  success: function(layero, index){
+              		 // 获取子页面的iframe
+                      var iframe = window['layui-layer-iframe' + index];
+                      // 向子页面的全局函数child传参
+                      console.log(data);
+                      iframe.child(data);
+              	  }
+              	});
+            }
+          });
+        
+        $("#save").click(function(){
+        	layer.open({
+        	  type: 2,
+        	  title:'菜单添加',
+        	  skin: 'layui-layer-demo', //样式类名
+        	  closeBtn: 0, //不显示关闭按钮
+        	  area:['35%','80%'],
+        	  anim: 2,
+        	  shadeClose: true, //开启遮罩关闭
+        	  content: '/layuiAdmin/src/views/component/form/group.html'
+        	});
+        });
+        
+        
+	    $('.up-all').click(function(){//收起
+	    	treetable.foldAll('#auth-table');
+		});
+		
+		$('.down-all').click(function(){//展开
+			treetable.expandAll('#auth-table');
+		});
+		
+        //搜索
+        $(document).on("click","#btn-search",function(){
+            var keyword = $('#edt-search').val();
+            var searchCount = 0;
+            $('#auth-table').next('.treeTable').find('.layui-table-body tbody tr td').each(function () {
+                $(this).css('background-color', 'transparent');
+                var text = $(this).text();
+                if (keyword != '' && text.indexOf(keyword) >= 0) {
+                    $(this).css('background-color', 'rgba(250,230,160,0.5)');
+                    if (searchCount == 0) {
+                        treetable.expandAll('#auth-table');
+                        $('html,body').stop(true);
+                        $('html,body').animate({scrollTop: $(this).offset().top - 150}, 500);
+                    }
+                    searchCount++;
+                }
+            });
+            if (keyword == '') {
+                layer.msg("请输入搜索内容", {icon: 5});
+            }
+        });
+      
+    });
+</script>
+
+
+<!-- <script>
+layui.use(['admin', 'form'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,form = layui.form;
+  
+  form.render(null, 'component-form-element');
+  element.render('breadcrumb', 'breadcrumb');
+  
+  form.on('submit(component-form-element)', function(data){
+    layer.msg(JSON.stringify(data.field));
+    return false;
+  }); 
+});
+</script> -->
+</body>
+</html>

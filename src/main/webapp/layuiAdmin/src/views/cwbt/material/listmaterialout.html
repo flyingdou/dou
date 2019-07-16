@@ -1,0 +1,342 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>物资使用记录列表</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+
+</head>
+<body  style="width:100%;height:100%">
+ <div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>物资管理</cite></a>
+    <a><cite>使用记录</cite></a>
+  </div>
+</div>
+
+
+
+
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          记录列表
+			</div>
+          <div class="layui-card-body">
+			<form class="layui-form" action="">
+	<blockquote class="layui-elem-quote elem-quote" >
+	  <div >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">物资名称</label>
+		    <div class="layui-input-inline">
+		    	<select class="select"  name="materialid" id="materialid" lay-filter="materialid"   lay-verify="materialid" lay-search>
+		    	</select>
+		    </div>
+		</div>
+		
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">部门</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" id="departmentid" name="departmentid" lay-filter="departmentid" class="layui-input">
+		    </div>
+		</div>
+		
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">时间</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" name="time" id="time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" style="width:200px;">
+		    </div>
+		</div>
+		
+		<div class="layui-inline" style="margin-left:50px">
+			<a class="layui-btn layui-btn-warm" lay-submit lay-filter="searchForm">查询</a>
+		</div>
+		
+		 </div > 
+
+	 <div >
+		
+	  </div>
+	</blockquote>
+	</form>
+	
+     <blockquote class="layui-elem-quote">双击行，可查看详情</blockquote>    
+		<table class="layui-hide" id="dataTable" lay-filter="dataTable"></table>
+			 
+	</table>
+		  </div>
+		 </div>
+		</div>
+		</div>
+		</div>
+
+	<!-- <div id="noticediv" class="notice layui-bg-blue layui-notice">
+          <p class="text-center">
+                       提示： 双击行，可查看详情<br/>
+             红色数值为低于预警数量         
+             <a  href="javascript:;" onclick="closediv()" class="pull-right notice-close"> <i class="layui-icon layui-icon-close"></i></a>
+          </p>
+     </div> -->
+     
+	
+	
+<script type="text/html" id="toolbarDemo">
+ 
+</script>
+
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit" ><i class="layui-icon" ></i></a>
+	</script>
+	
+	<script>
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var form;
+		var loading;
+		var treeSelect;
+		
+		var seachworkid = sessionStorage.seachworkid;
+		if(seachworkid == undefined){
+			seachworkid = null;
+		}
+		var $;
+		
+		
+		
+		layui.use(['table','form','layer','laytpl','laydate','treeSelect'], function(){
+		  table = layui.table,
+		  loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  laydate = layui.laydate;
+		  treeSelect= layui.treeSelect;
+		  
+		 form=layui.form,
+		  $ = layui.jquery;
+		 
+		 laydate.render({
+				elem: '#time',
+				range: '~',
+				});
+		 
+		 treeSelect.render({
+	            // 选择器
+	            elem: '#departmentid',
+	            // 数据
+	            data: '/person/selectall?status=1',
+	            style: {
+	                folder: { // 父节点图标
+	                    enable: true // 是否开启：true/false
+	                },
+	                line: { // 连接线
+	                    enable: true // 是否开启：true/false
+	                }
+	            },
+	            // 异步加载方式：get/post，默认get
+	            type: 'post',
+	            // 占位符
+	            placeholder: '全部',
+	            // 是否开启搜索功能：true/false，默认false
+	            search: true,
+	            // 点击回调
+	            click: function(d){
+	                document.getElementById("departmentid").value=d.current.id;
+	                console.log(d.current.id);
+	            },
+	            // 加载完成后的回调函数
+	            success: function (d) {
+	            	select1();
+	            }
+	        });
+		 
+		
+		  dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,url: '/WcMaterialout/selectall' //数据接口 
+			    ,request: {     
+			    	page: 'start'
+				   ,limit: 'limitsize' 
+				}
+			    ,toolbar: '#toolbarDemo'
+			    ,page: true //开启分页 	
+			    ,cols: [[ //表头
+			      {field: 'no', title: '序号',width:'5%',type:'numbers'}
+			      ,{field: 'materialid', title: '物资名称',templet:function(d){
+			    	  return d.materialname;
+			      }}
+			      ,{field: 'number', title: '数量'}
+			      ,{field: 'unitname', title: '单位'}
+			      ,{field: 'createperson', title: '记录人',templet:function(d){
+			    	  return d.createpersonname;
+			      }}
+			      ,{field: 'departmentid', title: '部门',templet:function(d){
+			    	  return d.departmentname;
+			      }}
+
+			      ,{field: 'outtime', title: '时间',templet:function(d){
+			    	  return createTime(d.outtime);
+			      }}
+			      ,{fixed: 'right',title:'操作',width:'20%',align:'center', toolbar: '#barDemo'}
+			    ]]
+			    ,done:function(){
+			    	layer.close(loading);
+			    }
+		  });
+		 
+		  
+
+			//监听行双击击
+			table.on('rowDouble(dataTable)', function(obj){
+				var data=obj.data;
+		    	
+		    	var index = layui.layer.open({
+		    		type: 1
+		            ,title: false 
+		            ,closeBtn: true
+		            ,area: '300px;'
+		            ,shade: 0.8
+		            ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+		            ,btnAlign: 'c'
+		            ,moveType: 1 //拖拽模式，0或者1
+		            ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">物资名称:'+data.materialname+'<br><br>使用情况:'+data.number+data.unitname+'<br><br>使用部门:'+data.departmentname+'<br><br>记录人:'+data.createpersonname+'<br><br><br><br>记录时间:'+createTime(data.outtime)+'</div>'
+		    		});
+			});
+		  
+		  //监听工具条
+		  table.on('tool(dataTable)', function(obj){
+		    var data = obj.data;
+			if(obj.event === 'edit'){
+		    	var id=data.id;
+		    	sessionStorage.setItem("id",id);
+		    	var index = layui.layer.open({
+		    		type: 1
+		            ,title: false 
+		            ,closeBtn: true
+		            ,area: '300px;'
+		            ,shade: 0.8
+		            ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+		            ,btnAlign: 'c'
+		            ,moveType: 1 //拖拽模式，0或者1
+		            ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">物资名称:'+data.materialname+'<br><br>使用情况:'+data.number+data.unitname+'<br><br>使用部门:'+data.departmentname+'<br><br>记录人:'+data.createpersonname+'<br><br><br><br>记录时间:'+createTime(data.outtime)+'</div>'
+		    		});
+		    }
+		  });
+		  	
+    
+			
+			 //监听排序
+			table.on('sort(dataTable)', function(obj){ //注：tool是工具条事件名，deptTable是table原始容器的属性 lay-filter="对应的值"
+				 // console.log(obj.field); //当前排序的字段名
+				//  console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+				//  console.log(this); //当前排序的 th 对象
+				  
+				  //尽管我们的 table 自带排序功能，但并没有请求服务端。
+				  //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，如：
+				 
+				  //表格重载
+				  table.reload('dataTable', {
+				    initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+				    ,where: { //请求参数 接口的其它参数
+				      field: obj.field, //排序字段
+				      order: obj.type //排序方式
+				    }
+				  });
+				}); 
+			 
+			form.on('submit(searchForm)', function(data){
+				loading = layer.load(1, {
+			    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+				    });
+				reloadData(data.field);
+				return false;
+			});
+			
+			
+
+			 //下拉框（物资）
+			  function select1() {
+				  $("select[name=materialid]").empty();
+				   $.ajax({
+				    async: false,
+				    type: "POST",
+				    url: "/wcMaterial/selectall",
+				    dataType: "json",
+				    data: {},
+				    success: function (res) {
+				    	var option = "<option value=\"\" placeholder=\"全部\"></option>";
+				    	$("select[name=materialid]").append(option);
+				  for(var i=0; i<res.data.length; i++){
+					  if(res.data[i].id!=null && res.data[i].id!='' ){
+						  var option="<option value=\""+res.data[i].id+"\"";
+						  option += ">"+res.data[i].name+"</option>"; //动态添加数据
+						  $("select[name=materialid]").append(option);
+					  }
+				  } 
+				  form.render('select'); 
+				    }
+				   });
+				  }
+			
+			 
+			 
+		});
+		
+
+		
+		function reloadData(formData) {
+			//console.log(formData);
+			dataTable.reload({
+				
+				where: formData
+				
+			});
+		}
+		
+		  //时间格式处理
+		 function createTime(v){
+	    var now = new Date(v);
+	        var yy = now.getFullYear();      //年
+	        var mm = now.getMonth() + 1;     //月
+	        var dd = now.getDate();          //日
+	        var hh = now.getHours();         //时
+	        var ii = now.getMinutes();       //分
+	        var ss = now.getSeconds();       //秒
+	        var clock = yy + "-";
+	        if(mm < 10) clock += "0";
+	        clock += mm + "-";
+	        if(dd < 10) clock += "0";
+	        clock += dd + " ";
+	        if(hh < 10) clock += "0";
+	        clock += hh + ":";
+	        if (ii < 10) clock += '0'; 
+	        clock += ii + ":";
+	        if (ss < 10) clock += '0'; 
+	        clock += ss;
+	     return clock;
+	    }
+		  
+		
+		</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>

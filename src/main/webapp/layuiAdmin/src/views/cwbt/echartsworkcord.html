@@ -1,0 +1,249 @@
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>统计分析（执行）</title>
+<meta name="renderer" content="webkit">
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/echarts.js"></script>
+	<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/layui/layui/css/layui.css" medidia="all" />
+	<link rel="stylesheet" href="/layui/css/news.css" media="all" />
+	<link rel="stylesheet" href="/layui/css/common.css" media="all" />
+	<link rel="stylesheet" href="/layui/layui/css/change.css" medidia="all" />
+	<script src="/layui/layui/layui.all.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/layui/js/dataSelect.js"></script>
+	<script type="text/javascript" src="/layuiAdmin/src/views/cwbt/js/layer.js"></script>
+	<script src="/layuiAdmin/src/views/cwbt/js/vue.min.js"></script>
+</head>
+<body>
+
+<div  id="wraper">
+
+ <form class="layui-form" action="">
+ 	<blockquote class="layui-elem-quote elem-quote" >
+	  <div >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">时间</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" name="time" id="time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" >
+		    </div>
+		</div>
+		<div class="layui-inline" style="margin-left:50px">
+			<a class="layui-btn layui-btn-warm" lay-submit lay-filter="searchForm">查询</a>
+		</div>
+		
+		 </div > 
+
+	</blockquote>
+ </form>
+ 
+<center>
+<div id="main" style="width:1000px; height:420px;"> 
+	
+</div>
+<table id="dataTable" lay-filter="dataTable">
+</table>
+</center>
+
+</div>
+	<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="view" onmouseover="show1()" id="i1"><i class="layui-icon" ></i></a>
+	</script>	
+<script type="text/javascript">
+		var department = sessionStorage.department;
+
+		var myChart = echarts.init(document.getElementById('main')); 
+		
+		var table;
+		var layer;
+		var laytpl;
+		var dataTable;
+		var laydate;
+		var json = [];
+		var loading;
+		layui.use(['table','form','layer','laytpl','laydate'], function(){
+			loading = window.parent.layer.load(1, {
+		    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+			    });
+			 table = layui.table,
+			  layer = layui.layer,
+			  laytpl = layui.laytpl;
+			  laydate = layui.laydate;
+			  $ = layui.jquery;
+			  form=layui.form,
+			  
+
+				 $(document).ajaxStop(function (){
+					 layer.close(loading);
+					 window.parent.layer.close(loading);
+				 });
+			  
+			  laydate.render({
+					elem: '#time',
+					range: '~',
+					});
+				 dataTable=table.render({
+					    elem: '#dataTable'
+					    ,height: 'auto'
+					    ,page: true //开启分页 	
+					    ,data: json//数据接口
+					    ,cols: [[ //表头
+					      {field: 'no', title: '序号',width:'10%',type:'numbers'}
+					      ,{field: 'boatname', title: '船名'}
+					      ,{field: 'number1', title: '未完成'}
+					      ,{field: 'number2', title: '完成'}
+					      ,{field: 'number3', title: '逾期完成'}
+					      ,{field: 'number4', title: '提前完成'}
+					      ,{field: 'number5', title: '总数'}
+					      ,{fixed: 'right',title:'操作',align:'center', toolbar: '#barDemo'}
+					    ]],
+				  });
+				//保存
+				 form.on('submit(searchForm)', function(data){
+						return show(data);;
+					});
+				 //监听工具条
+				  table.on('tool(dataTable)', function(obj){
+					  var data = obj.data;
+					  if(obj.event === 'view'){
+					    	var boatid=data.boatid;
+					    	var time = document.getElementById("time").value;
+					    	sessionStorage.setItem("boatid",boatid);//船舶id
+					    	sessionStorage.setItem("style",1);//船舶id
+					    	sessionStorage.setItem("time",time);//时间
+					    	var index = window.parent.layui.layer.open({
+								title : "查看详情",
+								type : 2,
+								area: ['80%', '70%'], // 弹窗大小
+								shadeClose: true,
+								shade: 0.5,
+								content :"/layuiAdmin/src/views/cwbt/echartsdetails.html",
+								success : function(layero, index){
+									setTimeout(function(){
+										layui.layer.tips('点击返回', '.layui-layer-close', {
+											tips: 3
+										});
+									},500);
+								}
+							})
+
+					    }
+				  });
+				 
+					
+					function show(formData){
+						var time = document.getElementById("time").value;
+						/* layer.ready(function(){ layer.msg('加载中', {
+							  icon:6
+							  ,shade: 0.5,
+							time: false
+							});
+						}); */
+						  $.ajax({
+								url: "/workCard/statisticsWcWorkcard",
+								type: "post",
+								data: {
+									departmentid: department,
+									time: time
+								},
+								dataType: "json",
+								success: function (res) {
+									/* layer.closeAll(); */
+									if(res.data==null){
+										layer.alert("无相关数据");
+									}else{
+										table.reload('dataTable',{data : res.data});
+										var data = res.data;
+										var boatname = [];
+										var numbers1 = [];
+										var numbers2 = [];
+										var numbers3 = [];
+										var numbers4 = [];
+										for(var i=0;i<data.length;i++){
+											boatname.push(data[i].boatname);
+											numbers1.push(data[i].number1);
+											numbers2.push(data[i].number2);
+											numbers3.push(data[i].number3);
+											numbers4.push(data[i].number4);
+										}
+										
+										option = {
+											    title: {
+											        text: '折线图堆叠'
+											    },
+											    tooltip: {
+											        trigger: 'axis'
+											    },
+											    legend: {
+											        data:['未完成','完成','逾期完成','提前完成']
+											    },
+											    grid: {
+											        containLabel: true
+											    },
+											    toolbox: {
+											        feature: {
+											            saveAsImage: {}
+											        }
+											    },
+											    xAxis: {
+											        type: 'category',
+											        boundaryGap: false,
+											        data: boatname
+											    },
+											    yAxis: {
+											        type: 'value'
+											    },
+											    series: [
+											        {
+											            name:'未完成',
+											            type:'line',
+											            data:numbers1
+											        },
+											        {
+											            name:'完成',
+											            type:'line',
+											            data:numbers2
+											        },
+											        {
+											            name:'逾期完成',
+											            type:'line',
+											            data:numbers3
+											        },
+											        {
+											            name:'提前完成',
+											            type:'line',
+											            data:numbers4
+											        }
+											    ]
+											};
+
+										// 为echarts对象加载数据 
+										myChart.setOption(option);  
+									}
+								}
+							}); 
+					  };
+					
+					window.onload = show(); 
+				 
+		});
+	
+		//鼠标悬浮提示
+		  function show1() {
+		        layer.tips("查看详情","#i1", {
+		          tips: [1, "#4794ec"],
+		          time:2000
+		        });
+		    }
+ 
+		  
+		
+		
+</script>
+</body>
+</html>

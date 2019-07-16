@@ -1,0 +1,49 @@
+
+<div class="layui-card-header">版本信息</div>
+<div class="layui-card-body layui-text layadmin-about">
+<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+  <script type="text/html" template>
+    <p>当前版本：数字机务V{{ layui.admin.v }}</p>
+    <p>基于框架：layui-v{{ layui.v }}</p>
+  </script>
+  小程序：
+  <div class="layui-btn-container">
+    <img alt="" src="/layuiAdmin/start/layui/images/WeChat.jpg" width="200px;">
+  </div>  
+  公众号：
+  <div class="layui-btn-container">
+    <img alt="" src="/layuiAdmin/start/layui/images/公众号.jpg" width="200px;">
+  </div>
+</div>
+
+<div class="layui-card-header">关于更新</div>
+<div class="layui-card-body layui-text layadmin-about">
+  
+  <blockquote class="layui-elem-quote" id="xianshi" style="border: none;">
+  </blockquote>
+  <p>© 2019 <a target="_blank" href="http://www.zcwish.com/">zcwish.com</a> 版权所有</p>
+  <script>
+      $(function(){
+    	  
+    	  $.ajax({
+				url: "/pceditioncontent/selectedition",
+				async: false,
+				dataType: "json",
+				type: "post",
+				success: function(data) {
+					var maplist=data.maplist;
+					var s="";
+		    		  for(var i=0;i<maplist.length;i++){
+		    			  s+=(i+1)+"、"+maplist[i].content+"<br>"
+		    		  }
+		    		 
+
+		    		  s+="<br><br>详见: <a href=\"/upload/file/航道船舶数字化移动管理系统操作手册.docx\" download=\"《数字机务(pc端)操作手册》.docx\">《数字机务(pc端)操作手册》</a>";
+		    		  s+="<br> <a href=\"/upload/file/数字机务手机App 管理端操作手册.docx\" download=\"《数字机务(管理端)操作手册》.docx\">《数字机务(管理端)操作手册》</a>";
+		    		  s+="<br> <a href=\"/upload/file/数字机务手机App 船舶端操作手册.docx\" download=\"《数字机务(船舶端)操作手册》.docx\">《数字机务(船舶端)操作手册》</a>";
+		    		  $("#xianshi").append(s); 
+				}
+			});
+      })
+  </script>
+</div>

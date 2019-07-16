@@ -1,0 +1,154 @@
+
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/layui/layui/css/layui.css"  media="all">
+<title>Insert title here</title>
+</head>
+<body>
+<div style="margin: 5px;">
+<button class="layui-btn" id="insert">
+  <i class="layui-icon">&#xe608;</i> 添加
+</button>
+<button class="layui-btn" id="del">
+  <i class="layui-icon">&#xe640;</i>删除
+</button>
+<table class="layui-table" id="datetable" lay-filter="datetable" style="margin-top: 15px"></table>
+</div>
+<script src="/layui/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['table','layer'], function(){
+  var table = layui.table;
+  var layer=layui.layer;
+  var $=layui.$;
+  var sid=sessionStorage.getItem("sid");
+  dataTable=table.render({
+	    elem: '#datetable'
+	    ,url:'/wceditioncontent/selectall?id='+sid+''
+	    ,page: true //开启分页
+	    ,cache:false
+	    ,cols: [[
+	        {type:'checkbox',align: 'center'}
+	      ,{field:'editionno', title: '序号',edit: 'text',align: 'center'} //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
+	      ,{field:'content', title: '内容', sort: true,edit: 'text',align: 'left',width:'50%'}
+	      ,{field:'createtime', title: '创建时间', align: 'center',templet:function (d){
+	    	  if(d.createtime==null){
+	    		  return "";
+	    	  }else{
+                  return createTime(d.createtime);
+	    	  }
+          }}
+	     
+	    ]]
+	  });
+  
+//监听表格复选框选择
+  table.on('checkbox(datetable)', function(obj){
+	 var a;
+	 if(obj.checked){
+		 console.log(obj.data.id);
+	 }
+  });
+  
+  $("#del").click(function(){
+      var checkStatus = table.checkStatus('datetable')
+      ,data = checkStatus.data;
+      console.log(data.id);
+      console.log(JSON.stringify(data));
+      $.ajax({
+    	  url:'/wceditioncontent/del',
+    	  type:'post',//method请求方式，get或者posts
+	  	  dataType:"json",
+	  	  async:false,
+	  	  data:{"sids":JSON.stringify(data)},
+	  	  success: function(res){
+	  		  layer.msg("删除成功");
+	  	  }
+      });
+   dataTable.reload();
+   });
+  //监听单元格编辑
+  table.on('edit(datetable)', function(obj){
+    var value = obj.value //得到修改后的值
+    ,data = obj.data //得到所在行所有键值
+    ,field = obj.field; //得到字段
+    console.log(data);
+    $.ajax({
+    	url:'/wceditioncontent/update',
+    	type:'post',//method请求方式，get或者post
+		dataType:"json",
+		async:false,
+        data:{data:JSON.stringify(data)},
+        success:function(res){//res为相应体,function为回调函数
+        	if(res=="200"){
+      			layer.alert('修改成功',{icon:1});
+        	}else{
+        		layer.alert('修改失败',{icon:5});
+        	}
+        }
+    })
+   
+    
+    
+  });
+ 
+  
+  $("#insert").click(function(){
+	    $.ajax({ 
+			  url:"/wceditioncontent/save",
+	          type:'post',//method请求方式，get或者post
+	          dataType:'json',//预期服务器返回的数据类型
+	          async:false,
+	          data:{'editionid':sid},//表格数据序列化
+	          success:function(){//res为相应体,function为回调函数
+	        		layer.alert('添加成功',{icon:1});
+	          }
+	       });
+	    dataTable.reload();
+  });
+  
+});
+
+    function wcnoticeup(id,status){
+    	$.ajax({
+    		url:'/notice/updatestutas',
+    		type:'post',//method请求方式，get或者post
+    		dataType:"json",
+    		async:false,
+    		data:{id:id,
+                  status:status
+    		     }
+    		
+    	})
+    }
+   
+    //时间格式处理
+  
+    function createTime(v){
+		var now = new Date(v);
+    	var yy = now.getFullYear();      //年
+    	var mm = now.getMonth() + 1;     //月
+    	var dd = now.getDate();          //日
+    	var hh = now.getHours();         //时
+    	var ii = now.getMinutes();       //分
+    	var ss = now.getSeconds();       //秒
+    	var clock = yy + "-";
+    	if(mm < 10) clock += "0";
+    	clock += mm + "-";
+    	if(dd < 10) clock += "0";
+    	clock += dd + " ";
+    	if(hh < 10) clock += "0";
+    	clock += hh + ":";
+    	if (ii < 10) clock += '0'; 
+    	clock += ii + ":";
+    	if (ss < 10) clock += '0'; 
+    	clock += ss;
+	    return clock;
+	}
+	  
+</script>
+</body>
+
+
+</html>

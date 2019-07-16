@@ -1,0 +1,82 @@
+﻿<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+<title>工作卡完成状况</title>  
+<script src="../js/echarts.js"></script>  
+</head>  
+<body>  
+<div id="echartsPie" style="width: 1600px;height:800px;"></div>  
+<script type="text/javascript">  
+    var echartsPie;  
+    var option = {  
+    		 title : {
+    		        text: '工作卡完成情况统计'
+    		    },
+    		    tooltip : {
+    		        trigger: 'axis'
+    		    },
+    		    legend: {
+    		        data:['完成量','未完成量']
+    		    },
+    		    toolbox: {
+    		        show : true,
+    		        feature : {
+    		            dataView : {show: true, readOnly: false},
+    		            magicType : {show: true, type: ['line', 'bar']},
+    		            restore : {show: true},
+    		            saveAsImage : {show: true}
+    		        }
+    		    },
+    		    calculable : true,
+    		    xAxis : [
+    		        {
+    		            type : 'category',
+    		            data : ['工作卡1','工作卡2','工作卡3','工作卡4','工作卡5','工作卡6','工作卡7','工作卡8','工作卡9','工作卡10','工作卡11','工作卡12']
+    		        }
+    		    ],
+    		    yAxis : [
+    		        {
+    		            type : 'value'
+    		        }
+    		    ],
+    		    series : [
+    		        {
+    		            name:'完成量',
+    		            type:'bar',
+    		            data:[20, 49, 70, 232, 256, 767, 356, 622, 326, 200, 64, 33],
+    		            markPoint : {
+    		                data : [
+    		                    {type : 'max', name: '最大值'},
+    		                    {type : 'min', name: '最小值'}
+    		                ]
+    		            },
+    		            markLine : {
+    		                data : [
+    		                    {type : 'average', name: '平均值'}
+    		                ]
+    		            }
+    		        },
+    		        {
+    		            name:'未完成量',
+    		            type:'bar',
+    		            data:[26, 59, 90, 264, 287, 707, 756, 822, 487, 188, 60, 23],
+    		            markPoint : {
+    		                data : [
+    		                    {type : 'max', name: '最高'},
+    		                    {type : 'min', name: '最低'}
+    		                ]
+    		            },
+    		            markLine : {
+    		                data : [
+    		                    {type : 'average', name : '平均值'}
+    		                ]
+    		            }
+    		        }
+    		    ]
+        };   
+      
+    echartsPie = echarts.init(document.getElementById('echartsPie'));    
+    echartsPie.setOption(option);                        
+</script>  
+</body>  
+</html>

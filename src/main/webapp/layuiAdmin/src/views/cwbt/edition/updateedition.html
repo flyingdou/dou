@@ -1,0 +1,95 @@
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/layui/layui/css/layui.css"  media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<div class="layui-tab-content" style="margin-top: 15px">
+  <div class="layui-tab-item layui-show">
+      <form  class="layui-form"  action="" onsubmit="return false" id="insert">
+		<div class="layui-form-item">
+		    <input type="hidden" id='id' name="id">
+		    <label class="layui-form-label">当前版本</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="edition" id="edition"  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		</div>
+	    <div class="layui-form-item layui-form-text">
+		    <label class="layui-form-label">备注</label>
+		    <div class="layui-input-block">
+		      <textarea placeholder="请输入内容" class="layui-textarea" name="remarks" id="remarks"></textarea>
+		    </div>
+		</div>
+		<div class="layui-form-item">
+		    <div class="layui-input-block" style="text-align: center;">
+		      <button class="layui-btn" lay-submit="" lay-filter="demo1" id="btn1">立即提交</button>
+		      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+	    </div>  
+      </form>
+  </div>
+</div>
+<script src="/layui/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="/jquery-3.3.1/jquery-3.3.1/jquery-3.3.1.js"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script type="text/javascript">
+window.onload = function(){
+	var sid=sessionStorage.getItem("sid");
+	var a=true;
+	if(a){
+	$.ajax({
+		url:'/wcedition/detail',
+		type:'post',
+		dataType:"json",
+		cache:false,
+		data:{"id":sid},
+		success: function(res){
+			  console.log(res);
+	  		  $("#edition").attr("value",res.edition);
+	  		  $("#id").attr("value",res.id);
+	  		  document.getElementById("remarks").value=res.remarks;
+	  	}
+	});
+	  a=false;
+	}
+}
+layui.use(['table','layer'], function(){
+	var table=layui.table;
+	var layer=layui.layer;
+	var $=layui.$;
+	$("#btn1").click(function(){
+		var postdata=$("#insert").serializeArray();
+		 var values = {};
+		 for( x in postdata ){
+		 	values[postdata[x].name] = postdata[x].value;
+		 }
+		$.ajax({
+			url:'/wcedition/update',
+			type:'post',
+			dataType:"json",
+			data:{"edition":JSON.stringify(values)},
+			async:false,
+			success:function(res){
+				if(res=='200'){
+					layer.alert('修改成功',{icon:1});
+				}else{
+					layer.alert('修改失败',{icon:5});
+				}
+			},
+			error:function(res){
+				layer.alert('操作有误！',{icon:5});
+			}
+		});
+	});
+})
+</script>
+
+</body>
+</html>

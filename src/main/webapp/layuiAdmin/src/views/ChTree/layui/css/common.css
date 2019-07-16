@@ -1,0 +1,376 @@
+/*登陆页*/
+ .dlbk{
+ 	width: 350px; 
+ 	height: 330px;
+ 	border-radius: 6px;
+ 	background: #fff;
+ 	margin-left: auto;
+ 	margin-right: auto;
+  	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.33);
+}
+.dlbk .yhdl{
+	width:306px;
+	height: 50px;
+	border-radius:2px ;
+	margin-left: 22px;
+	margin-top: 20px;
+}
+.yhdltb{
+	width: 48px;
+	float: left;
+}
+.clearfix{clear: both;}
+.dlbk .yhyz{
+	width:306px;
+	height: 50px;
+	margin-left: 22px;
+	margin-top: 28px;
+}
+.yhdlsz{
+	width: 150px;
+	float: left;
+	font-family: "Agency FB Bold";
+	text-align: center;
+	line-height: 52px;
+}
+.yhan{width:310px;
+	height: 52px;
+	border-radius:2px ;
+	margin-left: 24px;
+	margin-top: 10px;
+	
+}
+.yhan:hover{
+	cursor: pointer;
+}
+.wjmm{
+	width:306px;
+	margin-left: 22px;
+	margin-top: 18px;
+	text-align: center;
+	font-size: 16px;
+	color: #60adef;
+	line-height: 10px;
+	text-decoration:underline;
+	cursor: pointer;
+
+}
+.yzmts{
+	text-align: center;
+	margin-top: 8px;
+	color: red;
+}
+/*主页*/
+.cd{
+	float: left;
+	margin-left: 20px;
+	margin-top: 17px;
+	cursor: pointer;
+}
+.dbk{
+	position: absolute;
+	left: 0px;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 998;
+	width: auto;
+	overflow: hidden;
+	overflow-y: auto;
+	box-sizing: border-box
+	background-color: #fff;
+}
+.xhk{
+	position: absolute;
+	left: 0px;
+	right: 0;
+	top: 60px;
+	bottom: 0;
+	z-index: 998;
+	width: auto;
+	overflow: hidden;
+	overflow-y: auto;
+	box-sizing: border-box
+	background-color: #f3f3f3;
+	border: 1px solid #e0e0e0;
+	margin: 10px;
+}
+.data_display{
+	float: right;
+	width: 13%;
+}
+.data_box{
+	margin-top: 0px;
+	height: 72.5px;
+	margin-bottom: 6px;
+	background: #fff;
+	border-radius: 4px;
+	border: 1px solid #e0e0e0;
+	
+}
+.ic_img,.data_type{
+	float: left;
+}
+.ic_img{
+	margin: 16px 8px 0 14px;
+}
+.data_data{
+	margin: 10px 0 2px 0;
+	font-size: 28px;
+}
+.type_name{
+	color: #b2b2b2;
+	font-size: 14px;
+}
+.data_box:hover{
+	cursor: pointer;
+}
+.zdylm{
+	float:left;
+	margin-top: 8px;
+	width: 10%;
+}
+.zdylm p{
+	margin: 0 auto 6px auto;
+	
+}
+.dbcdl{
+	float:left;
+	margin-top: 12px;
+	width: 10%;
+}
+.dbcdl p{
+	margin: 0 auto 8px auto;
+	color: #fff;
+	font-size: 16px;
+	
+}
+.zdygg{
+	width: 60px;
+	margin: 0px auto 10px auto;
+	position: relative;
+}
+.zdylm span{
+	position: absolute;
+	top: -12px;
+	right: -12px;
+	background: #e70012;
+	width: 24px;
+	height: 24px;
+	border-radius: 19px;
+	color: #fff;
+	font-size: 10px;
+	text-align: center;
+	line-height: 24px;
+	
+}
+.zdylm img:hover{
+	cursor: pointer;
+}
+/*来信登记*/
+.form-content{
+	border-radius: 4px;
+	border: 1px solid #ececec;
+	background: #fff;
+	margin-top: 10px;
+}
+.form-odd-number{
+	background: #f0f0f0;
+	height: 46px;
+}
+.layui-tab-content .odd-number{
+	background: #f8f8f8;
+}
+.pc{
+	float: left;
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+}
+.layui-upload span{
+	color: #ff0000;
+	font-size: 12px;
+}
+.layui-col-md4 span{
+	line-height: 28px;
+}
+.layui-input-an img{
+	margin: 4px 10px;
+}
+.layui-input-an{	
+	width: 250px;
+	margin: 0px auto;
+}
+.layui-col-md8 .layui-input{
+	width: 100%;
+}
+/*信访详情*/
+.xfsx_top{
+	position: absolute;
+	right: 1%;
+	top: 7px;
+}
+.xfsx_top a{
+	color: #62b0f2;
+	font-size: 16px;
+	margin: 0 12px;
+	cursor: pointer;
+}
+.rows{
+	font-size: 14px;
+	height: 26px;
+	line-height: 26px;
+}
+.rows01,.rows02,.rows03{
+	float: left;
+}
+.rows01{
+	margin-left: 60px;
+	width: 19%;
+}
+.rows02{
+	margin-left: 80px;
+	width: 29%;
+}
+.rows01 span,.rows02 span{
+	color: #ff0706;
+}
+.lmryxq_title{
+	height: 46px;
+	line-height: 50px;
+	background: #f2f2f2;
+	font-size: 16px;
+}
+.rows1,.rows2{
+	float: left;
+}
+.rows1{
+	margin-left: 60px;
+	width: 160px;
+}
+.rows2{
+	margin-left: 30px;
+}
+.rows_numberz{
+	float: left;
+}
+.rows_numbery{
+	float: right;
+	margin-right: 60px;
+}
+.lj a{
+	color: #6aabe5;
+	cursor: pointer;
+}
+.rows03{
+	width: 15%;
+	margin-left: 20px;
+}
+.rows04{
+	margin-left: 60px;
+	
+}
+.rows04,.nr{
+	float: left;
+}
+
+.nr{
+	width: 80%;
+}
+.gban{
+	width: 90px;
+	height: 32px;
+	border-radius: 6px;
+	color: #fff;
+	background: #fdaf04;
+	border: 0;
+	cursor: pointer;
+}
+.sxrk .layui-form-select{
+	width: 152%;
+}
+.sxrk .layui-input{
+	width: 99.2%;
+}
+.gjhgat .layui-form-select{
+	width: 143.8%;
+}
+.gjhgat .layui-input{
+	width: 100%;
+}
+#panchong {
+	margin-top: 0px;
+    margin-bottom: 0px;
+	line-height: 28px;
+	padding: 0 20px 0 20px;
+}
+#duka {
+	margin-top: 0px;
+    margin-bottom: 0px;
+	line-height: 28px;
+	padding: 0 20px 0 20px;
+}
+/*form表单*/
+.elem-quote{
+		padding: 0;
+	}
+	.elem-quote .layui-input{
+		height: 32px;
+	}
+	.elem-quote .layui-form-item{
+		padding-bottom: 0;
+	}
+	.elem-quote .layui-form-item .layui-inline{
+		margin-bottom: 0;
+	}
+	.elem-quote .layui-btn{
+		height: 32px;
+		line-height: 32px;
+	}
+	.elem-quote .layui-input-inline{
+		width: 200px;
+	}
+	.elem-quote .layui-input{
+		width: 200px;
+	}
+	.elem-quote .layui-form-label{
+		width: 100px;
+		height: 27px;
+		background-color: #ccc6;
+	}
+
+.admin-contextmenu{
+	position: absolute;line-height: 36px;padding: 5px 0;
+	border: 1px solid #d2d2d2;background-color: white;z-index: 19940201;border-radius: 2px;white-space: nowrap;top:30px;
+	/*width: 100px;height: 200px; */
+}
+.admin-contextmenu ul li{
+	padding: 0 15px;
+}
+.admin-contextmenu ul li:hover{
+	background-color: #eee;
+	cursor: pointer;
+}
+.xjba{
+	float: left;
+	width: 9.86%;
+	font-size:16px;	
+	border:1px solid #e5e5e5;	
+	background: #fff;
+	text-align: center;
+	
+}
+.xbaoan{
+	height:42px;
+	border-bottom:none;
+	line-height: 42px
+}
+.jbaoan{
+	height:450px;
+	border-right:none;
+	border-top: none;
+	line-height: 450px;
+}
+.card_type .layui-unselect{
+	width: 84px;
+}

@@ -1,0 +1,22 @@
+
+  
+<title>搜索结果</title>
+
+<script type="text/html" template>
+  <link rel="stylesheet" href="{{ layui.setter.base }}style/template.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+
+<iframe class="full" src="/help/help.html" id="iframePage" onload="changeFrameHeight()" frameborder="0" width="100%"  marginwidth="0" marginheight="0"></iframe>
+
+<script>
+function changeFrameHeight(){
+	var ifm = document.getElementById("iframePage");
+	ifm.height = document.documentElement.clientHeight;
+}
+
+window.onresize = function() {
+	changeFrameHeight();
+}
+
+ document.getElementById("iframePage").onload = changeFrameHeight;
+</script>

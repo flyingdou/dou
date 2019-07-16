@@ -1,0 +1,364 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+	<title>统计查询 （单物资、时间段、多部门统计）</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+</head>
+<body  style="width:100%;height:100%">
+<div class="layui-card layadmin-header" style="background-color:#F2F2F2;">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>物资管理</cite></a>
+    <a><cite>物资部门统计报表</cite></a>
+  </div>
+</div>
+
+
+ <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+			<form class="layui-form" action="">
+	<blockquote class="layui-elem-quote elem-quote" >
+	  <div >
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">物资</label>
+		    <div class="layui-input-inline">
+		    	<select class="select"  name="materialid" id="materialid" lay-filter="materialid"   lay-verify="materialid" lay-search>
+		    	</select>
+		    </div>
+		</div>
+		
+		<div class="layui-inline">
+		  <label class="layui-form-label" style="width: 60px;">时间</label>
+		    <div class="layui-input-inline">
+		    	<input type="text" name="time" id="time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" style="width:200px;">
+		    </div>
+		</div>
+		
+		<div class="layui-inline" style="margin-left:50px">
+			<a class="layui-btn layui-btn-warm" lay-submit lay-filter="searchForm">查询</a>
+		</div>
+		
+		 </div > 
+
+	 <div >
+		
+	  </div>
+	</blockquote>
+	</form>
+	
+     <blockquote class="layui-elem-quote">
+			请选择统计物资，
+	</blockquote>
+		  </div>
+		 </div>
+		</div>
+		
+		
+	<div class="layui-row layui-col-space15">
+    <div class="layui-col-md4">
+      <div class="layui-card">
+      
+        <div class="layui-card-header">查询结果</div>
+        <div class="layui-card-body">
+				          
+			<table id="dataTable" lay-filter="dataTable">
+			
+			</table>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md8">
+      <div class="layui-card">
+        <div class="layui-card-header">饼图</div>
+        <div class="layui-card-body" id="echarts1">
+		      <div id="main" style="height:400px;"></div>
+        </div>
+      </div>
+    </div>
+	
+      
+     <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">柱状图</div>
+        <div class="layui-card-body" id="echarts2">
+		      <div id="main2" style="height:400px;"></div>
+        </div>
+      </div>
+    </div>
+      
+		</div>
+		</div>
+	
+	<script>
+	
+
+	
+	
+	var table;
+	var layer;
+	var laytpl;
+	var dataTable;
+	var laydate;
+	var form;
+	var loading;
+	var treeSelect;
+	var json = [];
+	
+	
+	layui.use(['table','form','layer','laytpl','laydate','echarts'], function(){
+		 table = layui.table,
+		  loading = layer.load(1, {
+	    	  shade: [0.5,'#000'] //0.1透明度的白色背景
+		    });
+		  layer = layui.layer,
+		  laytpl = layui.laytpl;
+		  laydate = layui.laydate;
+		  
+		 form=layui.form,
+		  $ = layui.jquery;
+		 
+		
+		 
+		 //下拉框（物资）
+		  function select1() {
+			  $("select[name=materialid]").empty();
+			   $.ajax({
+			    async: false,
+			    type: "POST",
+			    url: "/wcMaterial/selectall",
+			    dataType: "json",
+			    data: {},
+			    success: function (res) {
+			    	var option = "<option value=\"0\" placeholder=\"请选择\"></option>";
+			    	$("select[name=materialid]").append(option);
+			  for(var i=0; i<res.data.length; i++){
+				  if(res.data[i].id!=null && res.data[i].id!='' ){
+					  var option="<option value=\""+res.data[i].id+"\"";
+					  option += ">"+res.data[i].name+"</option>"; //动态添加数据
+					  $("select[name=materialid]").append(option);
+				  }
+			  } 
+			  form.render('select'); 
+			  layer.close(loading);
+			    }
+			   });
+			  }
+		 
+		 laydate.render({
+				elem: '#time',
+				range: '~',
+				});
+		 
+		 dataTable=table.render({
+			    elem: '#dataTable'
+			    ,height: 'auto'
+			    ,page: false //开启分页 
+			    ,toolbar:true
+			    ,data: json//数据接口
+			    ,cols: [[ //表头
+			      {field: 'no', title: '序号',width:'10%',type:'numbers'}
+			      ,{field: 'departmentname', title: '部门名称'}
+			      ,{field: 'sumnumber', title: '数量',templet:function(d){
+			    	  return d.sumnumber+d.unitname
+			      }
+			      }
+			    ]],
+			    done:function(){
+			    	
+			    }
+		  });
+		 
+		//查询
+		 form.on('submit(searchForm)', function(data){
+				var departmentid = document.getElementById("materialid").value;
+				if(departmentid==0){
+					layer.msg("请选择统计物资");
+					return false;
+				}else{
+					return show(data);
+				}
+			});
+		
+
+		//查询接口
+			function show(formData){
+				var time = document.getElementById("time").value;
+				var materialid = document.getElementById("materialid").value;
+				  $.ajax({
+						url: "/WcMaterialout/selecttoeacharts3",
+						type: "post",
+						data: {
+							materialid: materialid,
+							time: time
+						},
+						dataType: "json",
+						success: function (res) {
+							/* layer.closeAll(); */
+							if(res.data==null){
+								layer.msg("查询无数据");
+								
+							}else{
+								if(res.data.length===0){
+									layer.msg("查询无数据");
+									
+								}else if(res.data.length>0){
+									//数据表刷新
+									table.reload('dataTable',{data : res.data});
+									
+									//定义echarts宽度
+									//饼图
+									  var o = document.getElementById("echarts1");
+									  var w = o.clientWidth||o.offsetWidth;
+									  var main=document.getElementById("main");
+									  main.style.width=w-50+"px";
+									 var myChart = echarts.init(document.getElementById('main')); 
+									 //柱状图
+									  var o2 = document.getElementById("echarts2");
+									  var w2 = o2.clientWidth||o2.offsetWidth;
+									  var main=document.getElementById("main2");
+									  main.style.width=w2-100+"px";
+									 var myChart2 = echarts.init(document.getElementById('main2')); 
+									
+									
+									//标题
+									var materialname;
+									//饼图数据
+									var departmentname = [];
+									var sumnumber = [];
+									//柱状图数据
+									var sumnumber2 = [];
+									
+									var datalist = res.data;
+									for(var i=0;i<datalist.length;i++){
+										materialname = datalist[i].materialname;
+										departmentname.push(datalist[i].departmentname);
+										sumnumber.push({value:datalist[i].sumnumber,
+														name:datalist[i].departmentname});
+										sumnumber2.push(datalist[i].sumnumber);
+									}
+									  
+									  option = {
+											    title : {
+											        text: materialname+'各部门使用情况',
+											        x:'center'
+											    },
+											    tooltip : {
+											        trigger: 'item',
+											        formatter: "{a} <br/>{b} : {c} "
+											    },
+											    toolbox: {
+											        show : true,
+											        feature : {
+											            saveAsImage : {show: true}
+											        }
+											    },
+											    legend: {
+											        orient: 'vertical',
+											        x: 'left',
+											        data: departmentname
+											    },
+											    series : [
+											        {
+											            name: '使用情况',
+											            type: 'pie',
+											            radius : '55%',
+											            center: ['50%', '60%'],
+											            data:sumnumber,
+											            itemStyle: {
+											                emphasis: {
+											                    shadowBlur: 10,
+											                    shadowOffsetX: 0,
+											                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+											                }
+											            }
+											        }
+											    ]
+											};
+
+										// 为echarts对象加载数据 
+										myChart.setOption(option); 
+										
+										
+										//柱状图
+										
+										
+										option2 = {
+												 title : {
+												        text: materialname+'各部门使用情况',
+												        x:'center'
+												    },
+												    toolbox: {
+												        show : true,
+												        feature : {
+												            saveAsImage : {show: true}
+												        }
+												    },
+												    
+												    tooltip : {
+												        trigger: 'axis',
+												        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+												            type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+												        },
+												        formatter: "{b} : {c} "
+												    },
+											    xAxis: {
+											        type: 'category',
+											        data: departmentname,
+											    },
+											    yAxis: {
+											        type: 'value'
+											    },
+											    series: [{
+											    	itemStyle: {
+														normal: {
+															label: {
+																show: true, //开启显示
+																position: 'top', //在上方显示
+										                        formatter: '{c}',
+																textStyle: { //数值样式
+																	color: 'black',
+																	fontSize: 16
+																}
+															}
+														}
+													},
+											        data: sumnumber2,
+											        type: 'bar'
+											    }]
+											};
+
+										
+
+										// 为echarts对象加载数据 
+										myChart2.setOption(option2); 
+										
+										
+								}
+									
+							}
+						}
+					}); 
+				  
+				  
+			  };
+		 
+			  window.onload = select1();
+			  
+	});
+	</script>
+	
+<style>
+	.layui-layer-title{background: #fff;border: 1px solid #e5e5e5;border-top-left-radius: 4px;border-top-right-radius: 4px;font-size: 18px;}
+</style>
+
+</body>
+</html>
