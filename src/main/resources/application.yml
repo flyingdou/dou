@@ -2,8 +2,16 @@ server:
   port: 8080
 
 spring:
+  #dataSource配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/andon?useUnicode=true&characterEncoding=utf-8&useSSL=true
     name: root
     password: 123456
+
+  #rabbitMQ配置
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: dou
+    password: dou123456
