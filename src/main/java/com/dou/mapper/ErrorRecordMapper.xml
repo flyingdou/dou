@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dou.dao.ErrorRecordMapper">
+  <resultMap id="BaseResultMap" type="com.dou.pojo.ErrorRecord">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="device_no" jdbcType="VARCHAR" property="deviceNo" />
+    <result column="error_type" jdbcType="INTEGER" property="errorType" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+  </resultMap>
+  
+  <insert id="insertSelective" parameterType="com.dou.pojo.ErrorRecord">
+    insert into error_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deviceNo != null">
+        device_no,
+      </if>
+      <if test="errorType != null">
+        error_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="deviceNo != null">
+        #{deviceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="errorType != null">
+        #{errorType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+
+<!-- 测试sql -->
+<select id="getAll" resultType="Map">
+    select * from error_record where is_del = 0 and status &gt; 0 
+</select>
+
+
+</mapper>
